@@ -2,12 +2,14 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Windows.Media.Control;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Tray.Controls;
 
@@ -19,17 +21,22 @@ namespace Media_Control_Tray_Icon
     public partial class App : Application
     {
         private NotifyIcon trayIcon;
-        private ImageSource pauseDarkIcon;
+
+        private ImageSource noMediaLightIcon;
+        private ImageSource noMediaDarkIcon;
+        private ImageSource playLightIcon;
         private ImageSource playDarkIcon;
+        private ImageSource pauseLightIcon;
+        private ImageSource pauseDarkIcon;
 
         private MediaSessionService _mediaService;
+
+        //public SystemTheme currentSystemTheme;
+        //public ApplicationTheme currentAppTheme;
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             trayIcon = (NotifyIcon)FindResource("trayIcon");
-
-            pauseDarkIcon = LoadTrayIcon("icons/pauseDark.ico");
-            playDarkIcon = LoadTrayIcon("icons/playDark.ico");
 
             try
             {
@@ -41,7 +48,7 @@ namespace Media_Control_Tray_Icon
                 System.Windows.MessageBox.Show(ex.ToString(), "Startup Error");
                 Shutdown();
             }
-
+            PreloadIconAssets();
 
             // Events
             trayIcon.LeftClick += TrayIcon_LeftClickAsync;
@@ -69,7 +76,7 @@ namespace Media_Control_Tray_Icon
             base.OnExit(e);
         }
 
-
+        // Methods
         private void RegisterTrayIcon()
         {
             if (!trayIcon.IsRegistered)
@@ -77,20 +84,48 @@ namespace Media_Control_Tray_Icon
                 trayIcon.Register();
             }
         }
-
         private static ImageSource LoadTrayIcon(string relativePath)
         {
             var uri = new Uri($"pack://application:,,,/{relativePath}", UriKind.Absolute);
-            var image = BitmapFrame.Create(uri, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-            image.Freeze();
+
+            var image = BitmapFrame.Create(
+                uri,
+                BitmapCreateOptions.None,
+                BitmapCacheOption.OnLoad);
+
+            image.Freeze(); // important for cross-thread usage
+
             return image;
         }
+        private void PreloadIconAssets()
+        {
+            playLightIcon = LoadTrayIcon("icons/playLight.ico");
+            playDarkIcon = LoadTrayIcon("icons/playDark.ico");
+            pauseLightIcon = LoadTrayIcon("icons/pauseLight.ico");
+            pauseDarkIcon = LoadTrayIcon("icons/pauseDark.ico");
+            noMediaLightIcon = LoadTrayIcon("icons/noMediaLight.ico");
+            noMediaDarkIcon = LoadTrayIcon("icons/noMediaDark.ico");
+        }
+
 
         private void UpdateTrayIcon()
         {
             Dispatcher.Invoke(() =>
             {
-                trayIcon.Icon = _mediaService.IsPlaying() ? pauseDarkIcon : playDarkIcon;
+                bool isPlaying = _mediaService.IsPlaying();
+             
+                bool isDarkMode = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
+
+                if (_mediaService.CurrentSession is null)
+                {
+                    trayIcon.Icon = isDarkMode ? noMediaDarkIcon : noMediaLightIcon;
+                    return;
+                }
+
+                trayIcon.Icon = isPlaying
+                    ? (isDarkMode ? pauseDarkIcon : pauseLightIcon)
+                    : (isDarkMode ? playDarkIcon : playLightIcon);
+
             });
         }
 
