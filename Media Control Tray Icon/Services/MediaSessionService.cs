@@ -11,6 +11,8 @@ namespace Media_Control_Tray_Icon.Services
         public GlobalSystemMediaTransportControlsSession? CurrentSession { get; private set; }
         public GlobalSystemMediaTransportControlsSessionPlaybackInfo? CurrentPlaybackInfo { get; private set; }
 
+        //public event EventHandler<GlobalSystemMediaTransportControlsSessionManager>? CurrentSessionChanged;
+        public event EventHandler<GlobalSystemMediaTransportControlsSessionManager>? SessionChanged;
         public event EventHandler<GlobalSystemMediaTransportControlsSessionPlaybackInfo>? PlaybackInfoChanged;
         public event EventHandler? MediaPropertiesChanged;
         
@@ -19,8 +21,9 @@ namespace Media_Control_Tray_Icon.Services
         {
             SessionManager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync(); 
             CurrentSession = SessionManager.GetCurrentSession();
-
-            if(CurrentSession != null)
+            SessionManager.SessionsChanged += SessionManager_SessionsChanged;
+            
+            if (CurrentSession != null)
             {
                 CurrentPlaybackInfo = CurrentSession.GetPlaybackInfo();
                 CurrentSession.PlaybackInfoChanged += OnCurrentSession_PlaybackInfoChanged;
@@ -68,10 +71,39 @@ namespace Media_Control_Tray_Icon.Services
                 PlaybackInfoChanged?.Invoke(this, CurrentPlaybackInfo);
             }
         }
+        private void SessionManager_SessionsChanged(GlobalSystemMediaTransportControlsSessionManager sender, SessionsChangedEventArgs args)
+        {
+            // Summary : Removes old event handlers, updates the current session and playback info, and attaches new event handlers to the new session.
+            if(CurrentSession != null)
+            {
+                CurrentSession.PlaybackInfoChanged -= OnCurrentSession_PlaybackInfoChanged;
+                CurrentSession.MediaPropertiesChanged -= OnCurrentSession_MediaPropertiesChanged;
+            }
+
+            CurrentSession = SessionManager.GetCurrentSession();
+
+            if (CurrentSession != null)
+            {
+                CurrentPlaybackInfo = CurrentSession.GetPlaybackInfo();
+                CurrentSession.PlaybackInfoChanged += OnCurrentSession_PlaybackInfoChanged;
+                CurrentSession.MediaPropertiesChanged += OnCurrentSession_MediaPropertiesChanged;
+            }
+            else
+            {
+                CurrentPlaybackInfo = null;
+            }
+
+            SessionChanged?.Invoke(this, SessionManager);
+        }
 
         // On Dispose
         public void Dispose()
         {
+            if(SessionManager != null)
+            {
+                SessionManager.SessionsChanged -= SessionManager_SessionsChanged;
+            }
+
            if(CurrentSession != null)
            {
                CurrentSession.PlaybackInfoChanged -= OnCurrentSession_PlaybackInfoChanged;

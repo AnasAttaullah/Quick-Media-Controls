@@ -30,12 +30,11 @@ namespace Media_Control_Tray_Icon
         private ImageSource pauseDarkIcon;
 
         private MediaSessionService _mediaService;
-
-        //public SystemTheme currentSystemTheme;
-        //public ApplicationTheme currentAppTheme;
+        public ApplicationTheme currentAppTheme;
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            currentAppTheme = ApplicationThemeManager.GetAppTheme();
             trayIcon = (NotifyIcon)FindResource("trayIcon");
 
             try
@@ -54,8 +53,13 @@ namespace Media_Control_Tray_Icon
             trayIcon.LeftClick += TrayIcon_LeftClickAsync;
             trayIcon.LeftDoubleClick += TrayIcon_LeftDoubleClickAsync;
             trayIcon.RightClick += TrayIcon_RightClick;
+
+            _mediaService.SessionChanged += MediaService_SessionChanged;
             _mediaService.PlaybackInfoChanged += MediaService_PlaybackInfoChanged;
             _mediaService.MediaPropertiesChanged += MediaService_MediaPropertiesChanged;
+
+            ApplicationThemeManager.Changed += ApplicationThemeManager_Changed;
+
 
             // Registering the TrayIcon
             if (MainWindow is not null)
@@ -71,7 +75,27 @@ namespace Media_Control_Tray_Icon
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _mediaService.Dispose();
+            if (trayIcon != null)
+            {
+                trayIcon.LeftClick -= TrayIcon_LeftClickAsync;
+                trayIcon.LeftDoubleClick -= TrayIcon_LeftDoubleClickAsync;
+                trayIcon.RightClick -= TrayIcon_RightClick;
+            }
+
+            if (_mediaService != null)
+            {
+                _mediaService.SessionChanged -= MediaService_SessionChanged;
+                _mediaService.PlaybackInfoChanged -= MediaService_PlaybackInfoChanged;
+                _mediaService.MediaPropertiesChanged -= MediaService_MediaPropertiesChanged;
+                _mediaService.Dispose();
+            }
+
+            ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
+
+            if (MainWindow != null)
+            {
+                MainWindow.Loaded -= MainWindow_Loaded;
+            }
             trayIcon?.Dispose();
             base.OnExit(e);
         }
@@ -110,15 +134,20 @@ namespace Media_Control_Tray_Icon
 
         private void UpdateTrayIcon()
         {
-            Dispatcher.Invoke(() =>
+            // Check if we're already on the UI thread
+            if (!Dispatcher.CheckAccess())
             {
-                bool isPlaying = _mediaService.IsPlaying();
-             
-                bool isDarkMode = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
+                Dispatcher.Invoke(UpdateTrayIcon);
+                return;
+            }
+
+            bool isPlaying = _mediaService.IsPlaying();
+                         bool isDarkMode = currentAppTheme == ApplicationTheme.Dark;
 
                 if (_mediaService.CurrentSession is null)
                 {
                     trayIcon.Icon = isDarkMode ? noMediaDarkIcon : noMediaLightIcon;
+                    trayIcon.TooltipText = "No Media Playing";
                     return;
                 }
 
@@ -126,7 +155,8 @@ namespace Media_Control_Tray_Icon
                     ? (isDarkMode ? pauseDarkIcon : pauseLightIcon)
                     : (isDarkMode ? playDarkIcon : playLightIcon);
 
-            });
+                trayIcon.TooltipText = _mediaService.CurrentPlaybackInfo?.PlaybackStatus.ToString() ?? "Unknown";
+           
         }
 
         // EVENT HANDLERS
@@ -153,12 +183,22 @@ namespace Media_Control_Tray_Icon
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)
         {
             // update the details on the popup
+            // new thumbnails and stuuff
+        }
+        private void MediaService_SessionChanged(object? sender, GlobalSystemMediaTransportControlsSessionManager e)
+        {
+            UpdateTrayIcon();
         }
 
         private void MediaService_PlaybackInfoChanged(object? sender, Windows.Media.Control.GlobalSystemMediaTransportControlsSessionPlaybackInfo e)
         {
             UpdateTrayIcon();
             Debug.WriteLine(e.PlaybackStatus.ToString());
+        }
+        private void ApplicationThemeManager_Changed(ApplicationTheme currentApplicationTheme, System.Windows.Media.Color systemAccent)
+        {
+            currentAppTheme = currentApplicationTheme;
+            UpdateTrayIcon();
         }
     }
 }
