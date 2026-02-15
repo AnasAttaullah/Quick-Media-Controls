@@ -21,6 +21,7 @@ namespace Media_Control_Tray_Icon
     public partial class App : Application
     {
         private NotifyIcon trayIcon;
+        private MediaFlyout mediaFlyout;
 
         private ImageSource noMediaLightIcon;
         private ImageSource noMediaDarkIcon;
@@ -71,6 +72,10 @@ namespace Media_Control_Tray_Icon
                 Dispatcher.BeginInvoke(RegisterTrayIcon, DispatcherPriority.ApplicationIdle);
             }
             UpdateTrayIcon();
+
+            // Initialize the media flyout
+            mediaFlyout = new MediaFlyout(_mediaService);
+            mediaFlyout.Show();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -155,14 +160,19 @@ namespace Media_Control_Tray_Icon
                     ? (isDarkMode ? pauseDarkIcon : pauseLightIcon)
                     : (isDarkMode ? playDarkIcon : playLightIcon);
 
-                trayIcon.TooltipText = _mediaService.CurrentPlaybackInfo?.PlaybackStatus.ToString() ?? "Unknown";
-           
+            trayIcon.TooltipText = _mediaService.CurrentPlaybackInfo?.PlaybackStatus.ToString() ?? "Unknown";
+            
+            if (mediaFlyout != null)
+            {
+                mediaFlyout.UpdateIcon();
+            }
         }
 
         // EVENT HANDLERS
 
         private async void TrayIcon_LeftClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
         {
+            mediaFlyout.Hide();
             await _mediaService.TogglePlayPauseAsync();
         }
 
@@ -174,6 +184,7 @@ namespace Media_Control_Tray_Icon
         private void TrayIcon_RightClick([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Right mouse click");
+            mediaFlyout.Hide();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -187,10 +198,11 @@ namespace Media_Control_Tray_Icon
         }
         private void MediaService_SessionChanged(object? sender, GlobalSystemMediaTransportControlsSessionManager e)
         {
+            // when the session is closed 
             UpdateTrayIcon();
         }
 
-        private void MediaService_PlaybackInfoChanged(object? sender, Windows.Media.Control.GlobalSystemMediaTransportControlsSessionPlaybackInfo e)
+        private void MediaService_PlaybackInfoChanged(object? sender, GlobalSystemMediaTransportControlsSessionPlaybackInfo e)
         {
             UpdateTrayIcon();
             Debug.WriteLine(e.PlaybackStatus.ToString());

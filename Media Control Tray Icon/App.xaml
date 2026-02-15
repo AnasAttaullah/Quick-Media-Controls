@@ -5,8 +5,7 @@
     xmlns:local="clr-namespace:Media_Control_Tray_Icon"
     xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    ShutdownMode="OnExplicitShutdown"
-    StartupUri="MediaFlyout.xaml">
+    ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

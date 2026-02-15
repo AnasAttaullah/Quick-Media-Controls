@@ -9,18 +9,19 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="MediaFlyout"
     Width="400"
-    Height="130"
+    Height="120"
     MinWidth="400"
-    MinHeight="130"
-    AllowDrop="True"
+    MinHeight="120"
+    AllowDrop="False"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    WindowStyle="None"
     Topmost="True"
-    WindowStyle="ToolWindow"
     WindowBackdropType="Mica"
+    WindowStartupLocation="Manual"
     ExtendsContentIntoTitleBar="True"
     mc:Ignorable="d">
-    <Grid Margin="15">
+    <Grid Margin="12 0" MouseLeftButtonDown="Window_MouseLeftButtonDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
@@ -28,7 +29,7 @@
         <ui:Image
             Grid.Column="0"
             Width="auto"
-            Height="100"
+            Height="90"
             CornerRadius="8"
             Source="pack://application:,,,/demo.jpg" />
         <StackPanel
@@ -45,20 +46,20 @@
                 FontTypography="Body"
                 Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
                 Text="Tame Impala" />
-            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                <ui:Button>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Name="PlaybackButtonsGrid">
+                <ui:Button Click="PreviousButton_ClickAsync">
                     <ui:SymbolIcon
                         Filled="False"
                         FontSize="18"
                         Symbol="Previous16" />
                 </ui:Button>
-                <ui:Button Margin="10,0" Appearance="Primary">
-                    <ui:SymbolIcon
+                <ui:Button Margin="10,0" Appearance="Primary" Click="PlayPauseButton_ClickAsync">
+                    <ui:SymbolIcon Name="playPauseIcon"
                         Filled="True"
                         FontSize="18"
                         Symbol="Play12" />
                 </ui:Button>
-                <ui:Button>
+                <ui:Button Click="NextButton_ClickAsync">
                     <ui:SymbolIcon
                         Filled="False"
                         FontSize="18"
