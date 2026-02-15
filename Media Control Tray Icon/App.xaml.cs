@@ -31,6 +31,23 @@ namespace Media_Control_Tray_Icon
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            
+            // Create a hidden window to provide message pump for tray icon
+            MainWindow = new Window
+            {
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+                AllowsTransparency = false,
+                Visibility = Visibility.Hidden,
+                Left = -10000,
+                Top = -10000
+            };
+            MainWindow.Show();
+            MainWindow.Hide();
+            
             currentAppTheme = ApplicationThemeManager.GetAppTheme();
             trayIcon = (NotifyIcon)FindResource("trayIcon");
 
@@ -57,22 +74,9 @@ namespace Media_Control_Tray_Icon
 
             ApplicationThemeManager.Changed += ApplicationThemeManager_Changed;
 
-
-            // Registering the TrayIcon
-            if (MainWindow is not null)
-            {
-                MainWindow.Loaded += MainWindow_Loaded;
-            }
-            else
-            {
-                Dispatcher.BeginInvoke(RegisterTrayIcon, DispatcherPriority.ApplicationIdle);
-            }
+            // Register the TrayIcon
+            RegisterTrayIcon();
             UpdateTrayIcon();
-
-            // Initialize the media flyout
-            mediaFlyout = new MediaFlyout(_mediaService);
-            mediaFlyout.Show();
-            mediaFlyout.Hide();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -94,10 +98,6 @@ namespace Media_Control_Tray_Icon
 
             ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
 
-            if (MainWindow != null)
-            {
-                MainWindow.Loaded -= MainWindow_Loaded;
-            }
             trayIcon?.Dispose();
             base.OnExit(e);
         }
@@ -180,15 +180,14 @@ namespace Media_Control_Tray_Icon
         private void TrayIcon_RightClick([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Right mouse click");
-
-                mediaFlyout.showFlyout();
+            if(mediaFlyout == null)
+            {
+                mediaFlyout = new MediaFlyout(_mediaService);
+            }
+            mediaFlyout.showFlyout();
             
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            RegisterTrayIcon();
-        }
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)
         {
             // update the details on the popup
