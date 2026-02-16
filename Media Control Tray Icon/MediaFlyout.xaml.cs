@@ -22,19 +22,50 @@ namespace Media_Control_Tray_Icon
             Top = SystemParameters.WorkArea.Bottom - 130;
             InitializeComponent();
             UpdateIcon();
+            UpdateMediaInfo();
         }
 
         public void UpdateIcon()
         {
-            if(_sessionManager.CurrentSession == null)
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(UpdateIcon);
+                return;
+            }
+            if (_sessionManager.CurrentSession == null)
             {
                 //PlaybackButtonsGrid.IsEnabled = false;
+                PlaybackButtonsGrid.Visibility = Visibility.Collapsed;
                 return;
+            }
+            if(PlaybackButtonsGrid.Visibility != Visibility.Visible)
+            {
+                PlaybackButtonsGrid.Visibility = Visibility.Visible;
             }
             playPauseIcon.Symbol = (_sessionManager.IsPlaying()) ? SymbolRegular.Pause12 : SymbolRegular.Play12;
         }
 
 
+        public void UpdateMediaInfo()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(UpdateMediaInfo);
+                return;
+            }
+            if (_sessionManager.CurrentMediaProperties != null)
+            {
+                var mediaTitle = _sessionManager.CurrentMediaProperties.Title;
+                playingMediaTitle.Text = (mediaTitle.Length > 35) ? mediaTitle.Substring(0, 32) + "..." : mediaTitle;
+                playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
+                //playingMediaThumbnail.Source = _sessionManager.CurrentMediaThumbnail;
+            }
+            else
+            {
+                playingMediaTitle.Text = "No media playing";
+                playingMediaArtist.Text = "";
+            }
+        }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -65,7 +96,7 @@ namespace Media_Control_Tray_Icon
 
         internal void showFlyout()
         {
-
+            UpdateMediaInfo();
             // Make visible first
             this.Visibility = Visibility.Visible;
 

@@ -26,6 +26,7 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <ui:Image
+            Name="playingMediaThumbnail"
             Grid.Column="0"
             Width="auto"
             Height="90"
@@ -36,11 +37,13 @@
             Margin="15,0 , 0 , 0"
             VerticalAlignment="Center">
             <ui:TextBlock
+                Name="playingMediaTitle"
                 FontTypography="BodyStrong"
                 FontSize="16"
                 Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                 Text="Borderline Official Music Video" />
             <ui:TextBlock
+                Name="playingMediaArtist"
                 Margin="0,0,0,10"
                 FontTypography="Body"
                 Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"

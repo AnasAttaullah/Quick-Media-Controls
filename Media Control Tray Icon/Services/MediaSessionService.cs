@@ -11,6 +11,7 @@ namespace Media_Control_Tray_Icon.Services
         public GlobalSystemMediaTransportControlsSessionManager? SessionManager { get; private set; }
         public GlobalSystemMediaTransportControlsSession? CurrentSession { get; private set; }
         public GlobalSystemMediaTransportControlsSessionPlaybackInfo? CurrentPlaybackInfo { get; private set; }
+        public GlobalSystemMediaTransportControlsSessionMediaProperties? CurrentMediaProperties { get; private set; }
 
         public event EventHandler<GlobalSystemMediaTransportControlsSessionManager>? SessionChanged;
         public event EventHandler<GlobalSystemMediaTransportControlsSessionPlaybackInfo>? PlaybackInfoChanged;
@@ -82,9 +83,11 @@ namespace Media_Control_Tray_Icon.Services
             else
             {
                 CurrentPlaybackInfo = null;
+                CurrentMediaProperties = null;
             }
 
             SessionChanged?.Invoke(this, SessionManager);
+            MediaPropertiesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public async Task TogglePlayPauseAsync()
@@ -117,9 +120,13 @@ namespace Media_Control_Tray_Icon.Services
         }
 
         // Event Handlers   
-        private void OnCurrentSession_MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender, MediaPropertiesChangedEventArgs args)
+        private async void OnCurrentSession_MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender, MediaPropertiesChangedEventArgs args)
         {
-            MediaPropertiesChanged?.Invoke(this, EventArgs.Empty);
+            if (CurrentSession != null)
+            {
+                CurrentMediaProperties = await CurrentSession.TryGetMediaPropertiesAsync();
+            }
+                MediaPropertiesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnCurrentSession_PlaybackInfoChanged(GlobalSystemMediaTransportControlsSession sender, PlaybackInfoChangedEventArgs args)
