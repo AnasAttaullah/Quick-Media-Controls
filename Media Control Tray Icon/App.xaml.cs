@@ -1,6 +1,7 @@
 ﻿using Media_Control_Tray_Icon.Services;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -179,13 +180,14 @@ namespace Media_Control_Tray_Icon
             await _mediaService.SkipNextAsync();
         }
          
-        private void TrayIcon_RightClick([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        private async void TrayIcon_RightClick([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Right mouse click");
             if(mediaFlyout == null)
             {
                 mediaFlyout = new MediaFlyout(_mediaService);
             }
+            _mediaService.FetchMediaAsync();
             mediaFlyout.showFlyout();
             
         }

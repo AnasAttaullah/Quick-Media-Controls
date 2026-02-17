@@ -90,6 +90,15 @@ namespace Media_Control_Tray_Icon.Services
             MediaPropertiesChanged?.Invoke(this, EventArgs.Empty);
         }
 
+
+        public async void FetchMediaAsync()
+        {
+            if (CurrentSession != null)
+            {
+                CurrentMediaProperties = await CurrentSession.TryGetMediaPropertiesAsync();
+            }
+        }
+
         public async Task TogglePlayPauseAsync()
         {
             if (CurrentSession != null)
