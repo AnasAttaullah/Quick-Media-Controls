@@ -13,10 +13,13 @@ namespace Media_Control_Tray_Icon
     public partial class MediaFlyout : FluentWindow
     {
         private readonly MediaSessionService _sessionManager;
+        private bool _IsDragEnabled;
+
         public MediaFlyout(MediaSessionService sessionManager)
         {
             ApplicationThemeManager.ApplySystemTheme();
             ApplicationAccentColorManager.ApplySystemAccent();
+            _IsDragEnabled = false;
             _sessionManager = sessionManager;
             Left = SystemParameters.WorkArea.Right - 300 - 110;
             Top = SystemParameters.WorkArea.Bottom - 130;
@@ -38,13 +41,12 @@ namespace Media_Control_Tray_Icon
                 PlaybackButtonsGrid.Visibility = Visibility.Collapsed;
                 return;
             }
-            if(PlaybackButtonsGrid.Visibility != Visibility.Visible)
+            if (PlaybackButtonsGrid.Visibility != Visibility.Visible)
             {
                 PlaybackButtonsGrid.Visibility = Visibility.Visible;
             }
             playPauseIcon.Symbol = (_sessionManager.IsPlaying()) ? SymbolRegular.Pause12 : SymbolRegular.Play12;
         }
-
 
         public void UpdateMediaInfo()
         {
@@ -71,17 +73,20 @@ namespace Media_Control_Tray_Icon
         {
             base.OnMouseLeftButtonDown(e);
 
-            if (e.ButtonState == MouseButtonState.Pressed)
+            if (e.ButtonState == MouseButtonState.Pressed && _IsDragEnabled)
                 DragMove();
         }
+
         private async void PreviousButton_ClickAsync(object sender, RoutedEventArgs e)
         {
             await _sessionManager.SkipPreviousAsync();
         }
+
         private async void PlayPauseButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-           await _sessionManager.TogglePlayPauseAsync();
+            await _sessionManager.TogglePlayPauseAsync();
         }
+
         private async void NextButton_ClickAsync(object sender, RoutedEventArgs e)
         {
             await _sessionManager.SkipNextAsync();
@@ -89,10 +94,8 @@ namespace Media_Control_Tray_Icon
 
         private void Flyout_Deactivated(object sender, EventArgs e)
         {
-                Hide();
-             }
-
-
+            Hide();
+        }
 
         internal void showFlyout()
         {
@@ -110,12 +113,17 @@ namespace Media_Control_Tray_Icon
             this.Focus();
 
             Keyboard.Focus(this);
-
         }
 
-        //private void FluentWindow_LostFocus(object sender, RoutedEventArgs e)
-        //{
-        //    //Hide(); // I think by commeting this the sudden UI flyout Close is not happening anymore 
-        //}
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void MoveWindowMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            _IsDragEnabled = _IsDragEnabled ? false : true;
+        }
+
     }
 }

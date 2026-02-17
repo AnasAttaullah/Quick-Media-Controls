@@ -84,11 +84,19 @@ namespace Media_Control_Tray_Icon
 
         protected override void OnExit(ExitEventArgs e)
         {
+            ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
+
             if (trayIcon != null)
             {
                 trayIcon.LeftClick -= TrayIcon_LeftClickAsync;
                 trayIcon.LeftDoubleClick -= TrayIcon_LeftDoubleClickAsync;
                 trayIcon.RightClick -= TrayIcon_RightClick;
+                
+                if (trayIcon.IsRegistered)
+                {
+                    trayIcon.Unregister();
+                }
+                trayIcon.Dispose();
             }
 
             if (_mediaService != null)
@@ -98,10 +106,14 @@ namespace Media_Control_Tray_Icon
                 _mediaService.MediaPropertiesChanged -= MediaService_MediaPropertiesChanged;
                 _mediaService.Dispose();
             }
+            if (mediaFlyout != null)
+            {
+                mediaFlyout.Close();
+                mediaFlyout = null;
+            }
 
-            ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
+            MainWindow?.Close();
 
-            trayIcon?.Dispose();
             base.OnExit(e);
         }
 

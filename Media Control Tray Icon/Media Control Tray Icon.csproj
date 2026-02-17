@@ -34,28 +34,13 @@
 	<ItemGroup>
 		<Resource Include="icons\playDark.ico" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<Resource Include="icons\noMediaLight.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Resource Include="icons\noMediaDark.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="icons\nextLight.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="icons\nextDark.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="icons\previousLight.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="icons\previousDark.ico" />
 	</ItemGroup>
 
 </Project>

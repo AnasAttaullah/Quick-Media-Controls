@@ -1,30 +1,45 @@
 ﻿<ui:FluentWindow
     x:Class="Media_Control_Tray_Icon.MediaFlyout"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="MediaFlyout"
     Width="400"
     Height="120"
     MinWidth="400"
     MinHeight="120"
     AllowDrop="False"
+    Deactivated="Flyout_Deactivated"
+    ExtendsContentIntoTitleBar="True"
     ResizeMode="NoResize"
-    ShowInTaskbar="False"
     ShowActivated="True"
-    WindowStyle="None"
+    ShowInTaskbar="False"
     Topmost="False"
     WindowBackdropType="Mica"
     WindowStartupLocation="Manual"
-    ExtendsContentIntoTitleBar="True"
-    mc:Ignorable="d" Deactivated="Flyout_Deactivated">
-    <Grid Margin="12 0" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Click="MoveWindowMenuItem_Click"
+                Header="Move Flyout"
+                IsCheckable="True"
+                IsChecked="{Binding _IsDragEnabled, Mode=TwoWay}" />
+            <Separator />
+            <MenuItem Click="Exit_Click" Header="Exit" />
+        </ContextMenu>
+    </Window.ContextMenu>
+
+    <Grid Margin="12,0" MouseLeftButtonDown="Window_MouseLeftButtonDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
+
         <ui:Image
             Name="playingMediaThumbnail"
             Grid.Column="0"
@@ -34,12 +49,12 @@
             Source="pack://application:,,,/demo.jpg" />
         <StackPanel
             Grid.Column="1"
-            Margin="15,0 , 0 , 0"
+            Margin="15,0,0,0"
             VerticalAlignment="Center">
             <ui:TextBlock
                 Name="playingMediaTitle"
-                FontTypography="BodyStrong"
                 FontSize="16"
+                FontTypography="BodyStrong"
                 Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                 Text="Borderline Official Music Video" />
             <ui:TextBlock
@@ -48,18 +63,26 @@
                 FontTypography="Body"
                 Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
                 Text="Tame Impala" />
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Name="PlaybackButtonsGrid">
+            <StackPanel
+                Name="PlaybackButtonsGrid"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
                 <ui:Button Click="PreviousButton_ClickAsync">
                     <ui:SymbolIcon
                         Filled="False"
                         FontSize="18"
                         Symbol="Previous16" />
                 </ui:Button>
-                <ui:Button Margin="10,0" Appearance="Primary" Click="PlayPauseButton_ClickAsync">
-                    <ui:SymbolIcon Name="playPauseIcon"
-                                   Filled="True"
-                                   FontSize="18"
-                                   Symbol="Play12" />
+                <ui:Button
+                    Margin="10,0"
+                    Appearance="Primary"
+                    Click="PlayPauseButton_ClickAsync">
+                    <ui:SymbolIcon
+                        Name="playPauseIcon"
+                        Filled="True"
+                        FontSize="18"
+                        Symbol="Play12" />
                 </ui:Button>
                 <ui:Button Click="NextButton_ClickAsync">
                     <ui:SymbolIcon
