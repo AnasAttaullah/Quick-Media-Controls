@@ -26,6 +26,7 @@ namespace Media_Control_Tray_Icon
             InitializeComponent();
             UpdateIcon();
             UpdateMediaInfo();
+            showFlyout();
         }
 
         public void UpdateIcon()
@@ -57,6 +58,11 @@ namespace Media_Control_Tray_Icon
             }
             if (_sessionManager.CurrentMediaProperties != null)
             {
+                if(mediaPlayingGrid.Visibility != Visibility.Visible)
+                {
+                    mediaPlayingGrid.Visibility = Visibility.Visible;
+                    noMediaPlayingGrid.Visibility = Visibility.Collapsed;
+                }
                 var mediaTitle = _sessionManager.CurrentMediaProperties.Title;
                 playingMediaTitle.Text = (mediaTitle.Length > 35) ? mediaTitle.Substring(0, 32) + "..." : mediaTitle;
                 playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
@@ -64,8 +70,10 @@ namespace Media_Control_Tray_Icon
             }
             else
             {
-                playingMediaTitle.Text = "No media playing";
-                playingMediaArtist.Text = "";
+                mediaPlayingGrid.Visibility = Visibility.Collapsed;
+                noMediaPlayingGrid.Visibility = Visibility.Visible;
+                playingMediaTitle.Text = "It’s a bit quiet in here...";
+                playingMediaArtist.Text = "Time to break the silence";
             }
         }
 

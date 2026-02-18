@@ -33,64 +33,104 @@
             <MenuItem Click="Exit_Click" Header="Exit" />
         </ContextMenu>
     </Window.ContextMenu>
+    <Grid>
+        <!-- Media Playing Grid-->
+        <Grid Name="mediaPlayingGrid" Margin="12,0" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
 
-    <Grid Margin="12,0" MouseLeftButtonDown="Window_MouseLeftButtonDown">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="3*" />
-        </Grid.ColumnDefinitions>
+            <ui:Image
+                Name="playingMediaThumbnail"
+                Grid.Column="0"
+                Width="auto"
+                Height="90"
+                CornerRadius="8"
+                Visibility="Visible"
+                Source="pack://application:,,,/demo.jpg" />
 
-        <ui:Image
-            Name="playingMediaThumbnail"
-            Grid.Column="0"
-            Width="auto"
-            Height="90"
-            CornerRadius="8"
-            Source="pack://application:,,,/demo.jpg" />
-        <StackPanel
-            Grid.Column="1"
-            Margin="15,0,0,0"
-            VerticalAlignment="Center">
-            <ui:TextBlock
-                Name="playingMediaTitle"
-                FontSize="16"
-                FontTypography="BodyStrong"
-                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                Text="Borderline Official Music Video" />
-            <ui:TextBlock
-                Name="playingMediaArtist"
-                Margin="0,0,0,10"
-                FontTypography="Body"
-                Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                Text="Tame Impala" />
             <StackPanel
-                Name="PlaybackButtonsGrid"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
-                <ui:Button Click="PreviousButton_ClickAsync">
-                    <ui:SymbolIcon
-                        Filled="False"
-                        FontSize="18"
-                        Symbol="Previous16" />
-                </ui:Button>
-                <ui:Button
-                    Margin="10,0"
-                    Appearance="Primary"
-                    Click="PlayPauseButton_ClickAsync">
-                    <ui:SymbolIcon
-                        Name="playPauseIcon"
-                        Filled="True"
-                        FontSize="18"
-                        Symbol="Play12" />
-                </ui:Button>
-                <ui:Button Click="NextButton_ClickAsync">
-                    <ui:SymbolIcon
-                        Filled="False"
-                        FontSize="18"
-                        Symbol="Next16" />
-                </ui:Button>
+                Grid.Column="1"
+                Margin="15,0,0,0"
+                VerticalAlignment="Center">
+                <ui:TextBlock
+                    Name="playingMediaTitle"
+                    FontSize="16"
+                    FontTypography="BodyStrong"
+                    Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                    Text="Borderline Official Music Video" />
+                <ui:TextBlock
+                    Name="playingMediaArtist"
+                    Margin="0,0,0,10"
+                    FontTypography="Body"
+                    Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                    Text="Tame Impala" />
+                <StackPanel
+                    Name="PlaybackButtonsGrid"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <ui:Button Click="PreviousButton_ClickAsync">
+                        <ui:SymbolIcon
+                            Filled="False"
+                            FontSize="18"
+                            Symbol="Previous16" />
+                    </ui:Button>
+                    <ui:Button
+                        Margin="10,0"
+                        Appearance="Primary"
+                        Click="PlayPauseButton_ClickAsync">
+                        <ui:SymbolIcon
+                            Name="playPauseIcon"
+                            Filled="True"
+                            FontSize="18"
+                            Symbol="Play12" />
+                    </ui:Button>
+                    <ui:Button Click="NextButton_ClickAsync">
+                        <ui:SymbolIcon
+                            Filled="False"
+                            FontSize="18"
+                            Symbol="Next16" />
+                    </ui:Button>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Grid>
+
+        <!-- No Media Playing Grid -->
+        <Grid Name="noMediaPlayingGrid" Visibility="Collapsed" Margin="12,0" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <ui:SymbolIcon
+                Name="noMediaPlayingIcon"
+                Grid.Column="0"
+                Width="90"
+                Height="90"
+                FontSize="72"
+                Filled="True"
+                Symbol="MusicNote224" />
+
+            <StackPanel
+                Name="noMediaPlayingPanel"
+                Grid.Column="1"
+                Margin="10,0,0,10"
+                VerticalAlignment="Center">
+                <ui:TextBlock
+                    Name="noPlayingMediaTitle"
+                    FontTypography="Subtitle"
+                    FontSize="22"
+                    Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                    Text="It’s a bit quiet in here..." />
+                <ui:TextBlock
+                    Name="noPlayingMediaArtist"
+                    Margin="0,4,0,0"
+                    FontTypography="Body"
+                    Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                    Text="Time to break the silence" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </ui:FluentWindow>
