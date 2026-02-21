@@ -1,4 +1,4 @@
-# Media Control Tray Icon
+# Quick Media Controls
 
 A lightweight Windows tray utility that puts media controls one click away using the system media session (GSMTC). Built with WPF on `.NET 8`.
 
