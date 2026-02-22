@@ -169,7 +169,7 @@ namespace Quick_Media_Controls
         private void MoveWindowMenuItem_Click(object sender, RoutedEventArgs e)
         {
             _IsDragEnabled = _IsDragEnabled ? false : true;
+            this.Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
         }
-
     }
 }

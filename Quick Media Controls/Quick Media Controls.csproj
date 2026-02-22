@@ -6,8 +6,13 @@
 		<UseWPF>true</UseWPF>
 		<RootNamespace>Quick_Media_Controls</RootNamespace>
 		<Nullable>enable</Nullable>
-		<UseSystemDrawing>true</UseSystemDrawing>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<AssemblyName>QuickMediaControls</AssemblyName>
+		<Title>Quick Media Controls</Title>
+		<Description>A quick media controls flyout for Windows</Description>
+		<Company>Anas Attaullah</Company>
+		<Copyright>Copyright © 2026 Anas Attaullah</Copyright>
+		<Version>1.0.0</Version>
+		<ApplicationIcon>Assets\Icons\applicationIcon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,29 +22,11 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\placeholder.jpg" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Resource Include="Assets\Icons\pauseLight.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Resource Include="Assets\Icons\pauseDark.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Resource Include="Assets\Icons\playLight.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Resource Include="Assets\Icons\playDark.ico" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<Resource Include="Assets\Icons\noMediaLight.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Resource Include="Assets\Icons\noMediaDark.ico" />
 	</ItemGroup>
 
