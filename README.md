@@ -1,87 +1,113 @@
-# Quick Media Controls
-
-A lightweight Windows tray utility that puts media controls one click away using the system media session (GSMTC). Built with WPF on `.NET 8`.
+<img src="Assets/banner.png" alt="Quick Media Controls banner" />
 
 <p align="center">
-  <img src="Assets/logo.png" width="200"/>
+  <!-- Badges -->
+  <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
+     <img alt="Latest release" src="https://img.shields.io/github/v/release/AnasAttaullah/Quick-Media-Controls?label=Release&logo=github" />
+  </a>
+  <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/blob/main/LICENSE.txt">
+    <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-orange?logo=gnu" />
+  </a>
+  <img alt="Windows 10/11" src="https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4" />
+  <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8-512BD4" />
+  <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/AnasAttaullah/Quick-Media-Controls?logo=github" />
+  </a>
+  <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
+    <img alt="Download" src="https://img.shields.io/badge/Download-Installer-0078D4" />
+  </a>
 </p>
 
-## Features
 
-- **Tray icon media control**
-  - **Single left-click**: Play / Pause
-  - **Double left-click**: Next track
-  - **Right-click**: Open a compact **Media Flyout**
-- **Media Flyout**
-  - Shows **track title**, **artist**, and **album art** (when available)
-  - Playback buttons: **Previous / Play-Pause / Next**
-  - Auto-hides when it loses focus (deactivated)
-- **Theme-aware tray icons**
-  - Automatically adapts to **Light/Dark** app theme
-  - Displays a **“No Media Playing”** state when no session is active
-- **Fast, background-friendly**
-  - Runs primarily from the tray with a hidden window to support the message pump
+A Windows tray app that lets you control whatever is currently playing on your PC without opening the player.
 
-## Screenshots
+**It's super quick ⚡:**
 
-> Add screenshots to a `docs/screenshots/` folder and update the links below.
+* **Single Left Click** → Play / Pause ▶️
+* **Double Left Click** → Next track ⏭️
+* **Right Click** → Open the Flyout 📤
+---
 
-### Tray Icon + Flyout
-![Tray and Flyout](docs/screenshots/tray-and-flyout.png)
+## Download (Installer) ⬇️
 
-### No Media State
-![No Media](docs/screenshots/no-media.png)
+Get the latest installer from **GitHub Releases**:
 
-## How It Works (High Level)
+[![Download Installer](https://img.shields.io/badge/Download-Latest%20Installer-blue)](https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest)
 
-- Uses Windows **Global System Media Transport Controls** session APIs to read current media state and control playback.
-- A WPF tray icon provides quick actions:
-  - Click actions map directly to media commands.
-  - Right-click shows a flyout window for richer context and controls.
+Prefer building it yourself? Jump to **[Build from source](#build-from-source)**.
 
-## Getting Started
+---
 
-### Prerequisites
+## Install & run 🖥️
+
+1. Download the setup file from Releases (example: `QuickMediaControls-Setup-...exe`)
+2. Run the installer
+3. Launch **Quick Media Controls**
+4. Find it in the **system tray** (near the clock)  
+   - If you don’t see it, click the **^** arrow to show hidden tray icons
+
+**💡Tip:** On first use, **pin the tray icon** so it’s always visible.
+
+---
+
+## Features ✨
+
+- **Feels native on Windows 10 & 11**
+- **Light + Dark mode** support
+- Uses your **Windows accent color** for a clean, consistent look
+- Works with **whatever Windows is currently playing** (music apps, browsers, players, etc.)
+- **Flyout panel**
+  - Title / artist / album art (when available)
+  - Previous / Play-Pause / Next buttons
+- **Smart tray icon**
+  - Changes based on play/pause
+  - Shows **No Media Playing** when nothing is active
+- **Update checks**
+  - Helps you stay up to date
+
+---
+
+## Screenshots 🖼️
+
+|                     | Dark Mode | Light Mode |
+|---------------------|-----------|------------|
+| **Media Playing**   | <img src="Assets/Screenshots/windows11_dark.png" width="420" alt="Windows 11 Dark" /> | <img src="Assets/Screenshots/windows11_light.png" width="420" alt="Windows 11 Light" /> |
+| **No Media Playing**| <img src="Assets/Screenshots/windows11NoMedia_dark.png" width="420" alt="No Media Dark" /> | <img src="Assets/Screenshots/windows11NoMedia_light.png" width="420" alt="No Media Light" /> |
+
+---
+
+## Build from source 🛠️
+
+### Requirements
 - Windows 10/11
-- Visual Studio 2022
-- `.NET 8` SDK
+- Visual Studio 2022+ (Visual Studio 2026 works)
+- .NET 8 SDK
 
-### Build & Run
-1. Open the solution in Visual Studio.
-2. Set the tray app project as Startup Project (if needed).
-3. Build and run.
-4. Look for the app in the **system tray**.
+### Steps
+1. Open the solution in Visual Studio
+2. Build and run
+3. The app will appear in the **system tray**
 
-## Usage
+---
 
-- **Left-click tray icon** → Toggle **Play/Pause**
-- **Double left-click tray icon** → **Next track**
-- **Right-click tray icon** → Open **Media Flyout**
-- In the flyout:
-  - Use **Previous / Play-Pause / Next**
-  - Click **Exit** to close the app
+## Help / FAQ ❓
 
-## Project Structure (Key Files)
+**Where is the app window?**  
+It’s designed to live in the **tray**. Use the tray icon to control playback and open the flyout.
 
-- `App.xaml.cs` — Tray icon lifecycle, theme tracking, click handlers, icon updates
-- `MediaFlyout.xaml(.cs)` — Flyout UI, media info/thumbnail rendering, playback buttons
-- `Services/MediaSessionService` — Media session integration and playback commands
+**Can it start with Windows?**  
+Yes, there’s an installer option to launch on startup.
 
-## Roadmap / Ideas
+---
 
-- Configurable hotkeys
-- Startup on login
-- Per-app session selection (if multiple sessions are available)
-- Better text handling (scrolling/marquee for long titles)
-- Optional animations and richer theme customization
 
-## Contributing
+## Contributing 🤝
 
-Contributions are welcome:
-- Bug reports and feature requests via Issues
-- PRs for fixes and improvements
+Ideas, issues, and PRs are welcome:  
+- Issues: [GitHub Issues](https://github.com/AnasAttaullah/Quick-Media-Controls/issues)
 
-## License
+---
 
-Add your preferred license (e.g., MIT) in `LICENSE`.
+## License 📜
 
+Licensed under the **GNU GPL v3.0** — see `LICENSE.txt`.
