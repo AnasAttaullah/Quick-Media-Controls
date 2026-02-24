@@ -34,7 +34,7 @@ A Windows tray app that lets you control whatever is currently playing on your P
   <img src="Assets/download_installerx64.png" alt="Download Now" width="260" style="display:block; margin-left:0;" />
 </a>
 
-Prefer building it yourself? Jump to **[Build from source](#build-from-source)**.
+Prefer building it yourself? Jump to **[Build from source](#build-from-source-)**.
 
 ---
 
