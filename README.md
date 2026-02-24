@@ -30,9 +30,9 @@ A Windows tray app that lets you control whatever is currently playing on your P
 
 ## Download (Installer) ⬇️
 
-Get the latest installer from **GitHub Releases**:
-
-[![Download Installer](https://img.shields.io/badge/Download-Latest%20Installer-blue)](https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest)
+<a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
+  <img src="Assets/download_installerx64.png" alt="Download Now" width="260" style="display:block; margin-left:0;" />
+</a>
 
 Prefer building it yourself? Jump to **[Build from source](#build-from-source)**.
 
