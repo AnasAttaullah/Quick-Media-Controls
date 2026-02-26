@@ -2,9 +2,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -15,9 +18,15 @@ namespace Quick_Media_Controls
     {
         private readonly MediaSessionService _sessionManager;
         private bool _IsDragEnabled;
+        private bool _isAnimatingClose;
+        private double _homeTop;
 
         private string? _cachedThumbnailKey;
         private BitmapImage? _cachedThumbnail;
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
+        private const int DWMWA_TRANSITIONS_FORCEDISABLED = 3;
 
         public MediaFlyout(MediaSessionService sessionManager)
         {
@@ -28,10 +37,20 @@ namespace Quick_Media_Controls
             _sessionManager = sessionManager;
 
             Left = SystemParameters.WorkArea.Right - 300 - 110;
-            Top = SystemParameters.WorkArea.Bottom - 130;
+            _homeTop = Top = SystemParameters.WorkArea.Bottom - 130;
 
             InitializeComponent();
             UpdateIcons();
+
+            // Disables Default WPF Window Animations
+            SourceInitialized += OnSourceInitialized;
+        }
+
+        private void OnSourceInitialized(object? sender, EventArgs e)
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            int disabled = 1;
+            DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, ref disabled, sizeof(int));
         }
 
         public void UpdateIcons()
@@ -47,6 +66,12 @@ namespace Quick_Media_Controls
 
         public void ShowFlyout()
         {
+            this.Opacity = 0;
+            _isAnimatingClose = false;
+            BeginAnimation(Window.TopProperty, null);
+            BeginAnimation(OpacityProperty, null);
+
+            this.Top = _homeTop;
             this.Visibility = Visibility.Visible;
 
             // Force topmost activation workaround for WPF
@@ -58,7 +83,61 @@ namespace Quick_Media_Controls
             this.Focus();
             Keyboard.Focus(this);
 
+            // Fade-up: slide up 15px + fade in over 220ms with ease-out curve
+            var duration = new Duration(TimeSpan.FromMilliseconds(220));
+            var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+
+            var slideUp = new DoubleAnimation(_homeTop + 15, _homeTop, duration)
+            {
+                EasingFunction = ease,
+                FillBehavior = FillBehavior.Stop
+            };
+            slideUp.Completed += (_, _) => this.Top = _homeTop;
+            BeginAnimation(Window.TopProperty, slideUp);
+
+            var fadeIn = new DoubleAnimation(0, 1, duration)
+            {
+                EasingFunction = ease,
+                FillBehavior = FillBehavior.Stop
+            };
+            fadeIn.Completed += (_, _) => this.Opacity = 1;
+            BeginAnimation(OpacityProperty, fadeIn);
+
             UpdateMediaInfo();
+        }
+
+        private void AnimateClose()
+        {
+            if (_isAnimatingClose) return;
+            _isAnimatingClose = true;
+
+            var duration = new Duration(TimeSpan.FromMilliseconds(180));
+            var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
+
+            var slideDown = new DoubleAnimation(_homeTop, _homeTop + 15, duration)
+            {
+                EasingFunction = ease,
+                FillBehavior = FillBehavior.Stop
+            };
+            BeginAnimation(Window.TopProperty, slideDown);
+
+            var fadeOut = new DoubleAnimation(1, 0, duration)
+            {
+                EasingFunction = ease,
+                FillBehavior = FillBehavior.HoldEnd
+            };
+            fadeOut.Completed += (_, _) =>
+            {
+                if (!_isAnimatingClose) return;
+                _isAnimatingClose = false;
+                Hide();
+            };
+            BeginAnimation(OpacityProperty, fadeOut);
+        }
+
+        private void Flyout_Deactivated(object sender, EventArgs e)
+        {
+            AnimateClose();
         }
 
         public async void UpdateMediaInfo()
@@ -112,7 +191,7 @@ namespace Quick_Media_Controls
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.DecodePixelHeight = 90; // Decode at display size ( image box is 90x90 )
+                bitmap.DecodePixelHeight = 200; // Decode at 200px 
 
                 using var memStream = new MemoryStream();
                 await stream.AsStreamForRead().CopyToAsync(memStream);
@@ -170,18 +249,16 @@ namespace Quick_Media_Controls
         {
             base.OnMouseLeftButtonDown(e);
             if (e.ButtonState == MouseButtonState.Pressed && _IsDragEnabled)
+            {
                 DragMove();
+                _homeTop = this.Top; // Update home after user repositions the flyout
+            }
         }
 
         private void MoveWindowMenuItem_Click(object sender, RoutedEventArgs e)
         {
             _IsDragEnabled = !_IsDragEnabled;
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
-        }
-
-        private void Flyout_Deactivated(object sender, EventArgs e)
-        {
-            Hide();
         }
     }
 }
