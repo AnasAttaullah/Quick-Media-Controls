@@ -1,5 +1,5 @@
 #define MyAppName "Quick Media Controls"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.1.1"
 #define MyAppPublisher "Anas Attaullah"
 #define MyAppURL "https://github.com/AnasAttaullah/Quick-Media-Controls"
 #define MyAppExeName "Quick Media Controls.exe"

@@ -11,7 +11,7 @@
 		<Description>A quick media controls flyout for Windows</Description>
 		<Company>Anas Attaullah</Company>
 		<Copyright>Copyright © 2026 Anas Attaullah</Copyright>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<ApplicationIcon>Assets\Icons\applicationIcon.ico</ApplicationIcon>
 	</PropertyGroup>
 
