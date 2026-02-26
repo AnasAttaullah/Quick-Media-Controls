@@ -59,10 +59,11 @@ Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
 - **Flyout panel**
   - Title / artist / album art (when available)
   - Previous / Play-Pause / Next buttons
+  - Smooth **open & close animations**
 - **Smart tray icon**
   - Changes based on play/pause
   - Shows **No Media Playing** when nothing is active
-- **Update checks**
+- **Automatic updates**
   - Helps you stay up to date
 
 ---
