@@ -23,6 +23,7 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\banner.png" />
+		<Resource Include="Assets\logo.png" />
 		<Resource Include="Assets\Icons\pauseLight.ico" />
 		<Resource Include="Assets\Icons\pauseDark.ico" />
 		<Resource Include="Assets\Icons\playLight.ico" />

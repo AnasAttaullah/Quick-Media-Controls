@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Quick_Media_Controls.Views.Pages
 {
@@ -26,11 +14,6 @@ namespace Quick_Media_Controls.Views.Pages
             InitializeComponent();
         }
 
-        private void CardAction_Click(object sender, RoutedEventArgs e)
-        {
-            OpenUrl("https://github.com/AnasAttaullah/Quick-Media-Controls/issues");
-        }
-
         public static void OpenUrl(string url)
         {
             Process.Start(new ProcessStartInfo
@@ -38,6 +21,24 @@ namespace Quick_Media_Controls.Views.Pages
                 FileName = url,
                 UseShellExecute = true
             });
+        }
+        private void CardAction_Click1(object sender, RoutedEventArgs e)
+        {
+            OpenUrl("https://github.com/AnasAttaullah/Quick-Media-Controls/issues");
+        }
+        private void CardAction_Click_2(object sender, RoutedEventArgs e)
+        {
+            OpenUrl("https://github.com/AnasAttaullah/Quick-Media-Controls/issues");
+        }
+
+        private void CardAction_Click_3(object sender, RoutedEventArgs e)
+        {
+            OpenUrl("https://github.com/AnasAttaullah/Quick-Media-Controls");
+        }
+
+        private void CardAction_Click_4(object sender, RoutedEventArgs e)
+        {
+            OpenUrl("https://github.com/AnasAttaullah/Quick-Media-Controls");
         }
     }
 }
