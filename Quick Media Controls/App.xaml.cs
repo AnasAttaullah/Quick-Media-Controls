@@ -34,7 +34,7 @@ namespace Quick_Media_Controls
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-           
+
             currentAppTheme = ApplicationThemeManager.GetAppTheme();
             _trayIcon = (NotifyIcon)FindResource("trayIcon");
 

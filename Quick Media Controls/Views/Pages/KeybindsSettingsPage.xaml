@@ -1,0 +1,76 @@
+﻿<Page
+    x:Class="Quick_Media_Controls.Views.Pages.KeybindsSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Quick_Media_Controls.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Keybinds Setting Window"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="20 10 20 0">
+
+        <ui:TextBlock
+            Margin="0,0,0,20"
+            FontSize="22"
+            FontTypography="Subtitle"
+            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+            Text="Keybinds Settings" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ui:TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontTypography="Body"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                Text="Play/Pause:" />
+            <ui:TextBox
+                x:Name="PlayPauseHotkeyTextBox"
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="0,0,0,8"
+                IsReadOnly="True" />
+
+            <ui:TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontTypography="Body"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                Text="Next track:" />
+            <ui:TextBox
+                x:Name="NextTrackHotkeyTextBox"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,0,0,8"
+                IsReadOnly="True" />
+
+            <ui:TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontTypography="Body"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                Text="Previous track:" />
+            <ui:TextBox
+                x:Name="PreviousTrackHotkeyTextBox"
+                Grid.Row="2"
+                Grid.Column="1"
+                IsReadOnly="True" />
+        </Grid>
+
+
+    </StackPanel>
+</Page>

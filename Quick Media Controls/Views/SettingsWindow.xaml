@@ -1,0 +1,69 @@
+﻿<ui:FluentWindow
+    x:Class="Quick_Media_Controls.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:pages="clr-namespace:Quick_Media_Controls.Views.Pages"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Settings"
+    Width="700"
+    Height="450"
+    Loaded="SettingsWindow_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <ui:NavigationView
+                Name="SettingsNavigation"
+                Margin="0,10,10,0"
+                IsBackButtonVisible="Collapsed"
+                OpenPaneLength="80"
+                PaneDisplayMode="LeftFluent"
+                PaneTitle="Settings">
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem
+                        Content="Home"
+                        Icon="{ui:SymbolIcon Symbol=Home20}"
+                        TargetPageTag="home"
+                        TargetPageType="{x:Type pages:Home}" />
+                    <ui:NavigationViewItem
+                        Content="General"
+                        Icon="{ui:SymbolIcon Symbol=Settings20}"
+                        TargetPageTag="general"
+                        TargetPageType="{x:Type pages:GeneralSettingsPage}" />
+                    <ui:NavigationViewItem
+                        Content="Keybinds"
+                        Icon="{ui:SymbolIcon Symbol=KeyboardMouse16}"
+                        TargetPageTag="keybinds"
+                        TargetPageType="{x:Type pages:KeybindsSettingsPage}" />
+                    <ui:NavigationViewItem
+                        Content="About"
+                        Icon="{ui:SymbolIcon Symbol=Info20}"
+                        TargetPageTag="about"
+                        TargetPageType="{x:Type pages:AboutSettingsPage}" />
+                </ui:NavigationView.MenuItems>
+            </ui:NavigationView>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5">
+
+            <ui:HyperlinkButton Content="Buy me a Coffee" Icon="{ui:SymbolIcon Symbol=DrinkCoffee16}" NavigateUri="https://google.com" />
+
+            <StackPanel
+                Margin="0,0,10,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <ui:Button
+                    Margin="0,0,10,0"
+                    Click="CloseButton_Click"
+                    Content="Cancel" />
+                <ui:Button Appearance="Primary" Content="Save" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

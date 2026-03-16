@@ -243,10 +243,6 @@ namespace Quick_Media_Controls
             }
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -262,6 +258,16 @@ namespace Quick_Media_Controls
         {
             _IsDragEnabled = !_IsDragEnabled;
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
+        }
+
+        private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var setting = new SettingsWindow();
+            setting.Show();
+        }
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

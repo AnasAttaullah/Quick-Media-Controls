@@ -1,0 +1,71 @@
+﻿<Page
+    x:Class="Quick_Media_Controls.Views.Pages.GeneralSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="GeneralSettingsPage"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="20 10 20 0">
+
+        <ui:TextBlock
+            Margin="0,0,0,20"
+            FontSize="22"
+            FontTypography="Subtitle"
+            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+            Text="General Settings" />
+
+        <ui:CardControl
+            Margin="4"
+            Padding="20,10,20,10">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Run at Windows startup"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                HorizontalContentAlignment="Left"
+                IsEnabled="True" />
+        </ui:CardControl>
+        <ui:CardControl
+            Margin="4"
+            Padding="20,10,20,10">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Move Flyout by Default"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                HorizontalContentAlignment="Left"
+                IsEnabled="True" />
+        </ui:CardControl>
+        <ui:CardControl
+            Margin="4"
+            Padding="20,10,20,10">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Enable animations"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                HorizontalContentAlignment="Left"
+                IsEnabled="True" />
+        </ui:CardControl>
+
+
+    </StackPanel>
+</Page>

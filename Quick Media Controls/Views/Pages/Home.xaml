@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="Quick_Media_Controls.Views.Pages.Home"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Quick_Media_Controls.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Home"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="10">
+        <ui:Image Source="/Assets/banner.png" CornerRadius="12" Height="150" Margin="0,0,0,10"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0 0 3 0">
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=AppsAddIn16}" Content="Request a Feature"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click1" />
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Archive16}" Content="Visit Repository"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_3" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="3 0 0 0">
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Bug16}" Content="Report a Bug"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_2" />
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Heart16}" Content="Sponsor the Project"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_4" />
+
+            </StackPanel>
+        </Grid>
+        <ui:InfoBar
+            Margin="4,12,4,0"
+            IsClosable="False"
+            Title="Open Source"
+            Visibility="Visible"
+            Message="Thanks for using Quick Media Controls" />
+
+    </StackPanel>
+</Page>
