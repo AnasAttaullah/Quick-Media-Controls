@@ -1,4 +1,4 @@
-<img src="Assets/banner.png" alt="Quick Media Controls banner" />
+<img src="Assets/banner.jpg" alt="Quick Media Controls banner" />
 
 <p align="center">
   <!-- Badges -->
