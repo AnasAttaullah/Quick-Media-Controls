@@ -25,14 +25,12 @@
             <StackPanel Grid.Column="1" Margin="3 0 0 0">
                 <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Bug16}" Content="Report a Bug"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_2" />
                 <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Heart16}" Content="Sponsor the Project"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_4" />
-
             </StackPanel>
         </Grid>
         <ui:InfoBar
             IsClosable="False"
             Title="Open Source"
             Visibility="Visible"
-            Message="Thanks for using Quick Media Controls" />
-
+            Message="Your support keeps this project alive and growing" />
     </StackPanel>
 </Page>

@@ -30,9 +30,9 @@ namespace Quick_Media_Controls
         private ImageSource pauseDarkIcon;
 
         private MediaSessionService _mediaService;
-        private AppSettingsService _appSettingsService = new AppSettingsService();
         private AppSettings _appSettings = null;
         private GlobalHotkeyService _globalHotkeyService;
+        private AppSettingsService _appSettingsService = new();
 
         public ApplicationTheme currentAppTheme;
         
