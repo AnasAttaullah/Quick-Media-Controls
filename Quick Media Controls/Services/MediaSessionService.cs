@@ -22,6 +22,7 @@ namespace Quick_Media_Controls.Services
 
         private ISessionChangeDetector? _sessionChangeDetector;
         private string? _lastSessionId;
+        private bool _isDisposed;
 
         public async Task InitializeAsync()
         {
@@ -64,8 +65,9 @@ namespace Quick_Media_Controls.Services
 
         private void OnSessionChangeDetectedAsync(GlobalSystemMediaTransportControlsSession? newSession)
         {
-            var newSessionId = newSession?.SourceAppUserModelId;
+            if (_isDisposed) return;
 
+            var newSessionId = newSession?.SourceAppUserModelId;
             if (newSessionId != _lastSessionId)
             {
                 System.Diagnostics.Debug.WriteLine($"Session change: {_lastSessionId} -> {newSessionId}");
@@ -76,6 +78,8 @@ namespace Quick_Media_Controls.Services
 
         private async void UpdateCurrentSessionAsync(GlobalSystemMediaTransportControlsSession? newSession)
         {
+            if (_isDisposed) return;
+
             if (CurrentSession != null)
             {
                 CurrentSession.PlaybackInfoChanged -= OnCurrentSession_PlaybackInfoChanged;
@@ -97,6 +101,9 @@ namespace Quick_Media_Controls.Services
             }
 
             await FetchMediaAsync();
+
+            if (_isDisposed) return;
+
             SessionChanged?.Invoke(this, SessionManager);
             MediaPropertiesChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -206,13 +213,25 @@ namespace Quick_Media_Controls.Services
 
         public void Dispose()
         {
+            if (_isDisposed) return;
+            _isDisposed = true;
+
             _sessionChangeDetector?.Dispose();
+            _sessionChangeDetector = null;
 
             if (CurrentSession != null)
             {
                 CurrentSession.PlaybackInfoChanged -= OnCurrentSession_PlaybackInfoChanged;
                 CurrentSession.MediaPropertiesChanged -= OnCurrentSession_MediaPropertiesChanged;
             }
+
+            CurrentSession = null;
+            CurrentPlaybackInfo = null;
+            CurrentMediaProperties = null;
+
+            SessionChanged = null;
+            PlaybackInfoChanged = null;
+            MediaPropertiesChanged = null;
 
             GC.SuppressFinalize(this);
         }

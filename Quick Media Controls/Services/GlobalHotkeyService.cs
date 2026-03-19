@@ -31,7 +31,7 @@ namespace Quick_Media_Controls.Services
         private readonly Dictionary<int, GlobalHotkeyAction> _registeredHotkeyActions = new Dictionary<int, GlobalHotkeyAction>();
         private bool _isDisposed;
 
-        public event EventHandler<GlobalHotkeyAction> HotkeyPressed;
+        public event EventHandler<GlobalHotkeyAction>? HotkeyPressed;
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -107,25 +107,30 @@ namespace Quick_Media_Controls.Services
 
         private nint WndProc(nint hwnd, int msg, nint wParam, nint lParam, ref bool handled)
         {
-            if(msg == WM_HOTKEY)
+            if (_isDisposed)
+                return IntPtr.Zero;
+
+            if (msg == WM_HOTKEY)
             {
                 var id = wParam.ToInt32();
-                if(_registeredHotkeyActions.TryGetValue(id ,out var action))
+                if (_registeredHotkeyActions.TryGetValue(id, out var action))
                 {
-                    HotkeyPressed.Invoke(this, action);
+                    HotkeyPressed?.Invoke(this, action);
                     handled = true;
                 }
             }
+
             return IntPtr.Zero;
         }
 
         public void Dispose()
         {
-            if(_isDisposed) return;
+            if (_isDisposed) return;
             _isDisposed = true;
 
             UnregisterAll();
             _hwndSource.RemoveHook(WndProc);
+            HotkeyPressed = null;
 
             GC.SuppressFinalize(this);
         }

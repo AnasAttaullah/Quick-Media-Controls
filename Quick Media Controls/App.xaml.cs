@@ -271,17 +271,17 @@ namespace Quick_Media_Controls
         }
 
 
-        private async void TrayIcon_LeftClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
             await _mediaService.TogglePlayPauseAsync();
         }
 
-        private async void TrayIcon_LeftDoubleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        private async void TrayIcon_LeftDoubleClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
              await _mediaService.SkipNextAsync();
         }
 
-        private async void TrayIcon_RightClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
             _mediaFlyout ??= new MediaFlyout(_mediaService);
             UpdatePlaybackButtonsStatus();
