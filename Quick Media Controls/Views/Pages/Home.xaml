@@ -10,7 +10,7 @@
     mc:Ignorable="d">
 
     <StackPanel Margin="10">
-        <ui:Image Source="/Assets/banner.png" CornerRadius="12" Height="150" Margin="0,0,0,10"/>
+        <ui:Image Source="/Assets/banner.jpg" CornerRadius="6" Height="150" Margin="0,0,0,10"/>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -29,7 +29,6 @@
             </StackPanel>
         </Grid>
         <ui:InfoBar
-            Margin="4,12,4,0"
             IsClosable="False"
             Title="Open Source"
             Visibility="Visible"

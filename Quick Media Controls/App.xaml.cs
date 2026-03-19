@@ -1,4 +1,5 @@
 ﻿using AutoUpdaterDotNET;
+using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
 using System;
 using System.Diagnostics;
@@ -29,7 +30,13 @@ namespace Quick_Media_Controls
         private ImageSource pauseDarkIcon;
 
         private MediaSessionService _mediaService;
+        private AppSettingsService _appSettingsService = new AppSettingsService();
+        private AppSettings _appSettings = null;
+        private GlobalHotkeyService _globalHotkeyService;
+
         public ApplicationTheme currentAppTheme;
+        
+        public AppSettings GetSettingsSnapshot() => _appSettings.Clone();
 
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -77,6 +84,8 @@ namespace Quick_Media_Controls
             MainWindow.Show();
             MainWindow.Hide();
 
+            InitializeAppSettings();
+
             RegisterTrayIcon();
             UpdateTrayIcon();
             ConfigureAutoUpdater();
@@ -85,6 +94,12 @@ namespace Quick_Media_Controls
         protected override void OnExit(ExitEventArgs e)
         {
             ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
+
+            if (_globalHotkeyService != null)
+            {
+                _globalHotkeyService.HotkeyPressed -= GlobalHotkeyService_HotkeyPressed;
+                _globalHotkeyService.Dispose();
+            }
 
             if (_trayIcon != null)
             {
@@ -114,6 +129,48 @@ namespace Quick_Media_Controls
 
             MainWindow?.Close();
             base.OnExit(e);
+        }
+
+        private void InitializeAppSettings()
+        {
+            _appSettings = _appSettingsService.Load();
+
+            _globalHotkeyService = new GlobalHotkeyService(MainWindow);
+            _globalHotkeyService.HotkeyPressed += GlobalHotkeyService_HotkeyPressed;
+
+            try
+            {
+                _globalHotkeyService.Apply(_appSettings.Keybinds);
+
+            }
+            catch (Exception ex)
+            {
+                _appSettings = AppSettings.CreateDefault();
+                _appSettingsService.Save(_appSettings);
+                _globalHotkeyService.Apply(_appSettings.Keybinds);
+
+                MessageBox.Show($"Invalid saved keybinds. Defaults restored.\n\n{ex.Message}", "Keybinds");
+            }
+        }
+
+        public bool TrySaveSettings(AppSettings updatedSettings, out string? error)
+        {
+            error = null;
+
+            try
+            {
+                _globalHotkeyService.Apply(updatedSettings.Keybinds);
+
+                _appSettings = updatedSettings.Clone();
+                _appSettingsService.Save(_appSettings);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = $"Failed to save settings: {ex.Message}";
+                return false;
+            }
         }
 
         private void RegisterTrayIcon()
@@ -245,6 +302,22 @@ namespace Quick_Media_Controls
         {
             UpdateTrayIcon();
             UpdatePlaybackButtonsStatus();
+        }
+
+        private async void GlobalHotkeyService_HotkeyPressed(object? sender, GlobalHotkeyAction action)
+        {
+            switch (action)
+            {
+                case GlobalHotkeyAction.PlayPause:
+                    await _mediaService.TogglePlayPauseAsync();
+                    break;
+                case GlobalHotkeyAction.NextTrack:
+                    await _mediaService.SkipNextAsync();
+                    break;
+                case GlobalHotkeyAction.PreviousTrack:
+                    await _mediaService.SkipPreviousAsync();
+                    break;
+            }
         }
 
         private void ApplicationThemeManager_Changed(ApplicationTheme currentApplicationTheme, System.Windows.Media.Color systemAccent)

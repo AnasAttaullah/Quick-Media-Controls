@@ -47,6 +47,11 @@
                         TargetPageType="{x:Type pages:AboutSettingsPage}" />
                 </ui:NavigationView.MenuItems>
             </ui:NavigationView>
+            <ui:SnackbarPresenter
+                x:Name="SnackbarPresenter"
+                Width="auto"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom" />
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">
@@ -62,7 +67,7 @@
                     Margin="0,0,10,0"
                     Click="CloseButton_Click"
                     Content="Cancel" />
-                <ui:Button Appearance="Primary" Content="Save" />
+                <ui:Button Appearance="Primary" Content="Save" Click="SaveButton_Click" />
             </StackPanel>
         </Grid>
     </Grid>

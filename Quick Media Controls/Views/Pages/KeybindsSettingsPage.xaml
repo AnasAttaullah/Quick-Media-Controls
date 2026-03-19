@@ -22,6 +22,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="170" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -40,8 +41,14 @@
                 x:Name="PlayPauseHotkeyTextBox"
                 Grid.Row="0"
                 Grid.Column="1"
-                Margin="0,0,0,8"
+                Margin="0,0,8,8"
                 IsReadOnly="True" />
+            <ui:Button
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="0,0,0,8"
+                Content="Reset"
+                Click="ResetPlayPauseButton_Click" />
 
             <ui:TextBlock
                 Grid.Row="1"
@@ -54,8 +61,14 @@
                 x:Name="NextTrackHotkeyTextBox"
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="0,0,0,8"
+                Margin="0,0,8,8"
                 IsReadOnly="True" />
+            <ui:Button
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="0,0,0,8"
+                Content="Reset"
+                Click="ResetNextTrackButton_Click" />
 
             <ui:TextBlock
                 Grid.Row="2"
@@ -68,9 +81,20 @@
                 x:Name="PreviousTrackHotkeyTextBox"
                 Grid.Row="2"
                 Grid.Column="1"
+                Margin="0,0,8,0"
                 IsReadOnly="True" />
+            <ui:Button
+                Grid.Row="2"
+                Grid.Column="2"
+                Content="Reset"
+                Click="ResetPreviousTrackButton_Click" />
         </Grid>
 
-
+        <ui:TextBlock
+            x:Name="HotkeyValidationTextBlock"
+            Margin="0,8,0,0"
+            FontTypography="Caption"
+            Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
+            Visibility="Collapsed" />
     </StackPanel>
 </Page>

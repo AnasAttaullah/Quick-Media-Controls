@@ -13,6 +13,7 @@
 		<Copyright>Copyright © 2026 Anas Attaullah</Copyright>
 		<Version>1.1.1</Version>
 		<ApplicationIcon>Assets\Icons\applicationIcon.ico</ApplicationIcon>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Assets\banner.png" />
+		<Resource Include="Assets\banner.jpg" />
 		<Resource Include="Assets\logo.png" />
 		<Resource Include="Assets\Icons\pauseLight.ico" />
 		<Resource Include="Assets\Icons\pauseDark.ico" />
