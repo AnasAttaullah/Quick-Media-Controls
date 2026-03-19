@@ -21,6 +21,7 @@ namespace Quick_Media_Controls.Views.Pages
             PlayPauseHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             NextTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             PreviousTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+            OpenFlyoutHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
         }
 
         private void KeybindsSettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -37,6 +38,7 @@ namespace Quick_Media_Controls.Views.Pages
             PlayPauseHotkeyTextBox.Text = _keybindsSettings.PlayPause.ToDisplayString();
             NextTrackHotkeyTextBox.Text = _keybindsSettings.NextTrack.ToDisplayString();
             PreviousTrackHotkeyTextBox.Text = _keybindsSettings.PreviousTrack.ToDisplayString();
+            OpenFlyoutHotkeyTextBox.Text = _keybindsSettings.OpenFlyout.ToDisplayString();
         }
 
         private void HotkeyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -59,6 +61,8 @@ namespace Quick_Media_Controls.Views.Pages
                 _keybindsSettings.NextTrack = gesture;
             else if (sender == PreviousTrackHotkeyTextBox)
                 _keybindsSettings.PreviousTrack = gesture;
+            else if (sender == OpenFlyoutHotkeyTextBox)
+                _keybindsSettings.OpenFlyout = gesture;
 
             BindText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
@@ -79,6 +83,11 @@ namespace Quick_Media_Controls.Views.Pages
         private void ResetPreviousTrackButton_Click(object sender, RoutedEventArgs e)
         {
             _keybindsSettings.PreviousTrack = _defaultKeybinds.PreviousTrack.Clone();
+            ResetAndSync();
+        }
+        private void ResetOpenFlyoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            _keybindsSettings.OpenFlyout = _defaultKeybinds.OpenFlyout.Clone();
             ResetAndSync();
         }
 

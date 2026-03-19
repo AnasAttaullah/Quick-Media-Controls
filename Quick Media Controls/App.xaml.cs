@@ -317,6 +317,18 @@ namespace Quick_Media_Controls
                 case GlobalHotkeyAction.PreviousTrack:
                     await _mediaService.SkipPreviousAsync();
                     break;
+                case GlobalHotkeyAction.OpenFlyout:
+                    if (_mediaFlyout == null)
+                    {
+                        _mediaFlyout = new MediaFlyout(_mediaService);
+                    }
+                    if (_mediaFlyout.IsVisible)
+                    {
+                        _mediaFlyout.AnimateClose();
+                        return;
+                    }
+                    await _mediaFlyout.ShowFlyoutAsync();
+                    break;
             }
         }
 

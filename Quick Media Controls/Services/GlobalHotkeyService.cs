@@ -12,7 +12,8 @@ namespace Quick_Media_Controls.Services
     {
         PlayPause = 1,
         NextTrack = 2,
-        PreviousTrack = 3
+        PreviousTrack = 3,
+        OpenFlyout = 4
     }
 
     public sealed class GlobalHotkeyService : IDisposable
@@ -53,6 +54,7 @@ namespace Quick_Media_Controls.Services
             Register(1001, settings.PlayPause, GlobalHotkeyAction.PlayPause);
             Register(1002, settings.NextTrack, GlobalHotkeyAction.NextTrack);
             Register(1003, settings.PreviousTrack, GlobalHotkeyAction.PreviousTrack);
+            Register(1004, settings.OpenFlyout, GlobalHotkeyAction.OpenFlyout);
         }
 
         private void Register(int id, HotkeyGesture gesture,GlobalHotkeyAction action)

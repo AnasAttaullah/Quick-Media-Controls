@@ -29,6 +29,7 @@ namespace Quick_Media_Controls.Models
         public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, Key.P);
         public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, Key.N);
         public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, Key.P);
+        public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, Key.O);
 
         public static KeybindSettings CreateDefault()
         {
@@ -36,7 +37,8 @@ namespace Quick_Media_Controls.Models
             {
                 PlayPause = new HotkeyGesture(ModifierKeys.Alt, Key.P),
                 NextTrack = new HotkeyGesture(ModifierKeys.Alt, Key.N),
-                PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, Key.P)
+                PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, Key.P),
+                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, Key.O)
             };
         }
 
@@ -46,7 +48,8 @@ namespace Quick_Media_Controls.Models
             {
                 PlayPause = PlayPause.Clone(),
                 NextTrack = NextTrack.Clone(),
-                PreviousTrack = PreviousTrack.Clone()
+                PreviousTrack = PreviousTrack.Clone(),
+                OpenFlyout = OpenFlyout.Clone()
             };
         }
 
@@ -55,6 +58,7 @@ namespace Quick_Media_Controls.Models
             yield return PlayPause;
             yield return NextTrack;
             yield return PreviousTrack;
+            yield return OpenFlyout;
         }
     }
 }

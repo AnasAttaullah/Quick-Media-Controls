@@ -28,6 +28,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <ui:TextBlock
@@ -81,12 +82,33 @@
                 x:Name="PreviousTrackHotkeyTextBox"
                 Grid.Row="2"
                 Grid.Column="1"
-                Margin="0,0,8,0"
+                Margin="0,0,8,8"
                 IsReadOnly="True" />
             <ui:Button
                 Grid.Row="2"
                 Grid.Column="2"
                 Content="Reset"
+                Margin="0,0,0,8"
+                Click="ResetPreviousTrackButton_Click" />
+
+            <ui:TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontTypography="Body"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                Text="Open Flyout:" />
+            <ui:TextBox
+                x:Name="OpenFlyoutHotkeyTextBox"
+                Grid.Row="3"
+                Grid.Column="1"
+                Margin="0,0,8,8"
+                IsReadOnly="True" />
+            <ui:Button
+                Grid.Row="3"
+                Grid.Column="2"
+                Content="Reset"
+                Margin="0,0,0,8"
                 Click="ResetPreviousTrackButton_Click" />
         </Grid>
 

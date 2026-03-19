@@ -107,7 +107,7 @@ namespace Quick_Media_Controls
 
         }
 
-        private void AnimateClose()
+        public void AnimateClose()
         {
             if (_isAnimatingClose) return;
             _isAnimatingClose = true;
