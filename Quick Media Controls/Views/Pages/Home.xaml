@@ -16,19 +16,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Margin="0 0 3 0">
-                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=AppsAddIn16}" Content="Request a Feature"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click1" />
-                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Archive16}" Content="Visit Repository"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_3" />
+            <StackPanel Grid.Column="0" Margin="0 0 2 0">
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=AppsAddIn16}" Content="Request a Feature"   Margin="0,0,0,4" FontSize="18" Click="CardAction_Click1" />
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Archive16}" Content="Visit Repository"   Margin="0,0,0,0" FontSize="18" Click="CardAction_Click_3" />
 
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Margin="3 0 0 0">
-                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Bug16}" Content="Report a Bug"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_2" />
-                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Heart16}" Content="Sponsor the Project"   Margin="0,0,0,10" FontSize="18" Click="CardAction_Click_4" />
+            <StackPanel Grid.Column="1" Margin="2 0 0 0">
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Bug16}" Content="Report a Bug"   Margin="0,0,0,4" FontSize="18" Click="CardAction_Click_2" />
+                <ui:CardAction  Icon="{ui:SymbolIcon Symbol=Heart16}" Content="Sponsor the Project"   Margin="0,0,0,0" FontSize="18" Click="CardAction_Click_4" />
             </StackPanel>
         </Grid>
         <ui:InfoBar
             IsClosable="False"
+            Margin="0 10 0 0"
             Title="Open Source"
             Visibility="Visible"
             Message="Your support keeps this project alive and growing" />

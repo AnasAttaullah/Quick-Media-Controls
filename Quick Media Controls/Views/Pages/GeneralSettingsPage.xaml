@@ -17,9 +17,9 @@
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="General Settings" />
 
-        <ui:CardControl
-            Margin="4"
-            Padding="20,10,20,10">
+        <ui:CardControl Icon="{ui:SymbolIcon Symbol=WindowPlay20}"
+                        Margin="0,0,0,4"
+                        Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -33,9 +33,27 @@
                 HorizontalContentAlignment="Left"
                 IsEnabled="True" />
         </ui:CardControl>
-        <ui:CardControl
-            Margin="4"
-            Padding="20,10,20,10">
+
+        <ui:CardControl Icon="{ui:SymbolIcon Symbol=SlideHide20}"
+                        Margin="0,0,0,4"
+                        Padding="20,20,20,20">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Auto Hide Flyout"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                HorizontalContentAlignment="Left"
+                IsEnabled="True" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon Symbol=ArrowMove20}"
+                        Margin="0,0,0,4"
+                        Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -49,15 +67,16 @@
                 HorizontalContentAlignment="Left"
                 IsEnabled="True" />
         </ui:CardControl>
-        <ui:CardControl
-            Margin="4"
-            Padding="20,10,20,10">
+
+        <ui:CardControl Icon="{ui:SymbolIcon Symbol=WindowArrowUp20}"
+                        Margin="0,0,0,4"
+                        Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
                         Margin="0"
                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                        Text="Enable animations"
+                        Text="Enable Flyout animations"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
@@ -65,7 +84,5 @@
                 HorizontalContentAlignment="Left"
                 IsEnabled="True" />
         </ui:CardControl>
-
-
     </StackPanel>
 </Page>
