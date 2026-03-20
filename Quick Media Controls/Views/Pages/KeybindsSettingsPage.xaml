@@ -12,105 +12,145 @@
     <StackPanel Margin="20 10 20 0">
 
         <ui:TextBlock
-            Margin="0,0,0,20"
+            Margin="0,0,0,6"
             FontSize="22"
             FontTypography="Subtitle"
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="Keybinds Settings" />
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="170" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <ui:TextBlock
+            Margin="0,0,0,16"
+            FontTypography="Caption"
+            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+            Text="Click a hotkey field, then press a new key combination (modifier + key)." />
 
-            <ui:TextBlock
-                Grid.Row="0"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                FontTypography="Body"
-                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                Text="Play/Pause:" />
-            <ui:TextBox
-                x:Name="PlayPauseHotkeyTextBox"
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="0,0,8,8"
-                IsReadOnly="True" />
-            <ui:Button
-                Grid.Row="0"
-                Grid.Column="2"
-                Margin="0,0,0,8"
-                Content="Reset"
-                Click="ResetPlayPauseButton_Click" />
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=Play20}"
+            Margin="0,0,0,4"
+            Padding="20 10 20 10">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Play / Pause"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
 
-            <ui:TextBlock
-                Grid.Row="1"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                FontTypography="Body"
-                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                Text="Next track:" />
-            <ui:TextBox
-                x:Name="NextTrackHotkeyTextBox"
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="0,0,8,8"
-                IsReadOnly="True" />
-            <ui:Button
-                Grid.Row="1"
-                Grid.Column="2"
-                Margin="0,0,0,8"
-                Content="Reset"
-                Click="ResetNextTrackButton_Click" />
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <ui:TextBlock
-                Grid.Row="2"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                FontTypography="Body"
-                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                Text="Previous track:" />
-            <ui:TextBox
-                x:Name="PreviousTrackHotkeyTextBox"
-                Grid.Row="2"
-                Grid.Column="1"
-                Margin="0,0,8,8"
-                IsReadOnly="True" />
-            <ui:Button
-                Grid.Row="2"
-                Grid.Column="2"
-                Content="Reset"
-                Margin="0,0,0,8"
-                Click="ResetPreviousTrackButton_Click" />
+                <ui:TextBox
+                    x:Name="PlayPauseHotkeyTextBox"
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True" />
 
-            <ui:TextBlock
-                Grid.Row="3"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                FontTypography="Body"
-                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                Text="Open Flyout:" />
-            <ui:TextBox
-                x:Name="OpenFlyoutHotkeyTextBox"
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="0,0,8,8"
-                IsReadOnly="True" />
-            <ui:Button
-                Grid.Row="3"
-                Grid.Column="2"
-                Content="Reset"
-                Margin="0,0,0,8"
-                Click="ResetOpenFlyoutButton_Click" />
-        </Grid>
+                <ui:Button
+                    Grid.Column="1"
+                    Click="ResetPlayPauseButton_Click"
+                    Content="Reset" />
+            </Grid>
+        </ui:CardControl>
+
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=Next20}"
+            Margin="0,0,0,4"
+            Padding="20">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Next track"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ui:TextBox
+                    x:Name="NextTrackHotkeyTextBox"
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True" />
+
+                <ui:Button
+                    Grid.Column="1"
+                    Click="ResetNextTrackButton_Click"
+                    Content="Reset" />
+            </Grid>
+        </ui:CardControl>
+
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=Previous20}"
+            Margin="0,0,0,4"
+            Padding="20">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Previous track"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ui:TextBox
+                    x:Name="PreviousTrackHotkeyTextBox"
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True" />
+
+                <ui:Button
+                    Grid.Column="1"
+                    Click="ResetPreviousTrackButton_Click"
+                    Content="Reset" />
+            </Grid>
+        </ui:CardControl>
+
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=Window20}"
+            Margin="0,0,0,4"
+            Padding="20">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="Open flyout"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ui:TextBox
+                    x:Name="OpenFlyoutHotkeyTextBox"
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True" />
+
+                <ui:Button
+                    Grid.Column="1"
+                    Click="ResetOpenFlyoutButton_Click"
+                    Content="Reset" />
+            </Grid>
+        </ui:CardControl>
 
         <ui:TextBlock
             x:Name="HotkeyValidationTextBlock"
