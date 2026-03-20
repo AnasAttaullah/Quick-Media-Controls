@@ -26,6 +26,11 @@ namespace Quick_Media_Controls
             DraftSettings.Keybinds = keybinds.Clone();
         }
 
+        public void SetDraftGeneralSettings(GeneralSettings generalSettings)
+        {
+            DraftSettings.General = generalSettings.Clone();
+        }
+
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             SettingsNavigation.Navigate(typeof(Home));
@@ -42,7 +47,7 @@ namespace Quick_Media_Controls
             {
                 ShowSnackbar(
                     "Settings saved",
-                    "Your changes were applied successfully.",
+                    "Your changes were applied successfully",
                     ControlAppearance.Secondary,
                     SymbolRegular.CheckmarkCircle20);
 
@@ -51,7 +56,7 @@ namespace Quick_Media_Controls
 
             ShowSnackbar(
                 "Save failed",
-                error ?? "Failed to save settings.",
+                error ?? "Failed to save settings",
                 ControlAppearance.Danger,
                 SymbolRegular.DismissCircle20);
         }

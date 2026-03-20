@@ -163,6 +163,7 @@ namespace Quick_Media_Controls
 
                 _appSettings = updatedSettings.Clone();
                 _appSettingsService.Save(_appSettings);
+                _mediaFlyout?.ApplySettings(_appSettings);
 
                 return true;
             }
@@ -283,7 +284,7 @@ namespace Quick_Media_Controls
 
         private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            _mediaFlyout ??= new MediaFlyout(_mediaService);
+            _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
             UpdatePlaybackButtonsStatus();
             await _mediaFlyout.ShowFlyoutAsync();
         }
@@ -320,7 +321,7 @@ namespace Quick_Media_Controls
                 case GlobalHotkeyAction.OpenFlyout:
                     if (_mediaFlyout == null)
                     {
-                        _mediaFlyout = new MediaFlyout(_mediaService);
+                        _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
                     }
                     if (_mediaFlyout.IsVisible)
                     {

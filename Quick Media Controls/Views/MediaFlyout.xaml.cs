@@ -1,4 +1,5 @@
-﻿using Quick_Media_Controls.Services;
+﻿using Quick_Media_Controls.Models;
+using Quick_Media_Controls.Services;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -17,6 +18,7 @@ namespace Quick_Media_Controls
     public partial class MediaFlyout : FluentWindow
     {
         private readonly MediaSessionService _sessionManager;
+        private AppSettings _appSettings; 
         private bool _IsDragEnabled;
         private bool _isAnimatingClose;
         private double _homeTop;
@@ -28,20 +30,24 @@ namespace Quick_Media_Controls
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
         private const int DWMWA_TRANSITIONS_FORCEDISABLED = 3;
 
-        public MediaFlyout(MediaSessionService sessionManager)
+        public MediaFlyout(MediaSessionService sessionManager, AppSettings appSettings)
         {
             ApplicationThemeManager.ApplySystemTheme();
             ApplicationAccentColorManager.ApplySystemAccent();
 
-            _IsDragEnabled = false;
+            _appSettings = appSettings;
+
             _sessionManager = sessionManager;
+            _IsDragEnabled = appSettings.General.MoveFlyoutByDefault;
+
+            Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
 
             Left = SystemParameters.WorkArea.Right - 300 - 110;
             _homeTop = Top = SystemParameters.WorkArea.Bottom - 130;
 
             InitializeComponent();
-            UpdateIcons();
 
+            MoveFlyoutToggle.IsChecked = _IsDragEnabled;
             // Disables Default WPF Window Animations
             SourceInitialized += OnSourceInitialized;
         }
@@ -85,6 +91,12 @@ namespace Quick_Media_Controls
             Focus();
             Keyboard.Focus(this);
 
+            if (!_appSettings.General.EnableFlyoutAnimations)
+            {
+                Root.Opacity = 1;
+                return;
+            }
+
             // Fade-up: slide up 15px + fade in over 220ms with ease-out curve
             var duration = new Duration(TimeSpan.FromMilliseconds(220));
             var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
@@ -110,6 +122,15 @@ namespace Quick_Media_Controls
         public void AnimateClose()
         {
             if (_isAnimatingClose) return;
+
+            if (!_appSettings.General.EnableFlyoutAnimations)
+            {
+                Hide();
+                Root.Opacity = 1;
+                Top = _homeTop;
+                return;
+            }
+
             _isAnimatingClose = true;
 
             var duration = new Duration(TimeSpan.FromMilliseconds(180));
@@ -140,6 +161,7 @@ namespace Quick_Media_Controls
 
         private void Flyout_Deactivated(object sender, EventArgs e)
         {
+            if (!_appSettings.General.AutoHideFlyout) return;
             AnimateClose();
         }
 
@@ -254,9 +276,12 @@ namespace Quick_Media_Controls
             }
         }
 
-        private void MoveWindowMenuItem_Click(object sender, RoutedEventArgs e)
+        private void MoveFlyoutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            _IsDragEnabled = !_IsDragEnabled;
+            if (sender is not System.Windows.Controls.MenuItem menuItem)
+                return;
+
+            _IsDragEnabled = menuItem.IsChecked;
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
         }
 
@@ -268,6 +293,11 @@ namespace Quick_Media_Controls
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        public void ApplySettings(AppSettings appSettings)
+        {
+            _appSettings = appSettings;
         }
     }
 }

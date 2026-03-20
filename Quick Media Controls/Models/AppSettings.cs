@@ -5,13 +5,16 @@ namespace Quick_Media_Controls.Models
 {
     public sealed class AppSettings
     {
+
         public KeybindSettings Keybinds { get; set; } = KeybindSettings.CreateDefault();
+        public GeneralSettings General { get; set; } = GeneralSettings.CreateDefault();
 
         public static AppSettings CreateDefault()
         {
             return new AppSettings
             {
-                Keybinds = KeybindSettings.CreateDefault()
+                Keybinds = KeybindSettings.CreateDefault(),
+                General = GeneralSettings.CreateDefault()
             };
         }
 
@@ -19,7 +22,38 @@ namespace Quick_Media_Controls.Models
         {
             return new AppSettings
             {
-                Keybinds = Keybinds.Clone()
+                Keybinds = Keybinds.Clone(),
+                General = General.Clone()
+            };
+        }
+    }
+
+    public sealed class GeneralSettings
+    {
+        public bool RunAtStartup { get; set; } = true;
+        public bool AutoHideFlyout { get; set; } = true;
+        public bool MoveFlyoutByDefault { get; set; } = false;
+        public bool EnableFlyoutAnimations { get; set; } = true;
+
+        public static GeneralSettings CreateDefault()
+        {
+            return new GeneralSettings
+            {
+                RunAtStartup = true,
+                AutoHideFlyout = true,
+                MoveFlyoutByDefault = false,
+                EnableFlyoutAnimations = true
+            };
+        }
+
+        public GeneralSettings Clone()
+        {
+            return new GeneralSettings
+            {
+                RunAtStartup = RunAtStartup,
+                AutoHideFlyout = AutoHideFlyout,
+                MoveFlyoutByDefault = MoveFlyoutByDefault,
+                EnableFlyoutAnimations = EnableFlyoutAnimations
             };
         }
     }

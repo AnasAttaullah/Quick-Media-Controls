@@ -17,9 +17,10 @@
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="General Settings" />
 
-        <ui:CardControl Icon="{ui:SymbolIcon Symbol=WindowPlay20}"
-                        Margin="0,0,0,4"
-                        Padding="20,20,20,20">
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=WindowPlay20}"
+            Margin="0,0,0,4"
+            Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -30,13 +31,17 @@
                 </StackPanel>
             </ui:CardControl.Header>
             <ui:ToggleSwitch
+                x:Name="RunAtStartupToggle"
                 HorizontalContentAlignment="Left"
-                IsEnabled="True" />
+                IsEnabled="True"
+                Checked="GeneralSettingToggle_Checked"
+                Unchecked="GeneralSettingToggle_Checked" />
         </ui:CardControl>
 
-        <ui:CardControl Icon="{ui:SymbolIcon Symbol=SlideHide20}"
-                        Margin="0,0,0,4"
-                        Padding="20,20,20,20">
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=SlideHide20}"
+            Margin="0,0,0,4"
+            Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -47,13 +52,17 @@
                 </StackPanel>
             </ui:CardControl.Header>
             <ui:ToggleSwitch
+                x:Name="AutoHideFlyoutToggle"
                 HorizontalContentAlignment="Left"
-                IsEnabled="True" />
+                IsEnabled="True"
+                Checked="GeneralSettingToggle_Checked"
+                Unchecked="GeneralSettingToggle_Checked" />
         </ui:CardControl>
 
-        <ui:CardControl Icon="{ui:SymbolIcon Symbol=ArrowMove20}"
-                        Margin="0,0,0,4"
-                        Padding="20,20,20,20">
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=ArrowMove20}"
+            Margin="0,0,0,4"
+            Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -64,13 +73,17 @@
                 </StackPanel>
             </ui:CardControl.Header>
             <ui:ToggleSwitch
+                x:Name="MoveFlyoutByDefaultToggle"
                 HorizontalContentAlignment="Left"
-                IsEnabled="True" />
+                IsEnabled="True"
+                Checked="GeneralSettingToggle_Checked"
+                Unchecked="GeneralSettingToggle_Checked" />
         </ui:CardControl>
 
-        <ui:CardControl Icon="{ui:SymbolIcon Symbol=WindowArrowUp20}"
-                        Margin="0,0,0,4"
-                        Padding="20,20,20,20">
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=WindowArrowUp20}"
+            Margin="0,0,0,4"
+            Padding="20,20,20,20">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -81,8 +94,11 @@
                 </StackPanel>
             </ui:CardControl.Header>
             <ui:ToggleSwitch
+                x:Name="EnableFlyoutAnimationsToggle"
                 HorizontalContentAlignment="Left"
-                IsEnabled="True" />
+                IsEnabled="True"
+                Checked="GeneralSettingToggle_Checked"
+                Unchecked="GeneralSettingToggle_Checked" />
         </ui:CardControl>
     </StackPanel>
 </Page>

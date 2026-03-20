@@ -25,10 +25,10 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem
-                Click="MoveWindowMenuItem_Click"
+                Name="MoveFlyoutToggle"
+                Click="MoveFlyoutMenuItem_Click"
                 Header="Move Flyout"
-                IsCheckable="True"
-                IsChecked="{Binding _IsDragEnabled, Mode=TwoWay}" />
+                IsCheckable="True"/>
 
             <MenuItem Click="GithubMenuItem_Click" Header="On Github">
                 <MenuItem.Icon>

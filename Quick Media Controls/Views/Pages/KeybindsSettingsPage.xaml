@@ -22,12 +22,12 @@
             Margin="0,0,0,16"
             FontTypography="Caption"
             Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-            Text="Click a hotkey field, then press a new key combination (modifier + key)." />
+            Text="Click a hotkey field, then press a new key combination (modifier + key)" />
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Play20}"
             Margin="0,0,0,4"
-            Padding="20 10 20 10">
+            Padding="20 15 20 15">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -37,7 +37,7 @@
                 </StackPanel>
             </ui:CardControl.Header>
 
-            <Grid Margin="0,8,0,0">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -46,6 +46,7 @@
                 <ui:TextBox
                     x:Name="PlayPauseHotkeyTextBox"
                     Grid.Column="0"
+                    Width="200"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
@@ -59,7 +60,7 @@
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Next20}"
             Margin="0,0,0,4"
-            Padding="20">
+            Padding="20 15 20 15">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -69,7 +70,7 @@
                 </StackPanel>
             </ui:CardControl.Header>
 
-            <Grid Margin="0,8,0,0">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -78,6 +79,7 @@
                 <ui:TextBox
                     x:Name="NextTrackHotkeyTextBox"
                     Grid.Column="0"
+                    Width="200"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
@@ -91,7 +93,7 @@
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Previous20}"
             Margin="0,0,0,4"
-            Padding="20">
+            Padding="20 15 20 15">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -101,7 +103,7 @@
                 </StackPanel>
             </ui:CardControl.Header>
 
-            <Grid Margin="0,8,0,0">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -110,6 +112,7 @@
                 <ui:TextBox
                     x:Name="PreviousTrackHotkeyTextBox"
                     Grid.Column="0"
+                    Width="200"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
@@ -122,8 +125,8 @@
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Window20}"
-            Margin="0,0,0,4"
-            Padding="20">
+            Margin="0,0,0,0"
+            Padding="20 15 20 15">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -133,7 +136,7 @@
                 </StackPanel>
             </ui:CardControl.Header>
 
-            <Grid Margin="0,8,0,0">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -142,6 +145,7 @@
                 <ui:TextBox
                     x:Name="OpenFlyoutHotkeyTextBox"
                     Grid.Column="0"
+                    Width="200"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
