@@ -32,6 +32,7 @@ namespace Quick_Media_Controls
         private MediaSessionService _mediaService;
         private AppSettings _appSettings = null;
         private GlobalHotkeyService _globalHotkeyService;
+        private StartupRegistrationService _startupRegistrationService = new();
         private AppSettingsService _appSettingsService = new();
 
         public ApplicationTheme currentAppTheme;
@@ -141,6 +142,8 @@ namespace Quick_Media_Controls
             try
             {
                 _globalHotkeyService.Apply(_appSettings.Keybinds);
+                _appSettings.General.RunAtStartup = _startupRegistrationService.IsRegistered();
+                _appSettingsService.Save(_appSettings);
 
             }
             catch (Exception ex)
@@ -148,6 +151,7 @@ namespace Quick_Media_Controls
                 _appSettings = AppSettings.CreateDefault();
                 _appSettingsService.Save(_appSettings);
                 _globalHotkeyService.Apply(_appSettings.Keybinds);
+                _startupRegistrationService.Apply(_appSettings.General.RunAtStartup);
 
                 MessageBox.Show($"Invalid saved keybinds. Defaults restored.\n\n{ex.Message}", "Keybinds");
             }
@@ -160,6 +164,7 @@ namespace Quick_Media_Controls
             try
             {
                 _globalHotkeyService.Apply(updatedSettings.Keybinds);
+                _startupRegistrationService.Apply(_appSettings.General.RunAtStartup);
 
                 _appSettings = updatedSettings.Clone();
                 _appSettingsService.Save(_appSettings);
@@ -256,7 +261,7 @@ namespace Quick_Media_Controls
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(2000);
+                await Task.Delay(20000);
                 AutoUpdater.Start("https://raw.githubusercontent.com/AnasAttaullah/Quick-Media-Controls/main/update.xml");
             });
         }
@@ -271,6 +276,19 @@ namespace Quick_Media_Controls
             noMediaDarkIcon = LoadTrayIcon("Assets\\Icons\\noMediaDark.ico");
         }
 
+        public async void ToggleFlyout()
+        {
+            if (_mediaFlyout == null)
+            {
+                _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+            }
+            if (_mediaFlyout.IsVisible)
+            {
+                _mediaFlyout.AnimateClose();
+                return;
+            }
+            await _mediaFlyout.ShowFlyoutAsync();
+        }
 
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
@@ -284,9 +302,7 @@ namespace Quick_Media_Controls
 
         private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
-            UpdatePlaybackButtonsStatus();
-            await _mediaFlyout.ShowFlyoutAsync();
+            ToggleFlyout();
         }
 
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)
@@ -319,16 +335,7 @@ namespace Quick_Media_Controls
                     await _mediaService.SkipPreviousAsync();
                     break;
                 case GlobalHotkeyAction.OpenFlyout:
-                    if (_mediaFlyout == null)
-                    {
-                        _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
-                    }
-                    if (_mediaFlyout.IsVisible)
-                    {
-                        _mediaFlyout.AnimateClose();
-                        return;
-                    }
-                    await _mediaFlyout.ShowFlyoutAsync();
+                    ToggleFlyout();
                     break;
             }
         }
