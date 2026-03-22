@@ -6,12 +6,16 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using Application = System.Windows.Application;
+using Cursors = System.Windows.Input.Cursors;
 
 namespace Quick_Media_Controls
 {
@@ -22,6 +26,7 @@ namespace Quick_Media_Controls
         private bool _IsDragEnabled;
         private bool _isAnimatingClose;
         private double _homeTop;
+        private const double FlyoutScreenMargin = 12;
 
         private string? _cachedThumbnailKey;
         private BitmapImage? _cachedThumbnail;
@@ -42,21 +47,44 @@ namespace Quick_Media_Controls
 
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
 
-            Left = SystemParameters.WorkArea.Right - 300 - 110;
-            _homeTop = Top = SystemParameters.WorkArea.Bottom - 130;
-
             InitializeComponent();
+            PositionFlyoutOnPrimaryScreen();
 
             MoveFlyoutToggle.IsChecked = _IsDragEnabled;
-            // Disables Default WPF Window Animations
             SourceInitialized += OnSourceInitialized;
         }
 
         private void OnSourceInitialized(object? sender, EventArgs e)
         {
+            // Disables Default WPF Window Animations
             var hwnd = new WindowInteropHelper(this).Handle;
             int disabled = 1;
             DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, ref disabled, sizeof(int));
+
+            PositionFlyoutOnPrimaryScreen();
+        }
+
+        private void PositionFlyoutOnPrimaryScreen()
+        {
+            var primaryScreen = Screen.PrimaryScreen;
+            if (primaryScreen == null)
+            {
+                return;
+            }
+
+            var dpi = VisualTreeHelper.GetDpi(this);
+            var workAreaPx = primaryScreen.WorkingArea;
+
+            var width = double.IsNaN(Width) || Width <= 0 ? MinWidth : Width;
+            var height = double.IsNaN(Height) || Height <= 0 ? MinHeight : Height;
+
+            var workLeftDip = workAreaPx.Left / dpi.DpiScaleX;
+            var workTopDip = workAreaPx.Top / dpi.DpiScaleY;
+            var workWidthDip = workAreaPx.Width / dpi.DpiScaleX;
+            var workHeightDip = workAreaPx.Height / dpi.DpiScaleY;
+
+            Left = workLeftDip + workWidthDip - width - FlyoutScreenMargin;
+            _homeTop = Top = workTopDip + workHeightDip - height - FlyoutScreenMargin;
         }
 
         public void UpdateIcons()
@@ -172,9 +200,6 @@ namespace Quick_Media_Controls
                 Dispatcher.InvokeAsync(UpdateMediaInfo);
                 return;
             }
-
-            // Skip all work (including async thumbnail I/O) when not visible
-            //if (Visibility != Visibility.Visible) return;
 
             if (_sessionManager.CurrentMediaProperties != null)
             {

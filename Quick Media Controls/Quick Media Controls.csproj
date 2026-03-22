@@ -4,6 +4,8 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<UseWPF>true</UseWPF>
+     <UseWindowsForms>true</UseWindowsForms>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<RootNamespace>Quick_Media_Controls</RootNamespace>
 		<Nullable>enable</Nullable>
 		<AssemblyName>Quick Media Controls</AssemblyName>

@@ -295,6 +295,8 @@ namespace Quick_Media_Controls
                 if (_mediaFlyout == null)
                 {
                     _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+                    _mediaFlyout.UpdateIcons();
+                    _mediaFlyout.Owner = MainWindow;
                 }
                 if (_mediaFlyout.IsVisible)
                 {
@@ -336,6 +338,7 @@ namespace Quick_Media_Controls
             var wasVisible = _mediaFlyout.IsVisible;
             _mediaFlyout.Close();
             _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+            _mediaFlyout.Owner = MainWindow;
 
             if (wasVisible)
             {

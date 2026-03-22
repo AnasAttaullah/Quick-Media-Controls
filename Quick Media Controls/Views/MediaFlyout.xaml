@@ -73,11 +73,12 @@
 
             <StackPanel
                 Grid.Column="1"
-                Margin="15,0,0,0"
+                Margin="12,0,0,0"
                 VerticalAlignment="Center">
                 <ui:TextBlock
                     Name="playingMediaTitle"
-                    FontSize="16"
+                    FontSize="17"
+                    Margin="0 0 0 1"
                     FontTypography="BodyStrong"
                     Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
                 <ui:TextBlock
