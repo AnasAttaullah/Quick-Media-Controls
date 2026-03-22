@@ -1,8 +1,8 @@
 ﻿using AutoUpdaterDotNET;
+using Microsoft.Win32;
 using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -21,6 +21,11 @@ namespace Quick_Media_Controls
     {
         private NotifyIcon _trayIcon;
         private MediaFlyout? _mediaFlyout;
+
+        private readonly DispatcherTimer _displayChangeReloadTimer = new()
+        {
+            Interval = TimeSpan.FromMilliseconds(900)
+        };
 
         private ImageSource noMediaLightIcon;
         private ImageSource noMediaDarkIcon;
@@ -68,6 +73,10 @@ namespace Quick_Media_Controls
 
             ApplicationThemeManager.Changed += ApplicationThemeManager_Changed;
 
+            _displayChangeReloadTimer.Tick += DisplayChangeReloadTimer_TickAsync;
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
+
             // Hidden window to provide message pump for tray icon
             MainWindow = new Window
             {
@@ -95,6 +104,11 @@ namespace Quick_Media_Controls
         protected override void OnExit(ExitEventArgs e)
         {
             ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
+            SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
+
+            _displayChangeReloadTimer.Tick -= DisplayChangeReloadTimer_TickAsync;
+            _displayChangeReloadTimer.Stop();
 
             if (_globalHotkeyService != null)
             {
@@ -276,18 +290,57 @@ namespace Quick_Media_Controls
             noMediaDarkIcon = LoadTrayIcon("Assets\\Icons\\noMediaDark.ico");
         }
 
-        public async void ToggleFlyout()
+        public async Task ToggleFlyoutAsync()
         {
-            if (_mediaFlyout == null)
+                if (_mediaFlyout == null)
+                {
+                    _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+                }
+                if (_mediaFlyout.IsVisible)
+                {
+                    _mediaFlyout.AnimateClose();
+                    return;
+                }
+
+                await _mediaFlyout.ShowFlyoutAsync();
+        }
+
+        private void QueueWindowReinitialize()
+        {
+            if (!Dispatcher.CheckAccess())
             {
-                _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
-            }
-            if (_mediaFlyout.IsVisible)
-            {
-                _mediaFlyout.AnimateClose();
+                _ = Dispatcher.InvokeAsync(QueueWindowReinitialize);
                 return;
             }
-            await _mediaFlyout.ShowFlyoutAsync();
+
+            _displayChangeReloadTimer.Stop();
+            _displayChangeReloadTimer.Start();
+        }
+
+        private async void DisplayChangeReloadTimer_TickAsync(object? sender, EventArgs e)
+        {
+            _displayChangeReloadTimer.Stop();
+            await ReloadFlyoutAsync();
+        }
+
+        private async Task ReloadFlyoutAsync()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                _ = Dispatcher.InvokeAsync(ReloadFlyoutAsync);
+                return;
+            }
+
+            if (_mediaFlyout is null) return;
+
+            var wasVisible = _mediaFlyout.IsVisible;
+            _mediaFlyout.Close();
+            _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+
+            if (wasVisible)
+            {
+                await _mediaFlyout.ShowFlyoutAsync();
+            }
         }
 
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
@@ -302,7 +355,7 @@ namespace Quick_Media_Controls
 
         private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            ToggleFlyout();
+            ToggleFlyoutAsync();
         }
 
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)
@@ -335,8 +388,21 @@ namespace Quick_Media_Controls
                     await _mediaService.SkipPreviousAsync();
                     break;
                 case GlobalHotkeyAction.OpenFlyout:
-                    ToggleFlyout();
+                    ToggleFlyoutAsync();
                     break;
+            }
+        }
+
+        private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
+        {
+            QueueWindowReinitialize();
+        }
+
+        private void SystemEvents_UserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
+        {
+            if (e.Category is UserPreferenceCategory.Desktop or UserPreferenceCategory.General)
+            {
+                QueueWindowReinitialize();
             }
         }
 
