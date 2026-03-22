@@ -8,14 +8,32 @@
     Title="GeneralSettingsPage"
     mc:Ignorable="d">
 
-    <StackPanel Margin="20 10 20 0">
+    <StackPanel Margin="20 14 20 0">
 
-        <ui:TextBlock
-            Margin="0,0,0,20"
-            FontSize="22"
-            FontTypography="Subtitle"
-            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-            Text="General Settings" />
+        <Grid Margin="0,0,0,14" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ui:TextBlock
+                FontSize="22"
+                Grid.Column="0"
+                FontTypography="Subtitle"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                Text="General Settings" />
+
+            <ui:Button Name="CheckForUpdatesNowButton"
+                       Margin="0 2 0 0"
+                       Grid.Column="1"
+                       BorderBrush="Transparent"
+                       Click="CheckForUpdatesNowButton_Click"
+                       HorizontalAlignment="Right"
+                       Icon="{ui:SymbolIcon Symbol=ArrowSync20}"
+                       Content="Check for Update Now"
+                       Appearance="Transparent"
+                       Foreground="{ui:ThemeResource TextFillColorTertiaryBrush }"/>
+        </Grid>
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=WindowPlay20}"
@@ -25,13 +43,34 @@
                 <StackPanel>
                     <ui:TextBlock
                         Margin="0"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                         Text="Run at Windows startup"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
             <ui:ToggleSwitch
                 x:Name="RunAtStartupToggle"
+                HorizontalContentAlignment="Left"
+                IsEnabled="True"
+                Checked="GeneralSettingToggle_Checked"
+                Unchecked="GeneralSettingToggle_Checked" />
+        </ui:CardControl>
+
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=ArrowSync20}"
+            Margin="0,0,0,4"
+            Padding="20,20,20,20">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                        Text="Check for updates on startup"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                x:Name="CheckForUpdatesOnStartupToggle"
                 HorizontalContentAlignment="Left"
                 IsEnabled="True"
                 Checked="GeneralSettingToggle_Checked"
@@ -46,34 +85,13 @@
                 <StackPanel>
                     <ui:TextBlock
                         Margin="0"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                         Text="Auto Hide Flyout"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
             <ui:ToggleSwitch
                 x:Name="AutoHideFlyoutToggle"
-                HorizontalContentAlignment="Left"
-                IsEnabled="True"
-                Checked="GeneralSettingToggle_Checked"
-                Unchecked="GeneralSettingToggle_Checked" />
-        </ui:CardControl>
-
-        <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=ArrowMove20}"
-            Margin="0,0,0,4"
-            Padding="20,20,20,20">
-            <ui:CardControl.Header>
-                <StackPanel>
-                    <ui:TextBlock
-                        Margin="0"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                        Text="Move Flyout by Default"
-                        TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </ui:CardControl.Header>
-            <ui:ToggleSwitch
-                x:Name="MoveFlyoutByDefaultToggle"
                 HorizontalContentAlignment="Left"
                 IsEnabled="True"
                 Checked="GeneralSettingToggle_Checked"
@@ -88,7 +106,7 @@
                 <StackPanel>
                     <ui:TextBlock
                         Margin="0"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                         Text="Enable Flyout animations"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
@@ -100,5 +118,27 @@
                 Checked="GeneralSettingToggle_Checked"
                 Unchecked="GeneralSettingToggle_Checked" />
         </ui:CardControl>
+
+        <ui:CardControl
+            Icon="{ui:SymbolIcon Symbol=ArrowMove20}"
+            Margin="0,0,0,4"
+            Padding="20,20,20,20">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                        Text="Move Flyout by Default"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                x:Name="MoveFlyoutByDefaultToggle"
+                HorizontalContentAlignment="Left"
+                IsEnabled="True"
+                Checked="GeneralSettingToggle_Checked"
+                Unchecked="GeneralSettingToggle_Checked" />
+        </ui:CardControl>
+
     </StackPanel>
 </Page>

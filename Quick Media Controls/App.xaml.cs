@@ -27,6 +27,8 @@ namespace Quick_Media_Controls
             Interval = TimeSpan.FromMilliseconds(900)
         };
 
+        private const string UpdateManifestUrl = "https://raw.githubusercontent.com/AnasAttaullah/Quick-Media-Controls/main/update.xml";
+
         private ImageSource noMediaLightIcon;
         private ImageSource noMediaDarkIcon;
         private ImageSource playLightIcon;
@@ -98,7 +100,11 @@ namespace Quick_Media_Controls
 
             RegisterTrayIcon();
             UpdateTrayIcon();
-            ConfigureAutoUpdater();
+
+            if (_appSettings.General.CheckForUpdatesOnStartup)
+            {
+                ConfigureAutoUpdater();
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -266,17 +272,28 @@ namespace Quick_Media_Controls
             }
         }
 
-        private void ConfigureAutoUpdater()
+        private static void ConfigureAutoUpdaterOptions()
         {
             AutoUpdater.ShowSkipButton = true;
             AutoUpdater.ShowRemindLaterButton = true;
             AutoUpdater.Mandatory = false;
             AutoUpdater.UpdateMode = Mode.Normal;
+        }
+
+        public void CheckForUpdatesNow()
+        {
+            ConfigureAutoUpdaterOptions();
+            AutoUpdater.Start(UpdateManifestUrl);
+        }
+
+        private void ConfigureAutoUpdater()
+        {
+            ConfigureAutoUpdaterOptions();
 
             _ = Task.Run(async () =>
             {
                 await Task.Delay(20000);
-                AutoUpdater.Start("https://raw.githubusercontent.com/AnasAttaullah/Quick-Media-Controls/main/update.xml");
+                AutoUpdater.Start(UpdateManifestUrl);
             });
         }
 

@@ -33,6 +33,7 @@ namespace Quick_Media_Controls.Views.Pages
             _isBinding = true;
 
             RunAtStartupToggle.IsChecked = _generalSettings.RunAtStartup;
+            CheckForUpdatesOnStartupToggle.IsChecked = _generalSettings.CheckForUpdatesOnStartup;
             AutoHideFlyoutToggle.IsChecked = _generalSettings.AutoHideFlyout;
             MoveFlyoutByDefaultToggle.IsChecked = _generalSettings.MoveFlyoutByDefault;
             EnableFlyoutAnimationsToggle.IsChecked = _generalSettings.EnableFlyoutAnimations;
@@ -45,11 +46,20 @@ namespace Quick_Media_Controls.Views.Pages
             if (_settingWindows is null || _isBinding) return;
 
             _generalSettings.RunAtStartup = RunAtStartupToggle.IsChecked ?? false;
+            _generalSettings.CheckForUpdatesOnStartup = CheckForUpdatesOnStartupToggle.IsChecked ?? false;
             _generalSettings.AutoHideFlyout = AutoHideFlyoutToggle.IsChecked ?? false;
             _generalSettings.MoveFlyoutByDefault = MoveFlyoutByDefaultToggle.IsChecked ?? false;
             _generalSettings.EnableFlyoutAnimations = EnableFlyoutAnimationsToggle.IsChecked ?? false;
 
             _settingWindows.SetDraftGeneralSettings(_generalSettings);
+        }
+
+        private void CheckForUpdatesNowButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current is App app)
+            {
+                app.CheckForUpdatesNow();
+            }
         }
     }
 }

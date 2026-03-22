@@ -9,20 +9,14 @@
     Title="Keybinds Setting Window"
     mc:Ignorable="d">
 
-    <StackPanel Margin="20 10 20 0">
+    <StackPanel Margin="20 14 20 0">
 
         <ui:TextBlock
-            Margin="0,0,0,6"
+            Margin="0,0,0,18"
             FontSize="22"
             FontTypography="Subtitle"
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="Keybinds Settings" />
-
-        <ui:TextBlock
-            Margin="0,0,0,16"
-            FontTypography="Caption"
-            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-            Text="Click a hotkey field, then press a new key combination (modifier + key)" />
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Play20}"
