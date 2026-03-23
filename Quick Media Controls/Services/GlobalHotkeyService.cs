@@ -8,14 +8,6 @@ using System.Windows.Interop;
 
 namespace Quick_Media_Controls.Services
 {
-    public enum GlobalHotkeyAction
-    {
-        PlayPause = 1,
-        NextTrack = 2,
-        PreviousTrack = 3,
-        OpenFlyout = 4
-    }
-
     public sealed class GlobalHotkeyService : IDisposable
     {
         private const int WM_HOTKEY = 0x0312;
@@ -28,10 +20,10 @@ namespace Quick_Media_Controls.Services
 
         private readonly IntPtr _windowHandle;
         private readonly HwndSource _hwndSource;
-        private readonly Dictionary<int, GlobalHotkeyAction> _registeredHotkeyActions = new Dictionary<int, GlobalHotkeyAction>();
+        private readonly Dictionary<int, ShortcutAction> _registeredHotkeyActions = new Dictionary<int, ShortcutAction>();
         private bool _isDisposed;
 
-        public event EventHandler<GlobalHotkeyAction>? HotkeyPressed;
+        public event EventHandler<ShortcutAction>? HotkeyPressed;
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -52,10 +44,10 @@ namespace Quick_Media_Controls.Services
 
             try
             {
-            Register(1001, settings.PlayPause, GlobalHotkeyAction.PlayPause);
-            Register(1002, settings.NextTrack, GlobalHotkeyAction.NextTrack);
-            Register(1003, settings.PreviousTrack, GlobalHotkeyAction.PreviousTrack);
-            Register(1004, settings.OpenFlyout, GlobalHotkeyAction.OpenFlyout);
+            Register(1001, settings.PlayPause, ShortcutAction.PlayPause);
+            Register(1002, settings.NextTrack, ShortcutAction.NextTrack);
+            Register(1003, settings.PreviousTrack, ShortcutAction.PreviousTrack);
+            Register(1004, settings.OpenFlyout, ShortcutAction.OpenFlyout);
             }
             catch
             {
@@ -67,7 +59,7 @@ namespace Quick_Media_Controls.Services
             }
         }
 
-        private void Register(int id, HotkeyGesture gesture,GlobalHotkeyAction action)
+        private void Register(int id, HotkeyGesture gesture,ShortcutAction action)
         {
             var modifiers = ToNativeModifiers(gesture.Modifiers) | MOD_NOREPEAT;
             var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(gesture.Key);

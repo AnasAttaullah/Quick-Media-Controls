@@ -210,7 +210,7 @@ namespace Quick_Media_Controls
                 }
 
                 var mediaTitle = _sessionManager.CurrentMediaProperties.Title;
-                playingMediaTitle.Text = mediaTitle.Length > 35 ? mediaTitle[..32] + "..." : mediaTitle;
+                playingMediaTitle.Text = mediaTitle.Length > 30 ? mediaTitle[..30] + "..." : mediaTitle;
                 playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
 
                 var thumbnail = await LoadMediaThumbnailAsync(_sessionManager.CurrentMediaProperties.Thumbnail);

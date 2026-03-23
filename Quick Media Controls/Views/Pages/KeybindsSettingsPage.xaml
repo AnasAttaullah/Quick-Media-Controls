@@ -168,7 +168,6 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-
             <ui:CardControl
                 Height="auto"
                 Margin="0 0 2 0"
@@ -213,6 +212,7 @@
                         Width="140"
                         Grid.Column="1"
                         SelectedIndex="0">
+                        <ComboBoxItem Content="None" />
                         <ComboBoxItem Content="Play/Pause" />
                         <ComboBoxItem Content="Next track" />
                         <ComboBoxItem Content="Previous track" />
@@ -234,6 +234,7 @@
                         Width="140"
                         Grid.Column="1"
                         SelectedIndex="0">
+                        <ComboBoxItem Content="None" />
                         <ComboBoxItem Content="Play/Pause" />
                         <ComboBoxItem Content="Next track" />
                         <ComboBoxItem Content="Previous track" />
@@ -255,6 +256,7 @@
                         Width="140"
                         Grid.Column="1"
                         SelectedIndex="0">
+                        <ComboBoxItem Content="None" />
                         <ComboBoxItem Content="Play/Pause" />
                         <ComboBoxItem Content="Next track" />
                         <ComboBoxItem Content="Previous track" />
@@ -276,6 +278,7 @@
                         Width="140"
                         Grid.Column="1"
                         SelectedIndex="0">
+                        <ComboBoxItem Content="None" />
                         <ComboBoxItem Content="Play/Pause" />
                         <ComboBoxItem Content="Next track" />
                         <ComboBoxItem Content="Previous track" />

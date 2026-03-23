@@ -68,6 +68,7 @@ namespace Quick_Media_Controls
             _trayIcon.LeftClick += TrayIcon_LeftClickAsync;
             _trayIcon.LeftDoubleClick += TrayIcon_LeftDoubleClickAsync;
             _trayIcon.RightClick += TrayIcon_RightClickAsync;
+            _trayIcon.MiddleClick += TrayIcon_MiddleClickAsync;
 
             _mediaService.SessionChanged += MediaService_SessionChanged;
             _mediaService.PlaybackInfoChanged += MediaService_PlaybackInfoChanged;
@@ -105,6 +106,11 @@ namespace Quick_Media_Controls
             {
                 ConfigureAutoUpdater();
             }
+        }
+
+        private async void TrayIcon_MiddleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -392,20 +398,20 @@ namespace Quick_Media_Controls
             UpdatePlaybackButtonsStatus();
         }
 
-        private async void GlobalHotkeyService_HotkeyPressed(object? sender, GlobalHotkeyAction action)
+        private async void GlobalHotkeyService_HotkeyPressed(object? sender, ShortcutAction action)
         {
             switch (action)
             {
-                case GlobalHotkeyAction.PlayPause:
+                case ShortcutAction.PlayPause:
                     await _mediaService.TogglePlayPauseAsync();
                     break;
-                case GlobalHotkeyAction.NextTrack:
+                case ShortcutAction.NextTrack:
                     await _mediaService.SkipNextAsync();
                     break;
-                case GlobalHotkeyAction.PreviousTrack:
+                case ShortcutAction.PreviousTrack:
                     await _mediaService.SkipPreviousAsync();
                     break;
-                case GlobalHotkeyAction.OpenFlyout:
+                case ShortcutAction.OpenFlyout:
                     ToggleFlyoutAsync();
                     break;
             }
