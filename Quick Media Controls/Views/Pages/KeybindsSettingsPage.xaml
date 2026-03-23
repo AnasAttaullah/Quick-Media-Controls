@@ -9,14 +9,16 @@
     Title="Keybinds Setting Window"
     mc:Ignorable="d">
 
-    <StackPanel Margin="20 14 20 0">
+    <StackPanel Margin="14">
 
         <ui:TextBlock
-            Margin="0,0,0,18"
             FontSize="22"
             FontTypography="Subtitle"
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="Keybinds Settings" />
+
+        <!-- Mouse Keybinds Settings -->
+        <ui:TextBlock Text="Keyboard Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Play20}"
@@ -119,7 +121,7 @@
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Window20}"
-            Margin="0,0,0,0"
+            Margin="0,0,0,4"
             Padding="20 15 20 15">
             <ui:CardControl.Header>
                 <StackPanel>
@@ -156,5 +158,131 @@
             FontTypography="Caption"
             Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
             Visibility="Collapsed" />
+
+        <!-- Mouse Keybinds Settings -->
+        <ui:TextBlock Text="Mouse Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ui:CardControl
+                Height="auto"
+                Margin="0 0 2 0"
+                Grid.Column="0"
+                Padding="20 25 20 25">
+                <ui:CardControl.Header>
+                    <StackPanel>
+
+                        <ui:SymbolIcon Symbol="CursorClick24" FontSize="92" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"/>
+                        <ui:TextBlock
+                            Margin="0 10 0 0"
+                            TextAlignment="Center"
+                            FontSize="18"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Mouse Click Actions"
+                            FontTypography="Subtitle"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Margin="0 4 0 0"
+                            FontSize="12"
+                            TextAlignment="Center"
+                            Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                            Text="Each mouse click must be assigned a unique action"
+                            FontTypography="Body"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+            </ui:CardControl>
+
+            <StackPanel Grid.Column="1" Margin="2 0 0 0">
+                <ui:CardControl Padding="12,10">
+                    <ui:CardControl.Header>
+                        <ui:TextBlock
+                            Grid.Column="0"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0"
+                            Text="Single Left Click" />
+
+                    </ui:CardControl.Header>
+                    <ComboBox
+                        Width="140"
+                        Grid.Column="1"
+                        SelectedIndex="0">
+                        <ComboBoxItem Content="Play/Pause" />
+                        <ComboBoxItem Content="Next track" />
+                        <ComboBoxItem Content="Previous track" />
+                        <ComboBoxItem Content="Open flyout" />
+                    </ComboBox>
+                </ui:CardControl>
+
+                <ui:CardControl Padding="12,10">
+                    <ui:CardControl.Header>
+                        <ui:TextBlock
+                            Grid.Column="0"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0"
+                            Text="Double Left Click" />
+
+                    </ui:CardControl.Header>
+                    <ComboBox
+                        Width="140"
+                        Grid.Column="1"
+                        SelectedIndex="0">
+                        <ComboBoxItem Content="Play/Pause" />
+                        <ComboBoxItem Content="Next track" />
+                        <ComboBoxItem Content="Previous track" />
+                        <ComboBoxItem Content="Open flyout" />
+                    </ComboBox>
+                </ui:CardControl>
+
+                <ui:CardControl Padding="12,10">
+                    <ui:CardControl.Header>
+                        <ui:TextBlock
+                            Grid.Column="0"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0"
+                            Text="Right Click" />
+
+                    </ui:CardControl.Header>
+                    <ComboBox
+                        Width="140"
+                        Grid.Column="1"
+                        SelectedIndex="0">
+                        <ComboBoxItem Content="Play/Pause" />
+                        <ComboBoxItem Content="Next track" />
+                        <ComboBoxItem Content="Previous track" />
+                        <ComboBoxItem Content="Open flyout" />
+                    </ComboBox>
+                </ui:CardControl>
+
+                <ui:CardControl Padding="12,10">
+                    <ui:CardControl.Header>
+                        <ui:TextBlock
+                            Grid.Column="0"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0"
+                            Text="Middle Click" />
+
+                    </ui:CardControl.Header>
+                    <ComboBox
+                        Width="140"
+                        Grid.Column="1"
+                        SelectedIndex="0">
+                        <ComboBoxItem Content="Play/Pause" />
+                        <ComboBoxItem Content="Next track" />
+                        <ComboBoxItem Content="Previous track" />
+                        <ComboBoxItem Content="Open flyout" />
+                    </ComboBox>
+                </ui:CardControl>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </Page>

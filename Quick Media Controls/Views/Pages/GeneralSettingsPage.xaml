@@ -8,7 +8,7 @@
     Title="GeneralSettingsPage"
     mc:Ignorable="d">
 
-    <StackPanel Margin="20 14 20 0">
+    <StackPanel Margin="14">
 
         <Grid Margin="0,0,0,14" >
             <Grid.ColumnDefinitions>

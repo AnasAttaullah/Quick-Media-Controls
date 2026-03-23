@@ -37,11 +37,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Author:" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="License:" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Framework:" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Platform:" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Version:" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+                    <ui:TextBlock FontTypography="BodyStrong" Text="Author:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+                    <ui:TextBlock FontTypography="BodyStrong" Text="License:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+                    <ui:TextBlock FontTypography="BodyStrong" Text="Framework:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+                    <ui:TextBlock FontTypography="BodyStrong" Text="Platform:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+                    <ui:TextBlock FontTypography="BodyStrong" Text="Version:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <ui:TextBlock FontTypography="Body" Text="Anas Attaullah" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
