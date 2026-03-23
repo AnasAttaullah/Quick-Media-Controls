@@ -36,7 +36,7 @@
         </Grid>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=WindowPlay20}"
+            Icon="{ui:SymbolIcon Symbol=Power20}"
             Margin="0,0,0,4"
             Padding="20,20,20,20">
             <ui:CardControl.Header>
@@ -44,7 +44,7 @@
                     <ui:TextBlock
                         Margin="0"
                         Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Run at Windows startup"
+                        Text="Launch at System Startup"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
@@ -65,7 +65,7 @@
                     <ui:TextBlock
                         Margin="0"
                         Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Check for updates on startup"
+                        Text="Automatically Check for Updates"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
@@ -86,7 +86,7 @@
                     <ui:TextBlock
                         Margin="0"
                         Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Auto Hide Flyout"
+                        Text="Automatically Hide Flyout"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
@@ -107,7 +107,7 @@
                     <ui:TextBlock
                         Margin="0"
                         Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Enable Flyout animations"
+                        Text="Enable Flyout Animations"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>
@@ -128,7 +128,7 @@
                     <ui:TextBlock
                         Margin="0"
                         Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Move Flyout by Default"
+                        Text="Allow Flyout Repositioning by Default"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </ui:CardControl.Header>

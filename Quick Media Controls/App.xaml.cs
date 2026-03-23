@@ -162,19 +162,17 @@ namespace Quick_Media_Controls
             try
             {
                 _globalHotkeyService.Apply(_appSettings.Keybinds);
-                _appSettings.General.RunAtStartup = _startupRegistrationService.IsRegistered();
-                _appSettingsService.Save(_appSettings);
-
             }
             catch (Exception ex)
             {
-                _appSettings = AppSettings.CreateDefault();
-                _appSettingsService.Save(_appSettings);
-                _globalHotkeyService.Apply(_appSettings.Keybinds);
-                _startupRegistrationService.Apply(_appSettings.General.RunAtStartup);
-
-                MessageBox.Show($"Invalid saved keybinds. Defaults restored.\n\n{ex.Message}", "Keybinds");
+                MessageBox.Show(
+                    ex.Message,
+                    "Hotkeys Registration Failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
+            _appSettings.General.RunAtStartup = _startupRegistrationService.IsRegistered();
+            _appSettingsService.Save(_appSettings);
         }
 
         public bool TrySaveSettings(AppSettings updatedSettings, out string? error)
@@ -274,7 +272,7 @@ namespace Quick_Media_Controls
 
         private static void ConfigureAutoUpdaterOptions()
         {
-            AutoUpdater.ShowSkipButton = true;
+            AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = true;
             AutoUpdater.Mandatory = false;
             AutoUpdater.UpdateMode = Mode.Normal;
