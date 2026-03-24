@@ -133,7 +133,8 @@ namespace Quick_Media_Controls
                 _trayIcon.LeftClick -= TrayIcon_LeftClickAsync;
                 _trayIcon.LeftDoubleClick -= TrayIcon_LeftDoubleClickAsync;
                 _trayIcon.RightClick -= TrayIcon_RightClickAsync;
-                
+                _trayIcon.MiddleClick -= TrayIcon_MiddleClickAsync;
+
                 if (_trayIcon.IsRegistered)
                 {
                     _trayIcon.Unregister();

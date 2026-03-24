@@ -121,7 +121,7 @@
 
         <ui:CardControl
             Icon="{ui:SymbolIcon Symbol=Window20}"
-            Margin="0,0,0,4"
+            Margin="0,0,0,0"
             Padding="20 15 20 15">
             <ui:CardControl.Header>
                 <StackPanel>
@@ -154,7 +154,7 @@
 
         <ui:TextBlock
             x:Name="HotkeyValidationTextBlock"
-            Margin="0,8,0,0"
+            Margin="0,4,0,0"
             FontTypography="Caption"
             Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
             Visibility="Collapsed" />
