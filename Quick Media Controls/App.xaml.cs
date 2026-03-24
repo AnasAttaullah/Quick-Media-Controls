@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -108,11 +109,6 @@ namespace Quick_Media_Controls
             }
         }
 
-        private async void TrayIcon_MiddleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void OnExit(ExitEventArgs e)
         {
             ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
@@ -162,6 +158,8 @@ namespace Quick_Media_Controls
         private void InitializeAppSettings()
         {
             _appSettings = _appSettingsService.Load();
+            _appSettings.Keybinds.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
+            _appSettings.Keybinds.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
 
             _globalHotkeyService = new GlobalHotkeyService(MainWindow);
             _globalHotkeyService.HotkeyPressed += GlobalHotkeyService_HotkeyPressed;
@@ -178,6 +176,7 @@ namespace Quick_Media_Controls
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+
             _appSettings.General.RunAtStartup = _startupRegistrationService.IsRegistered();
             _appSettingsService.Save(_appSettings);
         }
@@ -186,10 +185,18 @@ namespace Quick_Media_Controls
         {
             error = null;
 
+            updatedSettings.Keybinds.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
+            updatedSettings.Keybinds.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
+
+            if (!TryValidateMouseShortcutMappings(updatedSettings.Keybinds.MouseShortcuts, out error))
+            {
+                return false;
+            }
+
             try
             {
                 _globalHotkeyService.Apply(updatedSettings.Keybinds);
-                _startupRegistrationService.Apply(_appSettings.General.RunAtStartup);
+                _startupRegistrationService.Apply(updatedSettings.General.RunAtStartup);
 
                 _appSettings = updatedSettings.Clone();
                 _appSettingsService.Save(_appSettings);
@@ -368,19 +375,73 @@ namespace Quick_Media_Controls
             }
         }
 
+        private async Task ExecuteShortcutActionAsync(ShortcutAction action)
+        {
+            switch (action)
+            {
+                case ShortcutAction.PlayPause:
+                    await _mediaService.TogglePlayPauseAsync();
+                    break;
+                case ShortcutAction.NextTrack:
+                    await _mediaService.SkipNextAsync();
+                    break;
+                case ShortcutAction.PreviousTrack:
+                    await _mediaService.SkipPreviousAsync();
+                    break;
+                case ShortcutAction.OpenFlyout:
+                    await ToggleFlyoutAsync();
+                    break;
+            }
+        }
+
+        private static bool TryValidateMouseShortcutMappings(MouseShortcutSettings settings, out string? error)
+        {
+            string? localError = null;
+            var seen = new HashSet<ShortcutAction>();
+
+            bool Add(ShortcutAction? action)
+            {
+                if (!action.HasValue)
+                    return true;
+
+                if (!seen.Add(action.Value))
+                {
+                    localError = $"Mouse shortcut conflict: \"{action.Value}\" is assigned more than once. " +
+                                 "Each non-None mouse action must be unique.";
+                    return false;
+                }
+
+                return true;
+            }
+
+            var ok =
+                Add(settings.LeftClick) &&
+                Add(settings.DoubleLeftClick) &&
+                Add(settings.RightClick) &&
+                Add(settings.MiddleClick);
+
+            error = localError;
+            return ok;
+        }
+
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await _mediaService.TogglePlayPauseAsync();
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.LeftClick);
         }
 
         private async void TrayIcon_LeftDoubleClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-             await _mediaService.SkipNextAsync();
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.DoubleLeftClick);
         }
 
         private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            ToggleFlyoutAsync();
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.RightClick);
+        }
+
+        private async void TrayIcon_MiddleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        {
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.MiddleClick);
         }
 
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)
@@ -401,21 +462,17 @@ namespace Quick_Media_Controls
 
         private async void GlobalHotkeyService_HotkeyPressed(object? sender, ShortcutAction action)
         {
-            switch (action)
+            await ExecuteShortcutActionAsync(action);
+        }
+
+        private async Task ExecuteMouseShortcutAsync(ShortcutAction? action)
+        {
+            if (!action.HasValue)
             {
-                case ShortcutAction.PlayPause:
-                    await _mediaService.TogglePlayPauseAsync();
-                    break;
-                case ShortcutAction.NextTrack:
-                    await _mediaService.SkipNextAsync();
-                    break;
-                case ShortcutAction.PreviousTrack:
-                    await _mediaService.SkipPreviousAsync();
-                    break;
-                case ShortcutAction.OpenFlyout:
-                    ToggleFlyoutAsync();
-                    break;
+                return;
             }
+
+            await ExecuteShortcutActionAsync(action.Value);
         }
 
         private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)

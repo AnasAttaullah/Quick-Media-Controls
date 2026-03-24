@@ -3,6 +3,7 @@ using Quick_Media_Controls.Views.Pages;
 using System;
 using System.Windows;
 using Wpf.Ui.Controls;
+
 namespace Quick_Media_Controls
 {
     public partial class SettingsWindow : FluentWindow
@@ -66,7 +67,7 @@ namespace Quick_Media_Controls
             _snackbar.Title = title;
             _snackbar.Content = message;
             _snackbar.Appearance = appearance;
-            _snackbar.Icon = new SymbolIcon(icon , FontSize = 32);
+            _snackbar.Icon = new SymbolIcon(icon, FontSize = 32);
             _snackbar.Timeout = TimeSpan.FromSeconds(5);
             _snackbar.Show(true);
         }

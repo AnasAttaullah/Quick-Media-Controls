@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Quick_Media_Controls.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:Quick_Media_Controls.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Keybinds Setting Window"
     mc:Ignorable="d">
@@ -17,7 +18,7 @@
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="Keybinds Settings" />
 
-        <!-- Mouse Keybinds Settings -->
+        <!-- Keyboard Keybinds Settings -->
         <ui:TextBlock Text="Keyboard Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
 
         <ui:CardControl
@@ -209,14 +210,15 @@
 
                     </ui:CardControl.Header>
                     <ComboBox
+                        x:Name="LeftClickActionComboBox"
                         Width="140"
                         Grid.Column="1"
-                        SelectedIndex="0">
-                        <ComboBoxItem Content="None" />
-                        <ComboBoxItem Content="Play/Pause" />
-                        <ComboBoxItem Content="Next track" />
-                        <ComboBoxItem Content="Previous track" />
-                        <ComboBoxItem Content="Open flyout" />
+                        SelectionChanged="MouseShortcutComboBox_SelectionChanged">
+                        <ComboBoxItem Content="None" Tag="{x:Null}" />
+                        <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
+                        <ComboBoxItem Content="Next Track" Tag="{x:Static models:ShortcutAction.NextTrack}" />
+                        <ComboBoxItem Content="Previous Track" Tag="{x:Static models:ShortcutAction.PreviousTrack}" />
+                        <ComboBoxItem Content="Open Flyout" Tag="{x:Static models:ShortcutAction.OpenFlyout}" />
                     </ComboBox>
                 </ui:CardControl>
 
@@ -231,14 +233,15 @@
 
                     </ui:CardControl.Header>
                     <ComboBox
+                        x:Name="DoubleLeftClickActionComboBox"
                         Width="140"
                         Grid.Column="1"
-                        SelectedIndex="0">
-                        <ComboBoxItem Content="None" />
-                        <ComboBoxItem Content="Play/Pause" />
-                        <ComboBoxItem Content="Next track" />
-                        <ComboBoxItem Content="Previous track" />
-                        <ComboBoxItem Content="Open flyout" />
+                        SelectionChanged="MouseShortcutComboBox_SelectionChanged">
+                        <ComboBoxItem Content="None" Tag="{x:Null}" />
+                        <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
+                        <ComboBoxItem Content="Next Track" Tag="{x:Static models:ShortcutAction.NextTrack}" />
+                        <ComboBoxItem Content="Previous Track" Tag="{x:Static models:ShortcutAction.PreviousTrack}" />
+                        <ComboBoxItem Content="Open Flyout" Tag="{x:Static models:ShortcutAction.OpenFlyout}" />
                     </ComboBox>
                 </ui:CardControl>
 
@@ -253,14 +256,15 @@
 
                     </ui:CardControl.Header>
                     <ComboBox
+                        x:Name="RightClickActionComboBox"
                         Width="140"
                         Grid.Column="1"
-                        SelectedIndex="0">
-                        <ComboBoxItem Content="None" />
-                        <ComboBoxItem Content="Play/Pause" />
-                        <ComboBoxItem Content="Next track" />
-                        <ComboBoxItem Content="Previous track" />
-                        <ComboBoxItem Content="Open flyout" />
+                        SelectionChanged="MouseShortcutComboBox_SelectionChanged">
+                        <ComboBoxItem Content="None" Tag="{x:Null}" />
+                        <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
+                        <ComboBoxItem Content="Next Track" Tag="{x:Static models:ShortcutAction.NextTrack}" />
+                        <ComboBoxItem Content="Previous Track" Tag="{x:Static models:ShortcutAction.PreviousTrack}" />
+                        <ComboBoxItem Content="Open Flyout" Tag="{x:Static models:ShortcutAction.OpenFlyout}" />
                     </ComboBox>
                 </ui:CardControl>
 
@@ -275,17 +279,25 @@
 
                     </ui:CardControl.Header>
                     <ComboBox
+                        x:Name="MiddleClickActionComboBox"
                         Width="140"
                         Grid.Column="1"
-                        SelectedIndex="0">
-                        <ComboBoxItem Content="None" />
-                        <ComboBoxItem Content="Play/Pause" />
-                        <ComboBoxItem Content="Next track" />
-                        <ComboBoxItem Content="Previous track" />
-                        <ComboBoxItem Content="Open flyout" />
+                        SelectionChanged="MouseShortcutComboBox_SelectionChanged">
+                        <ComboBoxItem Content="None" Tag="{x:Null}" />
+                        <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
+                        <ComboBoxItem Content="Next Track" Tag="{x:Static models:ShortcutAction.NextTrack}" />
+                        <ComboBoxItem Content="Previous Track" Tag="{x:Static models:ShortcutAction.PreviousTrack}" />
+                        <ComboBoxItem Content="Open Flyout" Tag="{x:Static models:ShortcutAction.OpenFlyout}" />
                     </ComboBox>
                 </ui:CardControl>
             </StackPanel>
         </Grid>
+
+        <ui:TextBlock
+            x:Name="MouseShortcutValidationTextBlock"
+            Margin="0,4,0,0"
+            FontTypography="Caption"
+            Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
+            Visibility="Collapsed" />
     </StackPanel>
 </Page>

@@ -5,16 +5,15 @@ namespace Quick_Media_Controls.Models
 {
     public sealed class AppSettings
     {
-
-        public KeybindSettings Keybinds { get; set; } = KeybindSettings.CreateDefault();
         public GeneralSettings General { get; set; } = GeneralSettings.CreateDefault();
+        public KeybindSettings Keybinds { get; set; } = KeybindSettings.CreateDefault();
 
         public static AppSettings CreateDefault()
         {
             return new AppSettings
             {
-                Keybinds = KeybindSettings.CreateDefault(),
-                General = GeneralSettings.CreateDefault()
+                General = GeneralSettings.CreateDefault(),
+                Keybinds = KeybindSettings.CreateDefault()
             };
         }
 
@@ -22,8 +21,8 @@ namespace Quick_Media_Controls.Models
         {
             return new AppSettings
             {
-                Keybinds = Keybinds.Clone(),
-                General = General.Clone()
+                General = General.Clone(),
+                Keybinds = Keybinds.Clone()
             };
         }
     }
@@ -63,14 +62,38 @@ namespace Quick_Media_Controls.Models
 
     public sealed class KeybindSettings
     {
+        public KeyboardShortcutSettings KeyboardShortcuts { get; set; } = KeyboardShortcutSettings.CreateDefault();
+        public MouseShortcutSettings MouseShortcuts { get; set; } = MouseShortcutSettings.CreateDefault();
+
+        public static KeybindSettings CreateDefault()
+        {
+            return new KeybindSettings
+            {
+                KeyboardShortcuts = KeyboardShortcutSettings.CreateDefault(),
+                MouseShortcuts = MouseShortcutSettings.CreateDefault()
+            };
+        }
+
+        public KeybindSettings Clone()
+        {
+            return new KeybindSettings
+            {
+                KeyboardShortcuts = KeyboardShortcuts.Clone(),
+                MouseShortcuts = MouseShortcuts.Clone()
+            };
+        }
+    }
+
+    public sealed class KeyboardShortcutSettings
+    {
         public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, Key.P);
         public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, Key.N);
         public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, Key.P);
         public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, Key.O);
 
-        public static KeybindSettings CreateDefault()
+        public static KeyboardShortcutSettings CreateDefault()
         {
-            return new KeybindSettings
+            return new KeyboardShortcutSettings
             {
                 PlayPause = new HotkeyGesture(ModifierKeys.Alt, Key.P),
                 NextTrack = new HotkeyGesture(ModifierKeys.Alt, Key.N),
@@ -79,9 +102,9 @@ namespace Quick_Media_Controls.Models
             };
         }
 
-        public KeybindSettings Clone()
+        public KeyboardShortcutSettings Clone()
         {
-            return new KeybindSettings
+            return new KeyboardShortcutSettings
             {
                 PlayPause = PlayPause.Clone(),
                 NextTrack = NextTrack.Clone(),
@@ -96,6 +119,44 @@ namespace Quick_Media_Controls.Models
             yield return NextTrack;
             yield return PreviousTrack;
             yield return OpenFlyout;
+        }
+    }
+
+    public sealed class MouseShortcutSettings
+    {
+        public ShortcutAction? LeftClick { get; set; } = ShortcutAction.PlayPause;
+        public ShortcutAction? DoubleLeftClick { get; set; } = ShortcutAction.NextTrack;
+        public ShortcutAction? RightClick { get; set; } = ShortcutAction.OpenFlyout;
+        public ShortcutAction? MiddleClick { get; set; } = null;
+
+        public static MouseShortcutSettings CreateDefault()
+        {
+            return new MouseShortcutSettings
+            {
+                LeftClick = ShortcutAction.PlayPause,
+                DoubleLeftClick = ShortcutAction.NextTrack,
+                RightClick = ShortcutAction.OpenFlyout,
+                MiddleClick = null
+            };
+        }
+
+        public MouseShortcutSettings Clone()
+        {
+            return new MouseShortcutSettings
+            {
+                LeftClick = LeftClick,
+                DoubleLeftClick = DoubleLeftClick,
+                RightClick = RightClick,
+                MiddleClick = MiddleClick
+            };
+        }
+
+        public IEnumerable<ShortcutAction?> Enumerate()
+        {
+            yield return LeftClick;
+            yield return DoubleLeftClick;
+            yield return RightClick;
+            yield return MiddleClick;
         }
     }
 }

@@ -20,13 +20,14 @@ namespace Quick_Media_Controls.Services
 
         private readonly IntPtr _windowHandle;
         private readonly HwndSource _hwndSource;
-        private readonly Dictionary<int, ShortcutAction> _registeredHotkeyActions = new Dictionary<int, ShortcutAction>();
+        private readonly Dictionary<int, ShortcutAction> _registeredHotkeyActions = new();
         private bool _isDisposed;
 
         public event EventHandler<ShortcutAction>? HotkeyPressed;
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
@@ -40,14 +41,16 @@ namespace Quick_Media_Controls.Services
         public void Apply(KeybindSettings settings)
         {
             UnregisterAll();
-            ValidateNoDuplicates(settings);
+
+            var keyboard = settings.KeyboardShortcuts ?? KeyboardShortcutSettings.CreateDefault();
+            ValidateNoDuplicates(keyboard);
 
             try
             {
-            Register(1001, settings.PlayPause, ShortcutAction.PlayPause);
-            Register(1002, settings.NextTrack, ShortcutAction.NextTrack);
-            Register(1003, settings.PreviousTrack, ShortcutAction.PreviousTrack);
-            Register(1004, settings.OpenFlyout, ShortcutAction.OpenFlyout);
+                Register(1001, keyboard.PlayPause, ShortcutAction.PlayPause);
+                Register(1002, keyboard.NextTrack, ShortcutAction.NextTrack);
+                Register(1003, keyboard.PreviousTrack, ShortcutAction.PreviousTrack);
+                Register(1004, keyboard.OpenFlyout, ShortcutAction.OpenFlyout);
             }
             catch
             {
@@ -59,29 +62,31 @@ namespace Quick_Media_Controls.Services
             }
         }
 
-        private void Register(int id, HotkeyGesture gesture,ShortcutAction action)
+        private void Register(int id, HotkeyGesture gesture, ShortcutAction action)
         {
             var modifiers = ToNativeModifiers(gesture.Modifiers) | MOD_NOREPEAT;
             var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(gesture.Key);
 
-            if(!RegisterHotKey(_windowHandle, id, modifiers, virtualKey))
+            if (!RegisterHotKey(_windowHandle, id, modifiers, virtualKey))
             {
                 var errorCode = Marshal.GetLastWin32Error();
                 throw new InvalidOperationException($"Failed to register hotkey. Error code: {errorCode}");
             }
+
             _registeredHotkeyActions[id] = action;
         }
 
         public void UnregisterAll()
         {
-            foreach(var id in _registeredHotkeyActions.Keys)
+            foreach (var id in _registeredHotkeyActions.Keys)
             {
                 UnregisterHotKey(_windowHandle, id);
             }
+
             _registeredHotkeyActions.Clear();
         }
 
-        private static void ValidateNoDuplicates(KeybindSettings settings)
+        private static void ValidateNoDuplicates(KeyboardShortcutSettings settings)
         {
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -99,10 +104,10 @@ namespace Quick_Media_Controls.Services
         {
             uint native = 0;
 
-            if(modifiers.HasFlag(ModifierKeys.Alt)) native |= MOD_ALT;
-            if(modifiers.HasFlag(ModifierKeys.Control)) native |= MOD_CONTROL;
-            if(modifiers.HasFlag(ModifierKeys.Shift)) native |= MOD_SHIFT;
-            if(modifiers.HasFlag(ModifierKeys.Windows)) native |= MOD_WIN;
+            if (modifiers.HasFlag(ModifierKeys.Alt)) native |= MOD_ALT;
+            if (modifiers.HasFlag(ModifierKeys.Control)) native |= MOD_CONTROL;
+            if (modifiers.HasFlag(ModifierKeys.Shift)) native |= MOD_SHIFT;
+            if (modifiers.HasFlag(ModifierKeys.Windows)) native |= MOD_WIN;
 
             return native;
         }

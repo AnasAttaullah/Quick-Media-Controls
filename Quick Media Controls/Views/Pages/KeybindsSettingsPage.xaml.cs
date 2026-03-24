@@ -11,6 +11,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private SettingsWindow? _settingsWindow;
         private KeybindSettings _keybindsSettings = KeybindSettings.CreateDefault();
+        private bool _isUpdatingMouseComboSelection;
 
         public KeybindsSettingsPage()
         {
@@ -30,15 +31,156 @@ namespace Quick_Media_Controls.Views.Pages
             if (_settingsWindow is null) return;
 
             _keybindsSettings = _settingsWindow.DraftSettings.Keybinds.Clone();
-            BindText();
+            _keybindsSettings.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
+            _keybindsSettings.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
+
+            BindKeyboardShortcutText();
+            BindMouseShortcutSelections();
         }
 
-        private void BindText()
+        private void BindKeyboardShortcutText()
         {
-            PlayPauseHotkeyTextBox.Text = _keybindsSettings.PlayPause.ToDisplayString();
-            NextTrackHotkeyTextBox.Text = _keybindsSettings.NextTrack.ToDisplayString();
-            PreviousTrackHotkeyTextBox.Text = _keybindsSettings.PreviousTrack.ToDisplayString();
-            OpenFlyoutHotkeyTextBox.Text = _keybindsSettings.OpenFlyout.ToDisplayString();
+            var keyboard = _keybindsSettings.KeyboardShortcuts;
+
+            PlayPauseHotkeyTextBox.Text = keyboard.PlayPause.ToDisplayString();
+            NextTrackHotkeyTextBox.Text = keyboard.NextTrack.ToDisplayString();
+            PreviousTrackHotkeyTextBox.Text = keyboard.PreviousTrack.ToDisplayString();
+            OpenFlyoutHotkeyTextBox.Text = keyboard.OpenFlyout.ToDisplayString();
+        }
+
+        private void BindMouseShortcutSelections()
+        {
+            _isUpdatingMouseComboSelection = true;
+            try
+            {
+                var mouse = _keybindsSettings.MouseShortcuts;
+                SetComboSelection(LeftClickActionComboBox, mouse.LeftClick);
+                SetComboSelection(DoubleLeftClickActionComboBox, mouse.DoubleLeftClick);
+                SetComboSelection(RightClickActionComboBox, mouse.RightClick);
+                SetComboSelection(MiddleClickActionComboBox, mouse.MiddleClick);
+            }
+            finally
+            {
+                _isUpdatingMouseComboSelection = false;
+            }
+
+            ClearMouseValidationMessage();
+        }
+
+        private static void SetComboSelection(ComboBox comboBox, ShortcutAction? action)
+        {
+            foreach (var item in comboBox.Items)
+            {
+                if (item is not ComboBoxItem comboBoxItem)
+                    continue;
+
+                if (!action.HasValue && comboBoxItem.Tag is null)
+                {
+                    comboBox.SelectedItem = comboBoxItem;
+                    return;
+                }
+
+                if (comboBoxItem.Tag is ShortcutAction itemAction && action.HasValue && itemAction == action.Value)
+                {
+                    comboBox.SelectedItem = comboBoxItem;
+                    return;
+                }
+            }
+
+            comboBox.SelectedIndex = 0;
+        }
+
+        private static ShortcutAction? GetSelectedAction(ComboBox comboBox)
+        {
+            if (comboBox.SelectedItem is ComboBoxItem { Tag: ShortcutAction action })
+            {
+                return action;
+            }
+
+            return null;
+        }
+
+        private void MouseShortcutComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_isUpdatingMouseComboSelection || _settingsWindow is null || sender is not ComboBox changedComboBox)
+            {
+                return;
+            }
+
+            var proposedAction = GetSelectedAction(changedComboBox);
+            var previousAction = GetMappedAction(changedComboBox);
+
+            if (HasDuplicateAction(changedComboBox, proposedAction))
+            {
+                ShowMouseValidationMessage("That action is already assigned. Each mouse action must be unique.");
+                RevertComboSelection(changedComboBox, previousAction);
+                return;
+            }
+
+            SetMappedAction(changedComboBox, proposedAction);
+            ClearMouseValidationMessage();
+            _settingsWindow.SetDraftKeybinds(_keybindsSettings);
+        }
+
+        private ShortcutAction? GetMappedAction(ComboBox comboBox)
+        {
+            var mouse = _keybindsSettings.MouseShortcuts;
+
+            if (comboBox == LeftClickActionComboBox) return mouse.LeftClick;
+            if (comboBox == DoubleLeftClickActionComboBox) return mouse.DoubleLeftClick;
+            if (comboBox == RightClickActionComboBox) return mouse.RightClick;
+            return mouse.MiddleClick;
+        }
+
+        private void SetMappedAction(ComboBox comboBox, ShortcutAction? action)
+        {
+            var mouse = _keybindsSettings.MouseShortcuts;
+
+            if (comboBox == LeftClickActionComboBox) mouse.LeftClick = action;
+            else if (comboBox == DoubleLeftClickActionComboBox) mouse.DoubleLeftClick = action;
+            else if (comboBox == RightClickActionComboBox) mouse.RightClick = action;
+            else mouse.MiddleClick = action;
+        }
+
+        private bool HasDuplicateAction(ComboBox changedComboBox, ShortcutAction? proposedAction)
+        {
+            if (!proposedAction.HasValue)
+                return false;
+
+            var action = proposedAction.Value;
+            var mouse = _keybindsSettings.MouseShortcuts;
+
+            if (changedComboBox != LeftClickActionComboBox && mouse.LeftClick == action) return true;
+            if (changedComboBox != DoubleLeftClickActionComboBox && mouse.DoubleLeftClick == action) return true;
+            if (changedComboBox != RightClickActionComboBox && mouse.RightClick == action) return true;
+            if (changedComboBox != MiddleClickActionComboBox && mouse.MiddleClick == action) return true;
+
+            return false;
+        }
+
+        private void RevertComboSelection(ComboBox comboBox, ShortcutAction? previousAction)
+        {
+            _isUpdatingMouseComboSelection = true;
+            try
+            {
+                SetComboSelection(comboBox, previousAction);
+            }
+            finally
+            {
+                _isUpdatingMouseComboSelection = false;
+            }
+        }
+
+        private void ShowMouseValidationMessage(string message)
+        {
+            MouseShortcutValidationTextBlock.Text = message;
+            MouseShortcutValidationTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void ClearMouseValidationMessage()
+        {
+            MouseShortcutValidationTextBlock.Text = string.Empty;
+            MouseShortcutValidationTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void HotkeyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -55,39 +197,42 @@ namespace Quick_Media_Controls.Views.Pages
             HotkeyValidationTextBlock.Text = string.Empty;
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
-            if (sender == PlayPauseHotkeyTextBox)
-                _keybindsSettings.PlayPause = gesture;
-            else if (sender == NextTrackHotkeyTextBox)
-                _keybindsSettings.NextTrack = gesture;
-            else if (sender == PreviousTrackHotkeyTextBox)
-                _keybindsSettings.PreviousTrack = gesture;
-            else if (sender == OpenFlyoutHotkeyTextBox)
-                _keybindsSettings.OpenFlyout = gesture;
+            var keyboard = _keybindsSettings.KeyboardShortcuts;
 
-            BindText();
+            if (sender == PlayPauseHotkeyTextBox)
+                keyboard.PlayPause = gesture;
+            else if (sender == NextTrackHotkeyTextBox)
+                keyboard.NextTrack = gesture;
+            else if (sender == PreviousTrackHotkeyTextBox)
+                keyboard.PreviousTrack = gesture;
+            else if (sender == OpenFlyoutHotkeyTextBox)
+                keyboard.OpenFlyout = gesture;
+
+            BindKeyboardShortcutText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
         }
 
         private void ResetPlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.PlayPause = _defaultKeybinds.PlayPause.Clone();
+            _keybindsSettings.KeyboardShortcuts.PlayPause = _defaultKeybinds.KeyboardShortcuts.PlayPause.Clone();
             ResetAndSync();
         }
 
         private void ResetNextTrackButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.NextTrack = _defaultKeybinds.NextTrack.Clone();
+            _keybindsSettings.KeyboardShortcuts.NextTrack = _defaultKeybinds.KeyboardShortcuts.NextTrack.Clone();
             ResetAndSync();
         }
 
         private void ResetPreviousTrackButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.PreviousTrack = _defaultKeybinds.PreviousTrack.Clone();
+            _keybindsSettings.KeyboardShortcuts.PreviousTrack = _defaultKeybinds.KeyboardShortcuts.PreviousTrack.Clone();
             ResetAndSync();
         }
+
         private void ResetOpenFlyoutButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.OpenFlyout = _defaultKeybinds.OpenFlyout.Clone();
+            _keybindsSettings.KeyboardShortcuts.OpenFlyout = _defaultKeybinds.KeyboardShortcuts.OpenFlyout.Clone();
             ResetAndSync();
         }
 
@@ -96,7 +241,7 @@ namespace Quick_Media_Controls.Views.Pages
             HotkeyValidationTextBlock.Text = string.Empty;
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
-            BindText();
+            BindKeyboardShortcutText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
         }
     }
