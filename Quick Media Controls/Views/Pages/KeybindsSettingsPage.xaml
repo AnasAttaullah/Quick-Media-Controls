@@ -161,7 +161,26 @@
             Visibility="Collapsed" />
 
         <!-- Mouse Keybinds Settings -->
-        <ui:TextBlock Text="Mouse Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+        <Grid Margin="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ui:TextBlock Text="Mouse Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+
+            <ui:Button Name="ResetMouseShortcutsButton"
+                       Margin="0 2 0 0"
+                       Grid.Column="1"
+                       BorderBrush="Transparent"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Click="ResetMouseShortcutsButton_Click"
+                       Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
+                       Content="Reset"
+                       Appearance="Transparent"
+                       Foreground="{ui:ThemeResource TextFillColorTertiaryBrush }"/>
+        </Grid>
 
         <Grid>
             <Grid.ColumnDefinitions>

@@ -28,9 +28,6 @@ namespace Quick_Media_Controls
         private double _homeTop;
         private const double FlyoutScreenMargin = 12;
 
-        private string? _cachedThumbnailKey;
-        private BitmapImage? _cachedThumbnail;
-
         [DllImport("dwmapi.dll")]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
         private const int DWMWA_TRANSITIONS_FORCEDISABLED = 3;
@@ -54,7 +51,7 @@ namespace Quick_Media_Controls
             SourceInitialized += OnSourceInitialized;
         }
 
-        private void OnSourceInitialized(object? sender, EventArgs e)
+        private async void OnSourceInitialized(object? sender, EventArgs e)
         {
             // Disables Default WPF Window Animations
             var hwnd = new WindowInteropHelper(this).Handle;
@@ -62,6 +59,8 @@ namespace Quick_Media_Controls
             DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, ref disabled, sizeof(int));
 
             PositionFlyoutOnPrimaryScreen();
+
+            await UpdateMediaInfo(); // changedhere also aynced the method name
         }
 
         private void PositionFlyoutOnPrimaryScreen()
@@ -100,7 +99,7 @@ namespace Quick_Media_Controls
 
         public async Task ShowFlyoutAsync()
         {
-            await UpdateMediaInfo();
+            //_ =  UpdateMediaInfo(); // changedhere
 
             Root.Opacity = 0;
             _isAnimatingClose = false;
@@ -197,7 +196,7 @@ namespace Quick_Media_Controls
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.InvokeAsync(UpdateMediaInfo);
+                await Dispatcher.InvokeAsync(UpdateMediaInfo);
                 return;
             }
 
@@ -209,12 +208,12 @@ namespace Quick_Media_Controls
                     noMediaPlayingGrid.Visibility = Visibility.Collapsed;
                 }
 
+                var thumbnail = await LoadMediaThumbnailAsync(_sessionManager.CurrentMediaProperties.Thumbnail);
+                playingMediaThumbnail.Source = thumbnail;
+
                 var mediaTitle = _sessionManager.CurrentMediaProperties.Title;
                 playingMediaTitle.Text = mediaTitle.Length > 30 ? mediaTitle[..30] + "..." : mediaTitle;
                 playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
-
-                var thumbnail = await LoadMediaThumbnailAsync(_sessionManager.CurrentMediaProperties.Thumbnail);
-                playingMediaThumbnail.Source = thumbnail;
             }
             else
             {
@@ -227,10 +226,6 @@ namespace Quick_Media_Controls
         {
             if (thumbnailRef == null)
                 return null;
-
-            var key = $"{_sessionManager.CurrentMediaProperties?.Title}|{_sessionManager.CurrentMediaProperties?.Artist}";
-            if (_cachedThumbnailKey == key && _cachedThumbnail != null)
-                return _cachedThumbnail;
 
             try
             {
@@ -251,8 +246,6 @@ namespace Quick_Media_Controls
                 bitmap.EndInit();
                 bitmap.Freeze();
 
-                _cachedThumbnailKey = key;
-                _cachedThumbnail = bitmap;
                 return bitmap;
             }
             catch (Exception ex)

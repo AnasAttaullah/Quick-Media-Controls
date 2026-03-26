@@ -230,6 +230,28 @@ namespace Quick_Media_Controls.Views.Pages
             ResetAndSync();
         }
 
+        private void ResetMouseShortcutsButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isUpdatingMouseComboSelection = true;
+            try
+            {
+                _keybindsSettings.MouseShortcuts = _defaultKeybinds.MouseShortcuts.Clone();
+
+                var defaultMouseShortcut = _keybindsSettings.MouseShortcuts;
+                SetComboSelection(LeftClickActionComboBox, defaultMouseShortcut.LeftClick);
+                SetComboSelection(DoubleLeftClickActionComboBox, defaultMouseShortcut.DoubleLeftClick);
+                SetComboSelection(RightClickActionComboBox, defaultMouseShortcut.RightClick);
+                SetComboSelection(MiddleClickActionComboBox, defaultMouseShortcut.MiddleClick);
+            }
+            finally
+            {
+                _isUpdatingMouseComboSelection = false;
+            }
+
+            ClearMouseValidationMessage();
+            _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
+        }
+
         private void ResetOpenFlyoutButton_Click(object sender, RoutedEventArgs e)
         {
             _keybindsSettings.KeyboardShortcuts.OpenFlyout = _defaultKeybinds.KeyboardShortcuts.OpenFlyout.Clone();
@@ -244,6 +266,7 @@ namespace Quick_Media_Controls.Views.Pages
             BindKeyboardShortcutText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
         }
+
     }
 }
 

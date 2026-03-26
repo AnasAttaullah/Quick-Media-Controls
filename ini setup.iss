@@ -37,7 +37,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
-Name: "startup"; Description: "Launch at Windows startup (Recommended)"; GroupDescription: "Startup Options:"; Flags: checkedonce
 
 [Files]
 Source: "Quick Media Controls\bin\Release\net8.0-windows10.0.19041.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -47,7 +46,6 @@ Source: "Quick Media Controls\Assets\{#DotNetInstallerName}"; DestDir: "{tmp}"; 
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{userstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startup
 
 [Run]
 Filename: "{tmp}\{#DotNetInstallerName}"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing .NET 8 Desktop Runtime..."; Flags: waituntilterminated; Check: not IsDotNetInstalled
@@ -94,6 +92,5 @@ begin
   if CurUninstallStep = usUninstall then
   begin
     Exec('taskkill.exe', '/F /IM "{#MyAppExeName}"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    DeleteFile(ExpandConstant('{userstartup}\{#MyAppName}.lnk'));
   end;
 end;

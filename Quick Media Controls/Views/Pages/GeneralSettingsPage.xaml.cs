@@ -26,6 +26,11 @@ namespace Quick_Media_Controls.Views.Pages
 
             _generalSettings = _settingWindows.DraftSettings.General.Clone();
             BindToggles();
+
+            if (Application.Current is App app && app.IsPackagedDistribution)
+            {
+                CheckForUpdatesNowButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void BindToggles()

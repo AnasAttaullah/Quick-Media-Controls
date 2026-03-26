@@ -30,6 +30,7 @@ namespace Quick_Media_Controls.Models
     public sealed class GeneralSettings
     {
         public bool RunAtStartup { get; set; } = true;
+        public bool StartupRegistrationInitialized { get; set; } = false;
         public bool CheckForUpdatesOnStartup { get; set; } = true;
         public bool AutoHideFlyout { get; set; } = true;
         public bool MoveFlyoutByDefault { get; set; } = false;
@@ -40,6 +41,7 @@ namespace Quick_Media_Controls.Models
             return new GeneralSettings
             {
                 RunAtStartup = true,
+                StartupRegistrationInitialized = false,
                 CheckForUpdatesOnStartup = true,
                 AutoHideFlyout = true,
                 MoveFlyoutByDefault = false,
@@ -52,6 +54,7 @@ namespace Quick_Media_Controls.Models
             return new GeneralSettings
             {
                 RunAtStartup = RunAtStartup,
+                StartupRegistrationInitialized = StartupRegistrationInitialized,
                 CheckForUpdatesOnStartup = CheckForUpdatesOnStartup,
                 AutoHideFlyout = AutoHideFlyout,
                 MoveFlyoutByDefault = MoveFlyoutByDefault,

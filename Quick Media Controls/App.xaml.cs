@@ -37,15 +37,23 @@ namespace Quick_Media_Controls
         private ImageSource pauseLightIcon;
         private ImageSource pauseDarkIcon;
 
-        private MediaSessionService _mediaService;
         private AppSettings _appSettings = null;
+        private MediaSessionService _mediaService;
         private GlobalHotkeyService _globalHotkeyService;
-        private StartupRegistrationService _startupRegistrationService = new();
+        private StartupRegistrationService _startupRegistrationService;
         private AppSettingsService _appSettingsService = new();
+        private AppDistributionService _appDistributionService = new();
 
         public ApplicationTheme currentAppTheme;
-        
+
+        public bool IsPackagedDistribution => _appDistributionService.IsPackaged;
         public AppSettings GetSettingsSnapshot() => _appSettings.Clone();
+
+        public App()
+        {
+            _startupRegistrationService = new StartupRegistrationService(
+                appDistributionService: _appDistributionService);
+        }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -103,7 +111,7 @@ namespace Quick_Media_Controls
             RegisterTrayIcon();
             UpdateTrayIcon();
 
-            if (_appSettings.General.CheckForUpdatesOnStartup)
+            if (_appSettings.General.CheckForUpdatesOnStartup && !_appDistributionService.IsPackaged)
             {
                 ConfigureAutoUpdater();
             }
@@ -175,6 +183,19 @@ namespace Quick_Media_Controls
                     "Hotkeys Registration Failed",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
+            }
+
+            if (!_appSettings.General.StartupRegistrationInitialized)
+            {
+                try
+                {
+                    _startupRegistrationService.Apply(_appSettings.General.RunAtStartup);
+                }
+                catch
+                {
+                }
+
+                _appSettings.General.StartupRegistrationInitialized = true;
             }
 
             _appSettings.General.RunAtStartup = _startupRegistrationService.IsRegistered();
@@ -446,7 +467,7 @@ namespace Quick_Media_Controls
 
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)
         {
-            _mediaFlyout?.UpdateMediaInfo();
+            _ = _mediaFlyout?.UpdateMediaInfo();
         }
 
         private void MediaService_SessionChanged(object? sender, GlobalSystemMediaTransportControlsSessionManager e)
