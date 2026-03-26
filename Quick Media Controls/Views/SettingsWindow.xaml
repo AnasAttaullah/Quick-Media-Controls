@@ -50,6 +50,7 @@
             <ui:SnackbarPresenter
                 x:Name="SnackbarPresenter"
                 Width="auto"
+                MaxWidth="650"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom" />
         </Grid>

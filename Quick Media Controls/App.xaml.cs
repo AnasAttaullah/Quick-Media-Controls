@@ -4,6 +4,7 @@ using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -22,6 +23,7 @@ namespace Quick_Media_Controls
     {
         private NotifyIcon _trayIcon;
         private MediaFlyout? _mediaFlyout;
+        private Window _hiddenWindow;
 
         private readonly DispatcherTimer _displayChangeReloadTimer = new()
         {
@@ -90,7 +92,7 @@ namespace Quick_Media_Controls
             SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
 
             // Hidden window to provide message pump for tray icon
-            MainWindow = new Window
+            _hiddenWindow = new Window
             {
                 Width = 0,
                 Height = 0,
@@ -103,11 +105,24 @@ namespace Quick_Media_Controls
                 Top = -10000
             };
 
+            _hiddenWindow.Show();
+
+            _appSettings = _appSettingsService.Load();
+            if (_appSettings.Keybinds.MouseShortcuts.LeftClick == ShortcutAction.OpenFlyout)
+            {
+                _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
+                MainWindow = _mediaFlyout;
+                _hiddenWindow.Close();
+            }
+            else
+            {
+                MainWindow = _hiddenWindow;
+            }
+
             MainWindow.Show();
             MainWindow.Hide();
 
             InitializeAppSettings();
-
             RegisterTrayIcon();
             UpdateTrayIcon();
 
@@ -165,7 +180,7 @@ namespace Quick_Media_Controls
 
         private void InitializeAppSettings()
         {
-            _appSettings = _appSettingsService.Load();
+            _appSettings ??= _appSettingsService.Load();
             _appSettings.Keybinds.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
             _appSettings.Keybinds.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
 
@@ -222,6 +237,27 @@ namespace Quick_Media_Controls
                 _appSettings = updatedSettings.Clone();
                 _appSettingsService.Save(_appSettings);
                 _mediaFlyout?.ApplySettings(_appSettings);
+
+                var mouseShortcuts = updatedSettings.Keybinds.MouseShortcuts;
+                var OpenFlyout = ShortcutAction.OpenFlyout;
+
+                if (mouseShortcuts.LeftClick == OpenFlyout ||
+                    mouseShortcuts.DoubleLeftClick == OpenFlyout ||
+                    mouseShortcuts.RightClick == OpenFlyout ||
+                    mouseShortcuts.MiddleClick == OpenFlyout)
+                {
+
+                    var result = MessageBox.Show(
+                        "The application must restart to apply the updated Open Flyout mouse-click action.\n\nWould you like to restart now?",
+                        "Quick Media Controls",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Exclamation);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        RestartApplication();
+                    }
+                }
 
                 return true;
             }
@@ -443,6 +479,25 @@ namespace Quick_Media_Controls
 
             error = localError;
             return ok;
+        }
+        public void RestartApplication()
+        {
+            var executablePath = Environment.ProcessPath;
+
+            if (string.IsNullOrWhiteSpace(executablePath))
+            {
+                Shutdown();
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = executablePath,
+                UseShellExecute = true,
+                WorkingDirectory = AppContext.BaseDirectory
+            });
+
+            Shutdown();
         }
 
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
