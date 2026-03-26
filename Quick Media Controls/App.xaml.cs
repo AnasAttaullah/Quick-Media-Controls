@@ -229,6 +229,10 @@ namespace Quick_Media_Controls
                 return false;
             }
 
+            var currentMouseShortcuts = _appSettings.Keybinds.MouseShortcuts ?? MouseShortcutSettings.CreateDefault();
+            var updatedMouseShortcuts = updatedSettings.Keybinds.MouseShortcuts;
+            var shouldPromptRestart = HasOpenFlyoutMouseBindingChanged(currentMouseShortcuts, updatedMouseShortcuts);
+
             try
             {
                 _globalHotkeyService.Apply(updatedSettings.Keybinds);
@@ -238,15 +242,8 @@ namespace Quick_Media_Controls
                 _appSettingsService.Save(_appSettings);
                 _mediaFlyout?.ApplySettings(_appSettings);
 
-                var mouseShortcuts = updatedSettings.Keybinds.MouseShortcuts;
-                var OpenFlyout = ShortcutAction.OpenFlyout;
-
-                if (mouseShortcuts.LeftClick == OpenFlyout ||
-                    mouseShortcuts.DoubleLeftClick == OpenFlyout ||
-                    mouseShortcuts.RightClick == OpenFlyout ||
-                    mouseShortcuts.MiddleClick == OpenFlyout)
+                if (shouldPromptRestart)
                 {
-
                     var result = MessageBox.Show(
                         "The application must restart to apply the updated Open Flyout mouse-click action.\n\nWould you like to restart now?",
                         "Quick Media Controls",
@@ -480,6 +477,18 @@ namespace Quick_Media_Controls
             error = localError;
             return ok;
         }
+        private static bool HasOpenFlyoutMouseBindingChanged(MouseShortcutSettings current, MouseShortcutSettings updated)
+        {
+            static bool ChangedToOrFromOpenFlyout(ShortcutAction? before, ShortcutAction? after) =>
+                before != after && (before == ShortcutAction.OpenFlyout || after == ShortcutAction.OpenFlyout);
+
+            return
+                ChangedToOrFromOpenFlyout(current.LeftClick, updated.LeftClick) ||
+                ChangedToOrFromOpenFlyout(current.DoubleLeftClick, updated.DoubleLeftClick) ||
+                ChangedToOrFromOpenFlyout(current.RightClick, updated.RightClick) ||
+                ChangedToOrFromOpenFlyout(current.MiddleClick, updated.MiddleClick);
+        }
+
         public void RestartApplication()
         {
             var executablePath = Environment.ProcessPath;
