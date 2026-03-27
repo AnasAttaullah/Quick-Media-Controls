@@ -74,6 +74,7 @@ namespace Quick_Media_Controls
                 MessageBox.Show(ex.ToString(), "Startup Error");
                 Shutdown();
             }
+
             PreloadIconAssets();
 
             _trayIcon.LeftClick += TrayIcon_LeftClickAsync;
@@ -265,6 +266,16 @@ namespace Quick_Media_Controls
             }
         }
 
+        private void PreloadIconAssets()
+        {
+            playLightIcon = LoadTrayIcon("Assets\\Icons\\playLight.ico");
+            playDarkIcon = LoadTrayIcon("Assets\\Icons\\playDark.ico");
+            pauseLightIcon = LoadTrayIcon("Assets\\Icons\\pauseLight.ico");
+            pauseDarkIcon = LoadTrayIcon("Assets\\Icons\\pauseDark.ico");
+            noMediaLightIcon = LoadTrayIcon("Assets\\Icons\\noMediaLight.ico");
+            noMediaDarkIcon = LoadTrayIcon("Assets\\Icons\\noMediaDark.ico");
+        }
+
         private void RegisterTrayIcon()
         {
             if (!_trayIcon.IsRegistered)
@@ -313,7 +324,7 @@ namespace Quick_Media_Controls
 
             var mediaTitle = _mediaService.CurrentMediaProperties?.Title;
             var mediaArtist = _mediaService.CurrentMediaProperties?.Artist;
-            mediaTitle  = mediaTitle?.Length > 35 ? mediaTitle[..32] + "..." : mediaTitle;
+            mediaTitle = mediaTitle?.Length > 35 ? mediaTitle[..32] + "..." : mediaTitle;
 
             _trayIcon.TooltipText = mediaTitle + $" | {mediaArtist}" ?? "Unknown";
 
@@ -322,7 +333,6 @@ namespace Quick_Media_Controls
                 _mediaFlyout.UpdateIcons();
             }
         }
-
 
         public void UpdatePlaybackButtonsStatus()
         {
@@ -338,56 +348,21 @@ namespace Quick_Media_Controls
             }
         }
 
-        private static void ConfigureAutoUpdaterOptions()
-        {
-            AutoUpdater.ShowSkipButton = false;
-            AutoUpdater.ShowRemindLaterButton = true;
-            AutoUpdater.Mandatory = false;
-            AutoUpdater.UpdateMode = Mode.Normal;
-        }
-
-        public void CheckForUpdatesNow()
-        {
-            ConfigureAutoUpdaterOptions();
-            AutoUpdater.Start(UpdateManifestUrl);
-        }
-
-        private void ConfigureAutoUpdater()
-        {
-            ConfigureAutoUpdaterOptions();
-
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(20000);
-                AutoUpdater.Start(UpdateManifestUrl);
-            });
-        }
-
-        private void PreloadIconAssets()
-        {
-            playLightIcon = LoadTrayIcon("Assets\\Icons\\playLight.ico");
-            playDarkIcon = LoadTrayIcon("Assets\\Icons\\playDark.ico");
-            pauseLightIcon = LoadTrayIcon("Assets\\Icons\\pauseLight.ico");
-            pauseDarkIcon = LoadTrayIcon("Assets\\Icons\\pauseDark.ico");
-            noMediaLightIcon = LoadTrayIcon("Assets\\Icons\\noMediaLight.ico");
-            noMediaDarkIcon = LoadTrayIcon("Assets\\Icons\\noMediaDark.ico");
-        }
-
         public async Task ToggleFlyoutAsync()
         {
-                if (_mediaFlyout == null)
-                {
-                    _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
-                    _mediaFlyout.UpdateIcons();
-                    _mediaFlyout.Owner = MainWindow;
-                }
-                if (_mediaFlyout.IsVisible)
-                {
-                    _mediaFlyout.AnimateClose();
-                    return;
-                }
+            if (_mediaFlyout == null)
+            {
+                _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+                _mediaFlyout.UpdateIcons();
+                _mediaFlyout.Owner = MainWindow;
+            }
+            if (_mediaFlyout.IsVisible)
+            {
+                _mediaFlyout.AnimateClose();
+                return;
+            }
 
-                await _mediaFlyout.ShowFlyoutAsync();
+            await _mediaFlyout.ShowFlyoutAsync();
         }
 
         private void QueueWindowReinitialize()
@@ -477,6 +452,7 @@ namespace Quick_Media_Controls
             error = localError;
             return ok;
         }
+
         private static bool HasOpenFlyoutMouseBindingChanged(MouseShortcutSettings current, MouseShortcutSettings updated)
         {
             static bool ChangedToOrFromOpenFlyout(ShortcutAction? before, ShortcutAction? after) =>
@@ -487,6 +463,31 @@ namespace Quick_Media_Controls
                 ChangedToOrFromOpenFlyout(current.DoubleLeftClick, updated.DoubleLeftClick) ||
                 ChangedToOrFromOpenFlyout(current.RightClick, updated.RightClick) ||
                 ChangedToOrFromOpenFlyout(current.MiddleClick, updated.MiddleClick);
+        }
+
+        private static void ConfigureAutoUpdaterOptions()
+        {
+            AutoUpdater.ShowSkipButton = false;
+            AutoUpdater.ShowRemindLaterButton = true;
+            AutoUpdater.Mandatory = false;
+            AutoUpdater.UpdateMode = Mode.Normal;
+        }
+
+        private void ConfigureAutoUpdater()
+        {
+            ConfigureAutoUpdaterOptions();
+
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(20000);
+                AutoUpdater.Start(UpdateManifestUrl);
+            });
+        }
+
+        public void CheckForUpdatesNow()
+        {
+            ConfigureAutoUpdaterOptions();
+            AutoUpdater.Start(UpdateManifestUrl);
         }
 
         public void RestartApplication()
@@ -508,6 +509,7 @@ namespace Quick_Media_Controls
 
             Shutdown();
         }
+
 
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
@@ -535,7 +537,7 @@ namespace Quick_Media_Controls
         }
 
         private void MediaService_SessionChanged(object? sender, GlobalSystemMediaTransportControlsSessionManager e)
-        { 
+        {
             UpdateTrayIcon();
         }
 

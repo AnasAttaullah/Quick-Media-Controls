@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows.Controls;
 
 namespace Quick_Media_Controls.Views.Pages

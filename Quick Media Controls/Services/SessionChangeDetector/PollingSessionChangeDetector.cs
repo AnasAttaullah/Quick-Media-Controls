@@ -16,7 +16,7 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
         private Timer? _pollTimer;
         private bool _isDisposed;
 
-        public PollingSessionChangeDetector(GlobalSystemMediaTransportControlsSessionManager sessionManager , Action<GlobalSystemMediaTransportControlsSession?> onSessionChanged)
+        public PollingSessionChangeDetector(GlobalSystemMediaTransportControlsSessionManager sessionManager, Action<GlobalSystemMediaTransportControlsSession?> onSessionChanged)
         {
             _sessionManager = sessionManager;
             _onSessionChanged = onSessionChanged;

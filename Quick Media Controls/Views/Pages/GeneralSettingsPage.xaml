@@ -1,44 +1,45 @@
 ﻿<Page
     x:Class="Quick_Media_Controls.Views.Pages.GeneralSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="GeneralSettingsPage"
     mc:Ignorable="d">
 
     <StackPanel Margin="14">
 
-        <Grid Margin="0,0,0,14" >
+        <Grid Margin="0,0,0,14">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <ui:TextBlock
-                FontSize="22"
                 Grid.Column="0"
+                FontSize="22"
                 FontTypography="Subtitle"
                 Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                 Text="General Settings" />
 
-            <ui:Button Name="CheckForUpdatesNowButton"
-                       Margin="0 2 0 0"
-                       Grid.Column="1"
-                       BorderBrush="Transparent"
-                       Click="CheckForUpdatesNowButton_Click"
-                       HorizontalAlignment="Right"
-                       Icon="{ui:SymbolIcon Symbol=ArrowSync20}"
-                       Content="Check for Update Now"
-                       Appearance="Transparent"
-                       Foreground="{ui:ThemeResource TextFillColorTertiaryBrush }"/>
+            <ui:Button
+                Name="CheckForUpdatesNowButton"
+                Grid.Column="1"
+                Margin="0,2,0,0"
+                HorizontalAlignment="Right"
+                BorderBrush="Transparent"
+                Click="CheckForUpdatesNowButton_Click"
+                Icon="{ui:SymbolIcon Symbol=ArrowSync20}"
+                Content="Check for Update Now"
+                Appearance="Transparent"
+                Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
         </Grid>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=Power20}"
             Margin="0,0,0,4"
-            Padding="20,20,20,20">
+            Padding="20,20,20,20"
+            Icon="{ui:SymbolIcon Symbol=Power20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -57,9 +58,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=ArrowSync20}"
             Margin="0,0,0,4"
-            Padding="20,20,20,20">
+            Padding="20,20,20,20"
+            Icon="{ui:SymbolIcon Symbol=ArrowSync20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -78,9 +79,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=SlideHide20}"
             Margin="0,0,0,4"
-            Padding="20,20,20,20">
+            Padding="20,20,20,20"
+            Icon="{ui:SymbolIcon Symbol=SlideHide20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -99,9 +100,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=WindowArrowUp20}"
             Margin="0,0,0,4"
-            Padding="20,20,20,20">
+            Padding="20,20,20,20"
+            Icon="{ui:SymbolIcon Symbol=WindowArrowUp20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -120,9 +121,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=ArrowMove20}"
             Margin="0,0,0,4"
-            Padding="20,20,20,20">
+            Padding="20,20,20,20"
+            Icon="{ui:SymbolIcon Symbol=ArrowMove20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock

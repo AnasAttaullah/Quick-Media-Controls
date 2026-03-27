@@ -6,8 +6,8 @@ namespace Quick_Media_Controls.Services
 {
     public enum AppDistributionChannel
     {
-            Unpackaged,
-            Packaged
+        Unpackaged,
+        Packaged
     }
     public class AppDistributionService
     {

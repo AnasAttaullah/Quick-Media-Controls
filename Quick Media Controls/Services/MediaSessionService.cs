@@ -37,7 +37,7 @@ namespace Quick_Media_Controls.Services
                     CurrentPlaybackInfo = CurrentSession.GetPlaybackInfo();
                     CurrentSession.PlaybackInfoChanged += OnCurrentSession_PlaybackInfoChanged;
                     CurrentSession.MediaPropertiesChanged += OnCurrentSession_MediaPropertiesChanged;
-                    
+
                     CurrentMediaProperties = await CurrentSession.TryGetMediaPropertiesAsync();
                 }
 
@@ -178,7 +178,7 @@ namespace Quick_Media_Controls.Services
         {
             return IsNextEnabled() || IsPreviousEnabled();
         }
- 
+
         private async void OnCurrentSession_MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender, MediaPropertiesChangedEventArgs args)
         {
             try
@@ -237,5 +237,5 @@ namespace Quick_Media_Controls.Services
         }
     }
 
-    }
+}
 

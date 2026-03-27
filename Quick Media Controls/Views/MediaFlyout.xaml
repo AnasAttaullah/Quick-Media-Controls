@@ -6,10 +6,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="MediaFlyout"
-    Width="400"
-    Height="120"
-    MinWidth="400"
-    MinHeight="120"
+    Width="360"
+    Height="112"
+    MinWidth="300"
+    MinHeight="96"
+    MaxWidth="360"
+    MaxHeight="112"
     AllowDrop="False"
     Deactivated="Flyout_Deactivated"
     ExtendsContentIntoTitleBar="True"
@@ -28,7 +30,7 @@
                 Name="MoveFlyoutToggle"
                 Click="MoveFlyoutMenuItem_Click"
                 Header="Move Flyout"
-                IsCheckable="True"/>
+                IsCheckable="True" />
 
             <MenuItem Click="GithubMenuItem_Click" Header="On Github">
                 <MenuItem.Icon>
@@ -59,15 +61,15 @@
             Margin="12,0"
             MouseLeftButtonDown="Window_MouseLeftButtonDown">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="86" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <ui:Image
                 Name="playingMediaThumbnail"
                 Grid.Column="0"
-                Width="auto"
-                Height="90"
+                Width="86"
+                Height="86"
                 CornerRadius="8"
                 Visibility="Visible" />
 
@@ -77,8 +79,8 @@
                 VerticalAlignment="Center">
                 <ui:TextBlock
                     Name="playingMediaTitle"
+                    Margin="0,0,0,1"
                     FontSize="17"
-                    Margin="0 0 0 1"
                     FontTypography="BodyStrong"
                     Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
                 <ui:TextBlock
@@ -131,10 +133,10 @@
             <ui:SymbolIcon
                 Name="noMediaPlayingIcon"
                 Grid.Column="0"
-                Width="90"
-                Height="90"
+                Width="82"
+                Height="82"
                 Filled="True"
-                FontSize="68"
+                FontSize="65"
                 Symbol="MusicNoteOff224" />
 
             <StackPanel

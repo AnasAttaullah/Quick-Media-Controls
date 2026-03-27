@@ -22,11 +22,15 @@ namespace Quick_Media_Controls
     public partial class MediaFlyout : FluentWindow
     {
         private readonly MediaSessionService _sessionManager;
-        private AppSettings _appSettings; 
+        private AppSettings _appSettings;
         private bool _IsDragEnabled;
         private bool _isAnimatingClose;
         private double _homeTop;
-        private const double FlyoutScreenMargin = 12;
+        private const double FlyoutScreenMargin = 11;
+        private const double MinFlyoutWidth = 300;
+        private const double MaxFlyoutWidth = 360;
+        private const double MinFlyoutHeight = 96;
+        private const double MaxFlyoutHeight = 112;
 
         [DllImport("dwmapi.dll")]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
@@ -59,8 +63,7 @@ namespace Quick_Media_Controls
             DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, ref disabled, sizeof(int));
 
             PositionFlyoutOnPrimaryScreen();
-
-            await UpdateMediaInfo(); // changedhere also aynced the method name
+            await UpdateMediaInfo();
         }
 
         private void PositionFlyoutOnPrimaryScreen()
@@ -74,16 +77,17 @@ namespace Quick_Media_Controls
             var dpi = VisualTreeHelper.GetDpi(this);
             var workAreaPx = primaryScreen.WorkingArea;
 
-            var width = double.IsNaN(Width) || Width <= 0 ? MinWidth : Width;
-            var height = double.IsNaN(Height) || Height <= 0 ? MinHeight : Height;
-
             var workLeftDip = workAreaPx.Left / dpi.DpiScaleX;
             var workTopDip = workAreaPx.Top / dpi.DpiScaleY;
             var workWidthDip = workAreaPx.Width / dpi.DpiScaleX;
             var workHeightDip = workAreaPx.Height / dpi.DpiScaleY;
 
-            Left = workLeftDip + workWidthDip - width - FlyoutScreenMargin;
-            _homeTop = Top = workTopDip + workHeightDip - height - FlyoutScreenMargin;
+            // Responsive sizing: ~25% width and ~15.5% height of work area, clamped
+            Width = Math.Clamp(workWidthDip * 0.25, MinFlyoutWidth, MaxFlyoutWidth);
+            Height = Math.Clamp(workHeightDip * 0.155, MinFlyoutHeight, MaxFlyoutHeight);
+
+            Left = workLeftDip + workWidthDip - Width - FlyoutScreenMargin;
+            _homeTop = Top = workTopDip + workHeightDip - Height - FlyoutScreenMargin;
         }
 
         public void UpdateIcons()
@@ -97,10 +101,72 @@ namespace Quick_Media_Controls
             playPauseIcon.Symbol = _sessionManager.IsPlaying() ? SymbolRegular.Pause12 : SymbolRegular.Play12;
         }
 
+        public async Task UpdateMediaInfo()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                await Dispatcher.InvokeAsync(UpdateMediaInfo);
+                return;
+            }
+
+            if (_sessionManager.CurrentMediaProperties != null)
+            {
+                if (mediaPlayingGrid.Visibility != Visibility.Visible)
+                {
+                    mediaPlayingGrid.Visibility = Visibility.Visible;
+                    noMediaPlayingGrid.Visibility = Visibility.Collapsed;
+                }
+
+                var thumbnail = await LoadMediaThumbnailAsync(_sessionManager.CurrentMediaProperties.Thumbnail);
+                playingMediaThumbnail.Source = thumbnail;
+
+                var mediaTitle = _sessionManager.CurrentMediaProperties.Title;
+                playingMediaTitle.Text = mediaTitle.Length > 28 ? mediaTitle[..28] + "..." : mediaTitle;
+                playingMediaTitle.ToolTip = (mediaTitle.Length > 28) ? mediaTitle : null;
+                playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
+            }
+            else
+            {
+                mediaPlayingGrid.Visibility = Visibility.Collapsed;
+                noMediaPlayingGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private async Task<BitmapImage?> LoadMediaThumbnailAsync(Windows.Storage.Streams.IRandomAccessStreamReference? thumbnailRef)
+        {
+            if (thumbnailRef == null)
+                return null;
+
+            try
+            {
+                using var stream = await thumbnailRef.OpenReadAsync();
+                if (stream == null || stream.Size == 0)
+                    return null;
+
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.DecodePixelHeight = 160; // Decode at 160px 
+
+                using var memStream = new MemoryStream();
+                await stream.AsStreamForRead().CopyToAsync(memStream);
+                memStream.Position = 0;
+
+                bitmap.StreamSource = memStream;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to load thumbnail: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task ShowFlyoutAsync()
         {
-            //_ =  UpdateMediaInfo(); // changedhere
-
             Root.Opacity = 0;
             _isAnimatingClose = false;
             BeginAnimation(Window.TopProperty, null);
@@ -143,7 +209,6 @@ namespace Quick_Media_Controls
             };
             fadeIn.Completed += (_, _) => Root.Opacity = 1;
             Root.BeginAnimation(OpacityProperty, fadeIn);
-
         }
 
         public void AnimateClose()
@@ -192,68 +257,11 @@ namespace Quick_Media_Controls
             AnimateClose();
         }
 
-        public async Task UpdateMediaInfo()
+        public void ApplySettings(AppSettings appSettings)
         {
-            if (!Dispatcher.CheckAccess())
-            {
-                await Dispatcher.InvokeAsync(UpdateMediaInfo);
-                return;
-            }
-
-            if (_sessionManager.CurrentMediaProperties != null)
-            {
-                if (mediaPlayingGrid.Visibility != Visibility.Visible)
-                {
-                    mediaPlayingGrid.Visibility = Visibility.Visible;
-                    noMediaPlayingGrid.Visibility = Visibility.Collapsed;
-                }
-
-                var thumbnail = await LoadMediaThumbnailAsync(_sessionManager.CurrentMediaProperties.Thumbnail);
-                playingMediaThumbnail.Source = thumbnail;
-
-                var mediaTitle = _sessionManager.CurrentMediaProperties.Title;
-                playingMediaTitle.Text = mediaTitle.Length > 30 ? mediaTitle[..30] + "..." : mediaTitle;
-                playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
-            }
-            else
-            {
-                mediaPlayingGrid.Visibility = Visibility.Collapsed;
-                noMediaPlayingGrid.Visibility = Visibility.Visible;
-            }
+            _appSettings = appSettings;
         }
 
-        private async Task<BitmapImage?> LoadMediaThumbnailAsync(Windows.Storage.Streams.IRandomAccessStreamReference? thumbnailRef)
-        {
-            if (thumbnailRef == null)
-                return null;
-
-            try
-            {
-                using var stream = await thumbnailRef.OpenReadAsync();
-                if (stream == null || stream.Size == 0)
-                    return null;
-
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.DecodePixelHeight = 200; // Decode at 200px 
-
-                using var memStream = new MemoryStream();
-                await stream.AsStreamForRead().CopyToAsync(memStream);
-                memStream.Position = 0;
-
-                bitmap.StreamSource = memStream;
-                bitmap.EndInit();
-                bitmap.Freeze();
-
-                return bitmap;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed to load thumbnail: {ex.Message}");
-                return null;
-            }
-        }
 
         private async void PlayPauseButton_ClickAsync(object sender, RoutedEventArgs e)
         {
@@ -269,20 +277,6 @@ namespace Quick_Media_Controls
         {
             await _sessionManager.SkipPreviousAsync();
         }
-
-        private void GithubMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            const string url = "https://github.com/AnasAttaullah/Quick-Media-Controls";
-            try
-            {
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed to open GitHub link: {ex}");
-            }
-        }
-
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -303,6 +297,19 @@ namespace Quick_Media_Controls
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
         }
 
+        private void GithubMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            const string url = "https://github.com/AnasAttaullah/Quick-Media-Controls";
+            try
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to open GitHub link: {ex}");
+            }
+        }
+
         private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var setting = new SettingsWindow();
@@ -311,11 +318,6 @@ namespace Quick_Media_Controls
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        }
-
-        public void ApplySettings(AppSettings appSettings)
-        {
-            _appSettings = appSettings;
         }
     }
 }

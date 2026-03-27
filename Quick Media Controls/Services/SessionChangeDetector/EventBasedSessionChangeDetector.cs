@@ -27,13 +27,13 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
         private void OnSessionsChanged(GlobalSystemMediaTransportControlsSessionManager sender, SessionsChangedEventArgs args)
         {
             try
-            {   
-                var newSession =  _sessionManager.GetCurrentSession();
+            {
+                var newSession = _sessionManager.GetCurrentSession();
                 _onSessionChanged.Invoke(newSession);
             }
-            catch(Exception ex) 
-            { 
-            Debug.WriteLine($"Error in event-based session change: {ex.Message}");
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in event-based session change: {ex.Message}");
             }
         }
 

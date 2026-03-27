@@ -11,19 +11,22 @@
 
     <StackPanel Margin="20,30,20,0">
 
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="4,0,4,10">
+        <StackPanel
+            Margin="4,0,4,10"
+            HorizontalAlignment="Center"
+            Orientation="Vertical">
             <ui:Image
-                Source="/Assets/logo.png"
                 Width="100"
                 Height="100"
-                Margin="0,0,0,10" />
+                Margin="0,0,0,10"
+                Source="/Assets/logo.png" />
             <ui:TextBlock
                 FontSize="24"
                 FontTypography="Subtitle"
                 Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                 Text="Quick Media Controls" />
         </StackPanel>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
             <ui:TextBlock
                 Margin="4,0,4,14"
                 Opacity="0.85"
@@ -31,24 +34,54 @@
                 Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                 Text="A Windows tray app that lets you control media playback quickly" />
 
-            <Grid Width="200" Margin="0 10 0 10">
+            <Grid Width="200" Margin="0,10,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="90" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Author:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="License:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Framework:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Platform:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
-                    <ui:TextBlock FontTypography="BodyStrong" Text="Version:" Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Author:"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="License:"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Framework:"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Platform:"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Version:"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <ui:TextBlock FontTypography="Body" Text="Anas Attaullah" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="Body" Text="GNU GPL v3.0" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="Body" Text=".NET 8" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="Body" Text="Windows 10 / 11" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
-                    <ui:TextBlock FontTypography="Body" Text="{Binding AppVersion}" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+                    <ui:TextBlock
+                        FontTypography="Body"
+                        Text="Anas Attaullah"
+                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="Body"
+                        Text="GNU GPL v3.0"
+                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="Body"
+                        Text=".NET 8"
+                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="Body"
+                        Text="Windows 10 / 11"
+                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
+                    <ui:TextBlock
+                        FontTypography="Body"
+                        Text="{Binding AppVersion}"
+                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
                 </StackPanel>
             </Grid>
 

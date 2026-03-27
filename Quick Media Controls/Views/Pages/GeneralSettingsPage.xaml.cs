@@ -1,5 +1,4 @@
 ﻿using Quick_Media_Controls.Models;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 

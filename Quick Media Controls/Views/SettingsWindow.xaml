@@ -57,7 +57,10 @@
 
         <Grid Grid.Row="1" Margin="5">
 
-            <ui:HyperlinkButton Content="Buy me a Coffee" Icon="{ui:SymbolIcon Symbol=DrinkCoffee16}" NavigateUri="https://google.com" />
+            <ui:HyperlinkButton
+                Content="Buy me a Coffee"
+                Icon="{ui:SymbolIcon Symbol=DrinkCoffee16}"
+                NavigateUri="https://google.com" />
 
             <StackPanel
                 Margin="0,0,10,0"
@@ -68,7 +71,10 @@
                     Margin="0,0,10,0"
                     Click="CloseButton_Click"
                     Content="Cancel" />
-                <ui:Button Appearance="Primary" Content="Save" Click="SaveButton_Click" />
+                <ui:Button
+                    Appearance="Primary"
+                    Content="Save"
+                    Click="SaveButton_Click" />
             </StackPanel>
         </Grid>
     </Grid>

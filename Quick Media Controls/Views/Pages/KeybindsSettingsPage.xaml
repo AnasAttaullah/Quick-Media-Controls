@@ -18,13 +18,16 @@
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="Keybinds Settings" />
 
-        <!-- Keyboard Keybinds Settings -->
-        <ui:TextBlock Text="Keyboard Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+        <!--  Keyboard Keybinds Settings  -->
+        <ui:TextBlock
+            Margin="0,10"
+            Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+            Text="Keyboard Shortcuts" />
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=Play20}"
             Margin="0,0,0,4"
-            Padding="20 15 20 15">
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=Play20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -55,9 +58,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=Next20}"
             Margin="0,0,0,4"
-            Padding="20 15 20 15">
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=Next20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -88,9 +91,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=Previous20}"
             Margin="0,0,0,4"
-            Padding="20 15 20 15">
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=Previous20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -121,9 +124,9 @@
         </ui:CardControl>
 
         <ui:CardControl
-            Icon="{ui:SymbolIcon Symbol=Window20}"
             Margin="0,0,0,0"
-            Padding="20 15 20 15">
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=Window20}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock
@@ -160,78 +163,85 @@
             Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
             Visibility="Collapsed" />
 
-        <!-- Mouse Keybinds Settings -->
-        <Grid Margin="0" >
+        <!--  Mouse Keybinds Settings  -->
+        <Grid Margin="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <ui:TextBlock Text="Mouse Shortcuts" Margin="0 10" Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"/>
+            <ui:TextBlock
+                Margin="0,10"
+                Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                Text="Mouse Shortcuts" />
 
-            <ui:Button Name="ResetMouseShortcutsButton"
-                       Margin="0 2 0 0"
-                       Grid.Column="1"
-                       BorderBrush="Transparent"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Center"
-                       Click="ResetMouseShortcutsButton_Click"
-                       Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
-                       Content="Reset"
-                       Appearance="Transparent"
-                       Foreground="{ui:ThemeResource TextFillColorTertiaryBrush }"/>
+            <ui:Button
+                Name="ResetMouseShortcutsButton"
+                Grid.Column="1"
+                Margin="0,2,0,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Appearance="Transparent"
+                BorderBrush="Transparent"
+                Click="ResetMouseShortcutsButton_Click"
+                Content="Reset"
+                Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}" />
         </Grid>
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <ui:CardControl
-                Height="auto"
-                Margin="0 0 2 0"
                 Grid.Column="0"
-                Padding="20 25 20 25">
+                Height="auto"
+                Margin="0,0,2,0"
+                Padding="20,25,20,25">
                 <ui:CardControl.Header>
                     <StackPanel>
 
-                        <ui:SymbolIcon Symbol="CursorClick24" FontSize="92" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"/>
+                        <ui:SymbolIcon
+                            FontSize="92"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Symbol="CursorClick24" />
                         <ui:TextBlock
-                            Margin="0 10 0 0"
-                            TextAlignment="Center"
+                            Margin="0,10,0,0"
                             FontSize="18"
+                            FontTypography="Subtitle"
                             Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                             Text="Mouse Click Actions"
-                            FontTypography="Subtitle"
+                            TextAlignment="Center"
                             TextWrapping="WrapWithOverflow" />
                         <ui:TextBlock
-                            Margin="0 4 0 0"
+                            Margin="0,4,0,0"
                             FontSize="12"
-                            TextAlignment="Center"
+                            FontTypography="Body"
                             Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
                             Text="Each mouse click must be assigned a unique action"
-                            FontTypography="Body"
+                            TextAlignment="Center"
                             TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </ui:CardControl.Header>
             </ui:CardControl>
 
-            <StackPanel Grid.Column="1" Margin="2 0 0 0">
+            <StackPanel Grid.Column="1" Margin="2,0,0,0">
                 <ui:CardControl Padding="12,10">
                     <ui:CardControl.Header>
                         <ui:TextBlock
                             Grid.Column="0"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            VerticalAlignment="Center"
                             Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                             Text="Single Left Click" />
 
                     </ui:CardControl.Header>
                     <ComboBox
                         x:Name="LeftClickActionComboBox"
-                        Width="140"
                         Grid.Column="1"
+                        Width="140"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
@@ -245,16 +255,16 @@
                     <ui:CardControl.Header>
                         <ui:TextBlock
                             Grid.Column="0"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            VerticalAlignment="Center"
                             Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                             Text="Double Left Click" />
 
                     </ui:CardControl.Header>
                     <ComboBox
                         x:Name="DoubleLeftClickActionComboBox"
-                        Width="140"
                         Grid.Column="1"
+                        Width="140"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
@@ -268,16 +278,16 @@
                     <ui:CardControl.Header>
                         <ui:TextBlock
                             Grid.Column="0"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            VerticalAlignment="Center"
                             Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                             Text="Right Click" />
 
                     </ui:CardControl.Header>
                     <ComboBox
                         x:Name="RightClickActionComboBox"
-                        Width="140"
                         Grid.Column="1"
+                        Width="140"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
@@ -291,16 +301,16 @@
                     <ui:CardControl.Header>
                         <ui:TextBlock
                             Grid.Column="0"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            VerticalAlignment="Center"
                             Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                             Text="Middle Click" />
 
                     </ui:CardControl.Header>
                     <ComboBox
                         x:Name="MiddleClickActionComboBox"
-                        Width="140"
                         Grid.Column="1"
+                        Width="140"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
