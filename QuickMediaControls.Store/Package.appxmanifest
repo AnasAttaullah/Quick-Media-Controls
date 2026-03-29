@@ -7,13 +7,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="eb368715-7568-474f-8332-6cc0b354bd6b"
-    Publisher="CN=Anas Attaullah 🦅"
-    Version="1.0.0.0" />
+    Name="AnasAttaullah.QuickMediaControls"
+    Publisher="CN=217DA2E1-12A6-4BCD-AF87-F844F8CF28C7"
+    Version="1.0.0.0.0" />
 
   <Properties>
-    <DisplayName>QuickMediaControls.Store</DisplayName>
-    <PublisherDisplayName>Anas Attaullah 🦅</PublisherDisplayName>
+    <DisplayName>Quick Media Controls</DisplayName>
+    <PublisherDisplayName>Anas Attaullah</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -31,12 +31,18 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="QuickMediaControls.Store"
+        DisplayName="Quick Media Controls"
         Description="QuickMediaControls.Store"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  ShortName="Quick Media Controls" Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
