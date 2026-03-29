@@ -11,7 +11,7 @@
 **/obj/
 
 # Installer/deployment artifacts
-Installer/
+inno output/
 *.msi
 *.exe
 *.zip

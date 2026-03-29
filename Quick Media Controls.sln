@@ -1,9 +1,8 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.3.11505.172 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick Media Controls", "Quick Media Controls\Quick Media Controls.csproj", "{5987445C-5424-4DD0-958C-F83099B8A748}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick Media Controls", "src\Quick Media Controls\Quick Media Controls.csproj", "{5987445C-5424-4DD0-958C-F83099B8A748}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
