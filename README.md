@@ -1,4 +1,4 @@
-<img src="Assets/banner.jpg" alt="Quick Media Controls banner" />
+<img src="docs/images/banner.jpg" alt="Quick Media Controls banner" />
 
 <p align="center">
   <!-- Badges -->
@@ -31,7 +31,7 @@ A Windows tray app that lets you control whatever is currently playing on your P
 ## Download (Installer) ⬇️
 
 <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
-  <img src="Assets/download_installerx64.png" alt="Download Now" width="260" style="display:block; margin-left:0;" />
+  <img src="docs/images/download_installerx64.png" alt="Download Now" width="260" style="display:block; margin-left:0;" />
 </a>
 
 <p></p>
@@ -76,8 +76,8 @@ Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
 
 |                     | Dark Mode | Light Mode |
 |---------------------|-----------|------------|
-| **Media Playing**   | <img src="Assets/Screenshots/windows11_dark.png" width="420" alt="Windows 11 Dark" /> | <img src="Assets/Screenshots/windows11_light.png" width="420" alt="Windows 11 Light" /> |
-| **No Media Playing**| <img src="Assets/Screenshots/windows11NoMedia_dark.png" width="420" alt="No Media Dark" /> | <img src="Assets/Screenshots/windows11NoMedia_light.png" width="420" alt="No Media Light" /> |
+| **Media Playing**   | <img src="docs/images/Screenshots/windows11_dark.png" width="420" alt="Windows 11 Dark" /> | <img src="docs/images/Screenshots/windows11_light.png" width="420" alt="Windows 11 Light" /> |
+| **No Media Playing**| <img src="docs/images/Screenshots/windows11NoMedia_dark.png" width="420" alt="No Media Dark" /> | <img src="docs/images/Screenshots/windows11NoMedia_light.png" width="420" alt="No Media Light" /> |
 
 ---
 
