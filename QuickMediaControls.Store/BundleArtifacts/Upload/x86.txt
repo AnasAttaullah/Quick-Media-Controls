@@ -1,0 +1,2 @@
+MainPackage=D:\Dev\C# Code\Quick-Media-Controls\QuickMediaControls.Store\bin\x86\Release\Upload\QuickMediaControls.Store_2.0.0.0_x86.msix
+SymbolPackage=D:\Dev\C# Code\Quick-Media-Controls\QuickMediaControls.Store\bin\x86\Release\Upload\QuickMediaControls.Store_2.0.0.0\QuickMediaControls.Store_2.0.0.0_x86.appxsym

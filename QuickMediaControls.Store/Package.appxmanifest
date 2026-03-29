@@ -1,55 +1,85 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  IgnorableNamespaces="uap uap5 uap10 desktop rescap">
 
-  <Identity
-    Name="AnasAttaullah.QuickMediaControls"
-    Publisher="CN=217DA2E1-12A6-4BCD-AF87-F844F8CF28C7"
-    Version="1.0.0.0.0" />
+	<Identity
+	  Name="AnasAttaullah.QuickMediaControls"
+	  Publisher="CN=217DA2E1-12A6-4BCD-AF87-F844F8CF28C7"
+	  Version="2.0.0.0" />
 
-  <Properties>
-    <DisplayName>Quick Media Controls</DisplayName>
-    <PublisherDisplayName>Anas Attaullah</PublisherDisplayName>
-    <Logo>Images\StoreLogo.png</Logo>
-  </Properties>
+	<Properties>
+		<DisplayName>Quick Media Controls</DisplayName>
+		<PublisherDisplayName>Anas Attaullah</PublisherDisplayName>
+		<Logo>Images\StoreLogo.png</Logo>
+		<Description>A Window tray app that lets you control media playback quickly</Description>
+	</Properties>
 
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
-  </Dependencies>
+	<Dependencies>
+		<TargetDeviceFamily
+		  Name="Windows.Desktop"
+		  MinVersion="10.0.17763.0"
+		  MaxVersionTested="10.0.26100.0" />
+	</Dependencies>
 
-  <Resources>
-    <Resource Language="x-generate"/>
-  </Resources>
+	<Resources>
+		<Resource Language="x-generate" />
+	</Resources>
 
-  <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
-      <uap:VisualElements
-        DisplayName="Quick Media Controls"
-        Description="QuickMediaControls.Store"
-        BackgroundColor="transparent"
-        Square150x150Logo="Images\Square150x150Logo.png"
-        Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  ShortName="Quick Media Controls" Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png">
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-            <uap:ShowOn Tile="square310x310Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile >
-        <uap:SplashScreen Image="Images\SplashScreen.png" />
-      </uap:VisualElements>
-    </Application>
-  </Applications>
+	<Applications>
+		<Application
+		  Id="App"
+		  Executable="Quick Media Controls\Quick Media Controls.exe"
+		  EntryPoint="Windows.FullTrustApplication"
+		  uap10:RuntimeBehavior="packagedClassicApp"
+		  uap10:TrustLevel="mediumIL">
 
-  <Capabilities>
-    <Capability Name="internetClient" />
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
+			<uap:VisualElements
+			  DisplayName="Quick Media Controls"
+			  Description="A Window tray app that lets you control media playback quickly"
+			  BackgroundColor="transparent"
+			  Square150x150Logo="Images\Square150x150Logo.png"
+			  Square44x44Logo="Images\Square44x44Logo.png">
+				<uap:DefaultTile
+				  Wide310x150Logo="Images\Wide310x150Logo.png"
+				  Square71x71Logo="Images\SmallTile.png"
+				  Square310x310Logo="Images\LargeTile.png"
+				  ShortName="Quick Media Controls">
+					<uap:ShowNameOnTiles>
+						<uap:ShowOn Tile="square150x150Logo" />
+						<uap:ShowOn Tile="wide310x150Logo" />
+						<uap:ShowOn Tile="square310x310Logo" />
+					</uap:ShowNameOnTiles>
+				</uap:DefaultTile>
+				<uap:SplashScreen Image="Images\SplashScreen.png" />
+			</uap:VisualElements>
+
+			<Extensions>
+				<desktop:Extension
+				  Category="windows.fullTrustProcess"
+				  Executable="Quick Media Controls\Quick Media Controls.exe" />
+
+				<uap5:Extension
+				  Category="windows.startupTask"
+				  Executable="Quick Media Controls\Quick Media Controls.exe"
+				  EntryPoint="Windows.FullTrustApplication">
+					<uap5:StartupTask
+					  TaskId="QuickMediaControlsStartupTask"
+					  Enabled="false"
+					  DisplayName="Quick Media Controls" />
+				</uap5:Extension>
+			</Extensions>
+		</Application>
+	</Applications>
+
+	<Capabilities>
+		<Capability Name="internetClient" />
+		<rescap:Capability Name="runFullTrust" />
+	</Capabilities>
 </Package>

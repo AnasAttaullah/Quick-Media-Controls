@@ -40,7 +40,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private void CardAction_Click_4(object sender, RoutedEventArgs e)
         {
-            OpenUrl("https://github.com/AnasAttaullah/Quick-Media-Controls");
+            OpenUrl("https://anasattaullah.netlify.app/support/");
         }
     }
 }

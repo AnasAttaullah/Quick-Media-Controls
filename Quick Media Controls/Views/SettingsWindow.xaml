@@ -60,7 +60,7 @@
             <ui:HyperlinkButton
                 Content="Buy me a Coffee"
                 Icon="{ui:SymbolIcon Symbol=DrinkCoffee16}"
-                NavigateUri="https://google.com" />
+                NavigateUri="https://anasattaullah.netlify.app/support/" />
 
             <StackPanel
                 Margin="0,0,10,0"
