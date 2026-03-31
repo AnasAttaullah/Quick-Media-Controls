@@ -22,10 +22,34 @@
 A Windows tray app that lets you control whatever is currently playing on your PC without opening the player.
 
 **It's super quick ⚡:**
-- **Play / Pause**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Left Click&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + P`  
-- **Next Track**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Double Click&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + N`  
-- **Previous Track**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + Shift + P`  
-- **Open Flyout**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Right Click&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + O`
+
+<table align="center">
+  <tr>
+    <th>Action</th>
+    <th>Mouse Input</th>
+    <th>Keyboard Shortcut</th>
+  </tr>
+  <tr>
+    <td>Play or Pause</td>
+    <td>Left Click</td>
+    <td><code>Alt + P</code></td>
+  </tr>
+  <tr>
+    <td>Next Track</td>
+    <td>Double Click</td>
+    <td><code>Alt + N</code></td>
+  </tr>
+  <tr>
+    <td>Previous Track</td>
+    <td>—</td>
+    <td><code>Alt + Shift + P</code></td>
+  </tr>
+  <tr>
+    <td>Open Flyout</td>
+    <td>Right Click</td>
+    <td><code>Alt + O</code></td>
+  </tr>
+</table>
 
 > All keybindings are fully customizable from the settings window.
 ---
@@ -66,16 +90,42 @@ Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
 - **Keyboard & mouse shortcuts** with custom keybinds  
 - **Multi-display & DPI aware**  
 - **Customizable settings window**  
-- **Automatic updates**pdates** to keep you up to date
+- **Automatic updates** to keep you up to date
 
 ---
 
-## Showcase 🖼️
+## 🖼️ Showcase
 
-|                     | Dark Mode | Light Mode |
-|---------------------|-----------|------------|
-| **Media Playing**   | <img src="docs/images/Screenshots/windows11_dark.png" width="420" alt="Windows 11 Dark" /> | <img src="docs/images/Screenshots/windows11_light.png" width="420" alt="Windows 11 Light" /> |
-| **No Media Playing**| <img src="docs/images/Screenshots/windows11NoMedia_dark.png" width="420" alt="No Media Dark" /> | <img src="docs/images/Screenshots/windows11NoMedia_light.png" width="420" alt="No Media Light" /> |
+
+https://github.com/user-attachments/assets/12bbd85d-fec1-4cc5-937d-b9ece97e7994
+
+
+
+
+<p align="center">
+<table>
+  <tr>
+    <th></th>
+    <th>Dark Mode</th>
+    <th>Light Mode</th>
+  </tr>
+  <tr>
+    <td><b>Media Playing</b></td>
+    <td><img src="docs/images/Screenshots/windows11_dark.png" width="420"/></td>
+    <td><img src="docs/images/Screenshots/windows11_light.png" width="420"/></td>
+  </tr>
+  <tr>
+    <td><b>No Media Playing</b></td>
+    <td><img src="docs/images/Screenshots/windows11NoMedia_dark.png" width="420"/></td>
+    <td><img src="docs/images/Screenshots/windows11NoMedia_light.png" width="420"/></td>
+  </tr>
+</table>
+</p>
+
+<p align="center">
+  <img src="docs/images/mouse_clicks_showcase.gif" width="500"/>
+  <img src="docs/images/settings_window_showcase.gif" width="500"/>
+</p>
 
 ---
 
