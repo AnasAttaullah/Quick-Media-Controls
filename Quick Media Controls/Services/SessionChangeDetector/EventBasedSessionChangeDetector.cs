@@ -5,15 +5,17 @@ using Windows.Media.Control;
 namespace Quick_Media_Controls.Services.SessionChangeDetector
 {
     /// <summary>
-    /// Windows 11+ session change detector using native events
+    /// Windows 11+ session change detector using native events.
     /// </summary>
-
     internal class EventBasedSessionChangeDetector : ISessionChangeDetector
     {
         private readonly GlobalSystemMediaTransportControlsSessionManager _sessionManager;
         private readonly Action<GlobalSystemMediaTransportControlsSession?> _onSessionChanged;
+        private bool _isDisposed;
 
-        public EventBasedSessionChangeDetector(GlobalSystemMediaTransportControlsSessionManager sessionManager, Action<GlobalSystemMediaTransportControlsSession?> onSessionChanged)
+        public EventBasedSessionChangeDetector(
+            GlobalSystemMediaTransportControlsSessionManager sessionManager,
+            Action<GlobalSystemMediaTransportControlsSession?> onSessionChanged)
         {
             _sessionManager = sessionManager;
             _onSessionChanged = onSessionChanged;
@@ -21,14 +23,19 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
 
         public void Start()
         {
-            _sessionManager.SessionsChanged += OnSessionsChanged;
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(EventBasedSessionChangeDetector));
+
+            _sessionManager.CurrentSessionChanged += OnCurrentSessionChanged;
         }
 
-        private void OnSessionsChanged(GlobalSystemMediaTransportControlsSessionManager sender, SessionsChangedEventArgs args)
+        private void OnCurrentSessionChanged(
+            GlobalSystemMediaTransportControlsSessionManager sender,
+            CurrentSessionChangedEventArgs args)
         {
             try
             {
-                var newSession = _sessionManager.GetCurrentSession();
+                var newSession = sender.GetCurrentSession();
                 _onSessionChanged.Invoke(newSession);
             }
             catch (Exception ex)
@@ -39,7 +46,10 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
 
         public void Dispose()
         {
-            _sessionManager.SessionsChanged -= OnSessionsChanged;
+            if (_isDisposed) return;
+            _isDisposed = true;
+
+            _sessionManager.CurrentSessionChanged -= OnCurrentSessionChanged;
         }
     }
 }

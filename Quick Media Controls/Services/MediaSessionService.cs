@@ -16,7 +16,7 @@ namespace Quick_Media_Controls.Services
         public GlobalSystemMediaTransportControlsSessionPlaybackInfo? CurrentPlaybackInfo { get; private set; }
         public GlobalSystemMediaTransportControlsSessionMediaProperties? CurrentMediaProperties { get; private set; }
 
-        public event EventHandler<GlobalSystemMediaTransportControlsSessionManager>? SessionChanged;
+        public event EventHandler<GlobalSystemMediaTransportControlsSessionManager?>? SessionChanged;
         public event EventHandler<GlobalSystemMediaTransportControlsSessionPlaybackInfo>? PlaybackInfoChanged;
         public event EventHandler? MediaPropertiesChanged;
 
@@ -46,12 +46,12 @@ namespace Quick_Media_Controls.Services
 
                 if (isWindows10)
                 {
-                    System.Diagnostics.Debug.WriteLine("Windows 10 detected: Using polling strategy");
+                    Debug.WriteLine("Windows 10 detected: Using polling strategy");
                     _sessionChangeDetector = new PollingSessionChangeDetector(SessionManager, OnSessionChangeDetectedAsync);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Windows 11+ detected: Using event-based strategy");
+                    Debug.WriteLine("Windows 11+ detected: Using event-based strategy");
                     _sessionChangeDetector = new EventBasedSessionChangeDetector(SessionManager, OnSessionChangeDetectedAsync);
                 }
 
@@ -70,7 +70,7 @@ namespace Quick_Media_Controls.Services
             var newSessionId = newSession?.SourceAppUserModelId;
             if (newSessionId != _lastSessionId)
             {
-                System.Diagnostics.Debug.WriteLine($"Session change: {_lastSessionId} -> {newSessionId}");
+                Debug.WriteLine($"Session change: {_lastSessionId} -> {newSessionId}");
                 UpdateCurrentSessionAsync(newSession);
                 _lastSessionId = newSessionId;
             }
@@ -164,6 +164,7 @@ namespace Quick_Media_Controls.Services
         {
             return CurrentPlaybackInfo?.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing;
         }
+
         public bool IsNextEnabled()
         {
             return CurrentPlaybackInfo?.Controls?.IsNextEnabled ?? false;
@@ -187,6 +188,7 @@ namespace Quick_Media_Controls.Services
                 {
                     CurrentMediaProperties = await CurrentSession.TryGetMediaPropertiesAsync();
                 }
+
                 MediaPropertiesChanged?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
@@ -236,6 +238,5 @@ namespace Quick_Media_Controls.Services
             GC.SuppressFinalize(this);
         }
     }
-
 }
 

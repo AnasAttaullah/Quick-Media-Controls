@@ -5,7 +5,7 @@
 #define MyAppExeName "Quick Media Controls.exe"
 #define MyAppId "{{55A7F81D-F251-4D10-BD90-01662BB5EE87}"
 #define DotNetInstallerName "windowsdesktop-runtime-8.0.24-win-x64.exe"
-#define MyAppPublishDir "Quick Media Controls\bin\x64\Release\net8.0-windows10.0.17763.0\win-x64\publish"
+#define MyAppPublishDir "Quick Media Controls\bin\Release\net8.0-windows10.0.17763.0\win-x64\publish"
 
 [Setup]
 AppId={#MyAppId}
@@ -20,7 +20,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=LICENSE.txt
-OutputDir=Installer
+OutputDir=Packaging Output
 OutputBaseFilename=QuickMediaControls-Setup-v{#MyAppVersion}
 SetupIconFile=Quick Media Controls\Assets\Icons\applicationIcon.ico
 Compression=lzma2/max
