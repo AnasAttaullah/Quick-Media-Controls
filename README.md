@@ -22,13 +22,15 @@
 A Windows tray app that lets you control whatever is currently playing on your PC without opening the player.
 
 **It's super quick ⚡:**
+- **Play / Pause**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Left Click&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + P`  
+- **Next Track**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Double Click&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + N`  
+- **Previous Track**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + Shift + P`  
+- **Open Flyout**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Right Click&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| `Alt + O`
 
-* **Single Left Click** → Play / Pause ▶️
-* **Double Left Click** → Next track ⏭️
-* **Right Click** → Open the Flyout 📤
+> All keybindings are fully customizable from the settings window.
 ---
 
-## Download (Installer) ⬇️
+## Download ⬇️
 
 <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
   <img src="docs/images/download_installerx64.png" alt="Download Now" width="260" style="display:block; margin-left:0;" />
@@ -42,7 +44,7 @@ Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
 
 ---
 
-## Install & run 🖥️
+## Installation 🖥️
 
 1. Download the setup file from Releases (example: `QuickMediaControls-Setup-...exe`)
 2. Run the installer
@@ -56,23 +58,19 @@ Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
 
 ## Features ✨
 
-- **Feels native on Windows 10 & 11**
-- **Light + Dark mode** support
-- Uses your **Windows accent color** for a clean, consistent look
-- Works with **whatever Windows is currently playing** (music apps, browsers, players, etc.)
-- **Flyout panel**
-  - Title / artist / album art (when available)
-  - Previous / Play-Pause / Next buttons
-  - Smooth **open & close animations**
-- **Smart tray icon**
-  - Changes based on play/pause
-  - Shows **No Media Playing** when nothing is active
-- **Automatic updates**
-  - Helps you stay up to date
+- **Native experience** on Windows 10 & 11  
+- **Light & Dark mode** with Windows accent color  
+- **Universal media support** – works with apps, browsers, and players  
+- **Flyout panel**: shows title, artist, album art, and playback controls  
+- **Smart tray icon**: displays play/pause state or “No Media Playing”  
+- **Keyboard & mouse shortcuts** with custom keybinds  
+- **Multi-display & DPI aware**  
+- **Customizable settings window**  
+- **Automatic updates**pdates** to keep you up to date
 
 ---
 
-## Screenshots 🖼️
+## Showcase 🖼️
 
 |                     | Dark Mode | Light Mode |
 |---------------------|-----------|------------|
