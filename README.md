@@ -126,13 +126,13 @@ https://github.com/user-attachments/assets/12bbd85d-fec1-4cc5-937d-b9ece97e7994
 
 #### Mouse Click Actions
 <p align="center">
-  <img src="docs/images/mouse_clicks_showcase.gif" width="auto"/>
+  <img src="docs/images/mouse_clicks_showcase.gif" width="100%"/>
 </p>
 
 #### Settings Windows
 
 <p align="center">
-  <img src="docs/images/settings_window_showcase.gif" width="auto"/>
+  <img src="docs/images/settings_window_showcase.gif" width="100%"/>
 </p>
 
 ---
