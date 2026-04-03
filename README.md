@@ -100,7 +100,7 @@ Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
 
 #### Trailer
 
-https://github.com/user-attachments/assets/12bbd85d-fec1-4cc5-937d-b9ece97e7994
+https://github.com/user-attachments/assets/61f0dea8-6c25-40d1-8a48-cc870b52eefd
 
 #### Screenshots
 
@@ -166,7 +166,7 @@ https://github.com/user-attachments/assets/12bbd85d-fec1-4cc5-937d-b9ece97e7994
 <details>
   <summary><strong>How do I open the settings window?</strong></summary>
   <br/>
-  Right-click the tray icon, then select <strong>Settings</strong>.
+  Right-click the media flyout, then select <strong>Settings</strong>.
 </details>
 
 <details>
