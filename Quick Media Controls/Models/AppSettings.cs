@@ -89,19 +89,19 @@ namespace Quick_Media_Controls.Models
 
     public sealed class KeyboardShortcutSettings
     {
-        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, Key.P);
-        public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, Key.N);
-        public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, Key.P);
-        public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, Key.O);
+        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N));
+        public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O));
 
         public static KeyboardShortcutSettings CreateDefault()
         {
             return new KeyboardShortcutSettings
             {
-                PlayPause = new HotkeyGesture(ModifierKeys.Alt, Key.P),
-                NextTrack = new HotkeyGesture(ModifierKeys.Alt, Key.N),
-                PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, Key.P),
-                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, Key.O)
+                PlayPause = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1)),
+                NextTrack = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N)),
+                PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P)),
+                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O))
             };
         }
 

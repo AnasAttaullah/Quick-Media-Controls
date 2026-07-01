@@ -1,4 +1,5 @@
 ﻿using Quick_Media_Controls.Models;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,10 +20,18 @@ namespace Quick_Media_Controls.Views.Pages
 
             Loaded += KeybindsSettingsPage_Loaded;
 
+            
             PlayPauseHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             NextTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             PreviousTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             OpenFlyoutHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+
+            PlayPauseHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            NextTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            PreviousTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            OpenFlyoutHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            
+            
         }
 
         private void KeybindsSettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -71,6 +80,8 @@ namespace Quick_Media_Controls.Views.Pages
         {
             e.Handled = true;
 
+            Debug.WriteLine("Nooooorr");
+
             if (!HotkeyGesture.TryFromKeyEvent(e, out var gesture) || gesture is null)
             {
                 HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key.";
@@ -79,6 +90,36 @@ namespace Quick_Media_Controls.Views.Pages
             }
 
             HotkeyValidationTextBlock.Text = string.Empty;
+            HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
+
+            var keyboard = _keybindsSettings.KeyboardShortcuts;
+
+            if (sender == PlayPauseHotkeyTextBox)
+                keyboard.PlayPause = gesture;
+            else if (sender == NextTrackHotkeyTextBox)
+                keyboard.NextTrack = gesture;
+            else if (sender == PreviousTrackHotkeyTextBox)
+                keyboard.PreviousTrack = gesture;
+            else if (sender == OpenFlyoutHotkeyTextBox)
+                keyboard.OpenFlyout = gesture;
+
+            Debug.WriteLine("Hellloo");
+            BindKeyboardShortcutText();
+            _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
+        }
+
+        private void HotkeyTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("Yeeerrr");
+
+            if(!HotkeyGesture.TryFromMouseEvent(e , out var gesture))
+            {
+                HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key.";
+                HotkeyValidationTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+
+            HotkeyValidationTextBlock.Text = "YeEESS";
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
             var keyboard = _keybindsSettings.KeyboardShortcuts;

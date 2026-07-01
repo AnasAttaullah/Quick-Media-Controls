@@ -1,35 +1,72 @@
-﻿using System.Collections.Generic;
+﻿using Quick_Media_Controls.Services;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Quick_Media_Controls.Models
 {
+    public enum InputType
+    {
+        Keyboard = 0,
+        Mouse = 1
+    }
+
+    public readonly struct HotkeyInput
+    {
+        public InputType Type { get; }
+        public Key? Key { get; }
+        public MouseButton? MouseButton { get; }
+
+        private HotkeyInput(InputType type, Key? key, MouseButton? mouseButton)
+        {
+            Type = type;
+            Key = key;
+            MouseButton = mouseButton;
+        }
+
+        public static HotkeyInput FromKey(Key key)
+            => new(InputType.Keyboard, key, null);
+
+        public static HotkeyInput FromMouse(MouseButton button)
+            => new(InputType.Mouse, null, button);
+
+        public string Value()
+        {
+            return Type switch
+            {
+                InputType.Keyboard => Key?.ToString() ?? "None",
+                InputType.Mouse => MouseButton?.ToString() ?? "None",
+                _ => "Unknown"
+            };
+        }
+    }
+
     public sealed class HotkeyGesture
     {
-        public ModifierKeys Modifiers { get; set; }
-        public Key Key { get; set; }
+        public ModifierKeys modifiers { get; set; }
+        public HotkeyInput input { get; set; }
 
         public HotkeyGesture()
         {
         }
 
-        public HotkeyGesture(ModifierKeys modifiers, Key key)
+        public HotkeyGesture(ModifierKeys _modifiers, HotkeyInput _input)
         {
-            Modifiers = modifiers;
-            Key = key;
+            modifiers = _modifiers;
+            input = _input;
         }
 
-        public HotkeyGesture Clone() => new(Modifiers, Key);
+        public HotkeyGesture Clone() => new(modifiers, input);
 
         public string ToDisplayString()
         {
             var parts = new List<string>();
 
-            if (Modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
-            if (Modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
-            if (Modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
-            if (Modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
+            if (modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
+            if (modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
+            if (modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
+            if (modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
 
-            parts.Add(Key.ToString());
+            parts.Add(input.Value());
 
             return string.Join(" + ", parts);
         }
@@ -39,7 +76,7 @@ namespace Quick_Media_Controls.Models
             gesture = null;
 
             var key = e.Key == Key.System ? e.SystemKey : e.Key;
-            var modifiers = Keyboard.Modifiers;
+            var modifiers = ModifierStateService.GetModifiers();
 
             if (modifiers == ModifierKeys.None)
                 return false;
@@ -53,8 +90,26 @@ namespace Quick_Media_Controls.Models
                 return false;
             }
 
-            gesture = new HotkeyGesture(modifiers, key);
+            gesture = new HotkeyGesture(modifiers, HotkeyInput.FromKey(key));
             return true;
         }
+
+        public static bool TryFromMouseEvent(MouseButtonEventArgs e, out HotkeyGesture? gesture)
+        {
+            gesture = null;
+
+            var button = e.ChangedButton;
+            var modifiers = ModifierStateService.GetModifiers();
+
+            if (modifiers == ModifierKeys.None) return false;
+
+            if (e == null) return false;
+
+            gesture = new HotkeyGesture(modifiers, HotkeyInput.FromMouse(button));
+
+            System.Diagnostics.Debug.WriteLine("This is out gesture: " + gesture.modifiers.ToString() + " " + gesture.input.Value());
+            return true;
+        }
+        
     }
 }
