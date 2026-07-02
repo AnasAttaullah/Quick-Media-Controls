@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.Devices;
+﻿using AutoUpdaterDotNET;
+using Microsoft.VisualBasic.Devices;
 using Quick_Media_Controls.Models;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 
@@ -17,10 +19,10 @@ namespace Quick_Media_Controls.Services
 
         // Native Windows constants for the low-level mouse hook
         private const int WH_MOUSE_LL = 14;
-        private const int WM_XBUTTONDOWN = 0x020B;
         private const int WM_XBUTTONUP = 0x020C;
-        private const int XBUTTON2 = 0x0002;
-        private const int VK_CONTROL = 0x11;
+        private const int WM_LBUTTONUP = 0x0202;
+        private const int WM_RBUTTONUP = 0x0205;
+        private const int WM_MBUTTONUP = 0x0207;
 
         private const uint MOD_ALT = 0x0001;
         private const uint MOD_CONTROL = 0x0002;
@@ -122,12 +124,12 @@ namespace Quick_Media_Controls.Services
         private void Register(int id, HotkeyGesture gesture, ShortcutAction action)
         {
             //If input type is keyboard then input.key *shouddnt* be null 
-            if (gesture.input.Type == Models.InputType.Keyboard)
+            if (gesture.Input.Type == Models.InputType.Keyboard)
             {
-                if (gesture.input.Key == null) return;
+                if (gesture.Input.Key == null) return;
 
-                var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(gesture.input.Key.Value);
-                var modifiers = ToNativeModifiers(gesture.modifiers) | MOD_NOREPEAT;
+                var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(gesture.Input.Key.Value);
+                var modifiers = ToNativeModifiers(gesture.Modifiers) | MOD_NOREPEAT;
 
                 if (!RegisterHotKey(_windowHandle, id, modifiers, virtualKey))
                 {
@@ -143,7 +145,7 @@ namespace Quick_Media_Controls.Services
                 Debug.WriteLine("Added a mouse gesture");
                 _registeredMouseHotkeys[gesture] = action;
 
-                Debug.WriteLine(gesture.input.MouseButton);
+                Debug.WriteLine(gesture.Input.MouseButton);
             }
         }
 
@@ -164,8 +166,8 @@ namespace Quick_Media_Controls.Services
 
             foreach (var hotkey in settings.Enumerate())
             {
-                if (hotkey.input.Key == null) continue;
-                var key = $"{(int)hotkey.modifiers}:{(int)hotkey.input.Key}";
+                if (hotkey.Input.Key == null) continue;
+                var key = $"{(int)hotkey.Modifiers}:{(int)hotkey.Input.Key}";
                 if (!set.Add(key))
                 {
                     throw new InvalidOperationException($"Duplicate hotkey detected: {hotkey.ToDisplayString()}");
@@ -206,70 +208,56 @@ namespace Quick_Media_Controls.Services
         // Handles the global mouse event streaming interception
         private IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0)
+            if (nCode < 0)
+                return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
+
+            if (!TryGetMouseGesture(wParam, lParam, out var gesture))
+                return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
+
+            if (_registeredMouseHotkeys.TryGetValue(gesture, out var action))
             {
-
-
-
-                HotkeyGesture gesture = new(ModifierKeys.None, HotkeyInput.Empty());
-                var hook = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-
-                var mods = ModifierStateService.GetModifiers();
-                
-                int message = wParam.ToInt32();
-                if(message == WM_XBUTTONUP) return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
-
-                if (message == WM_XBUTTONDOWN || message == WM_XBUTTONUP)
-                {
-
-                    uint xButton = (hook.mouseData >> 16) & 0xFFFF;
-                    if (xButton == 1)
-                    {
-                        gesture = new(mods, HotkeyInput.FromMouse(MouseButton.XButton1));
-                    }
-
-                    if (xButton == 2)
-                    {
-                        gesture = new(mods, HotkeyInput.FromMouse(MouseButton.XButton2));
-                    }
-
-
-                    if (_registeredMouseHotkeys.TryGetValue(gesture, out var action))
-                    {
-                        Debug.WriteLine("Hello");
-                        HotkeyPressed?.Invoke(this, action);
-                        return (IntPtr)1;
-                    }
-                }
-
-                /*
-                if (message == WM_XBUTTONDOWN || message == WM_XBUTTONUP)
-                {
-                    
-
-                    uint xButton = (hook.mouseData >> 16) & 0xFFFF; 
-                    bool isCtrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-                    bool isAltPressed = (GetKeyState(VK_Alt))
-
-                    if (isCtrlPressed && xButton == 2)
-                    {
-                        Debug.WriteLine("Swallowing XButton2");
-
-                        return (IntPtr)1;
-                    }
-
-                   
-                }
-                /*
-                if (_registeredHotkeyActions.TryGetValue(gesture, out var action))
-                {
-                    ShortcutPressed?.Invoke(this, action);
-
-                    return (IntPtr)1;
-                }*/
+                HotkeyPressed?.Invoke(this, action);
+                return (IntPtr)1;
             }
 
             return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
+        }
+        
+        private static bool TryGetMouseGesture(IntPtr wParam, IntPtr lParam, out HotkeyGesture gesture)
+        {
+            gesture = default;
+
+            int message = wParam.ToInt32();
+
+            var mods = ModifierStateService.GetModifiers();
+
+            MouseButton? button = message switch
+            {
+                WM_LBUTTONUP => MouseButton.Left,
+                WM_RBUTTONUP => MouseButton.Right,
+                WM_MBUTTONUP => MouseButton.Middle,
+                WM_XBUTTONUP => GetXButton(lParam),
+                _ => null
+            };
+
+
+            if (button is null)
+             return false;
+
+            gesture = new HotkeyGesture(mods, HotkeyInput.FromMouse(button.Value));
+            return true;
+        }
+
+        private static MouseButton GetXButton(IntPtr lParam)
+        {
+            var hook = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+            uint button = (hook.mouseData >> 16) & 0xFFFF;
+
+            return button switch
+            {
+                1 => MouseButton.XButton1,
+                2 => MouseButton.XButton2
+            };
         }
 
         public void Dispose()

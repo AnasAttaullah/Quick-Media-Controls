@@ -46,8 +46,8 @@ namespace Quick_Media_Controls.Models
 
     public sealed class HotkeyGesture : IEquatable<HotkeyGesture>
     {
-        public ModifierKeys modifiers { get; set; }
-        public HotkeyInput input { get; set; }
+        public ModifierKeys Modifiers { get; set; }
+        public HotkeyInput Input { get; set; }
 
         public HotkeyGesture()
         {
@@ -55,22 +55,22 @@ namespace Quick_Media_Controls.Models
 
         public HotkeyGesture(ModifierKeys _modifiers, HotkeyInput _input)
         {
-            modifiers = _modifiers;
-            input = _input;
+            Modifiers = _modifiers;
+            Input = _input;
         }
 
-        public HotkeyGesture Clone() => new(modifiers, input);
+        public HotkeyGesture Clone() => new(Modifiers, Input);
 
         public string ToDisplayString()
         {
             var parts = new List<string>();
 
-            if (modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
-            if (modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
-            if (modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
-            if (modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
+            if (Modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
+            if (Modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
+            if (Modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
+            if (Modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
 
-            parts.Add(input.Value());
+            parts.Add(Input.Value());
 
             return string.Join(" + ", parts);
         }
@@ -111,22 +111,18 @@ namespace Quick_Media_Controls.Models
 
             gesture = new HotkeyGesture(modifiers, HotkeyInput.FromMouse(button));
 
-            System.Diagnostics.Debug.WriteLine("This is out gesture: " + gesture.modifiers.ToString() + " " + gesture.input.Value());
+            System.Diagnostics.Debug.WriteLine("This is out gesture: " + gesture.Modifiers.ToString() + " " + gesture.Input.Value());
             return true;
         }
 
-        public override string ToString()
-        {
-            return ToDisplayString();
-        }
         public bool Equals(HotkeyGesture? other)
         {
             if (other is null) return false;
 
-            return modifiers == other.modifiers
-                && input.Type == other.input.Type
-                && input.Key == other.input.Key
-                && input.MouseButton == other.input.MouseButton;
+            return Modifiers == other.Modifiers
+                && Input.Type == other.Input.Type
+                && Input.Key == other.Input.Key
+                && Input.MouseButton == other.Input.MouseButton;
         }
             
         public override bool Equals(object? obj)
@@ -135,10 +131,10 @@ namespace Quick_Media_Controls.Models
         public override int GetHashCode()
         {
             return HashCode.Combine(
-                modifiers,
-                input.Type,
-                input.Key,
-                input.MouseButton
+                Modifiers,
+                Input.Type,
+                Input.Key,
+                Input.MouseButton
             );
         }
     }

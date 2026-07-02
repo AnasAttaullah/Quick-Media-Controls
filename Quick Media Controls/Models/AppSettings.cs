@@ -89,7 +89,7 @@ namespace Quick_Media_Controls.Models
 
     public sealed class ShortcutSettings
     {
-        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1));
         public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N));
         public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P));
         public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O));
