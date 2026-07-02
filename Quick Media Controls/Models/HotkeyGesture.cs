@@ -98,6 +98,11 @@ namespace Quick_Media_Controls.Models
             return true;
         }
 
+        public override string ToString()
+        {
+            return Modifiers.ToString() + " " + Input.MouseButton.ToString(); 
+        }
+
         public static bool TryFromMouseEvent(MouseButtonEventArgs e, out HotkeyGesture? gesture)
         {
             gesture = null;

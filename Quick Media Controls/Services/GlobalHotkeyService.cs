@@ -24,6 +24,11 @@ namespace Quick_Media_Controls.Services
         private const int WM_RBUTTONUP = 0x0205;
         private const int WM_MBUTTONUP = 0x0207;
 
+        private const int WM_XBUTTONDOWN = 0x020B;
+        private const int WM_LBUTTONDOWN = 0x0201;
+        private const int WM_RBUTTONDOWN = 0x0204;
+        private const int WM_MBUTTONDOWN = 0x0206;
+
         private const uint MOD_ALT = 0x0001;
         private const uint MOD_CONTROL = 0x0002;
         private const uint MOD_SHIFT = 0x0004;
@@ -206,43 +211,82 @@ namespace Quick_Media_Controls.Services
         }
 
         // Handles the global mouse event streaming interception
+        private MouseButton? _suppressUpFor = null;
         private IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode < 0)
+            if (nCode < 0 || _isDisposed)
                 return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
 
-            if (!TryGetMouseGesture(wParam, lParam, out var gesture))
+            int message = wParam.ToInt32();
+
+            bool isDown =
+                message == WM_LBUTTONDOWN ||
+                message == WM_RBUTTONDOWN ||
+                message == WM_MBUTTONDOWN ||
+                message == WM_XBUTTONDOWN;
+
+            bool isUp =
+                message == WM_LBUTTONUP ||
+                message == WM_RBUTTONUP ||
+                message == WM_MBUTTONUP ||
+                message == WM_XBUTTONUP;
+
+            // 1. If this is a suppressed UP → swallow it
+            if (isUp && _suppressUpFor != null)
+            {
+                MouseButton? upButton = message switch
+                {
+                    WM_LBUTTONUP => MouseButton.Left,
+                    WM_RBUTTONUP => MouseButton.Right,
+                    WM_MBUTTONUP => MouseButton.Middle,
+                    WM_XBUTTONUP => GetXButton(lParam),
+                    _ => null
+                };
+
+                if (upButton == _suppressUpFor)
+                {
+                    _suppressUpFor = null;
+                    return (IntPtr)1;
+                }
+            }
+
+            // 2. Only process DOWN for hotkeys
+            if (!isDown)
+                return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
+
+            if (!TryGetMouseGesture(message, lParam, out var gesture))
                 return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
 
             if (_registeredMouseHotkeys.TryGetValue(gesture, out var action))
             {
                 HotkeyPressed?.Invoke(this, action);
+
+                // remember to also block the matching UP
+                _suppressUpFor = gesture.Input.MouseButton;
+
                 return (IntPtr)1;
             }
 
             return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
         }
-        
-        private static bool TryGetMouseGesture(IntPtr wParam, IntPtr lParam, out HotkeyGesture gesture)
+
+        private static bool TryGetMouseGesture(int message, IntPtr lParam, out HotkeyGesture gesture)
         {
             gesture = default;
-
-            int message = wParam.ToInt32();
 
             var mods = ModifierStateService.GetModifiers();
 
             MouseButton? button = message switch
             {
-                WM_LBUTTONUP => MouseButton.Left,
-                WM_RBUTTONUP => MouseButton.Right,
-                WM_MBUTTONUP => MouseButton.Middle,
-                WM_XBUTTONUP => GetXButton(lParam),
+                WM_LBUTTONDOWN => MouseButton.Left,
+                WM_RBUTTONDOWN => MouseButton.Right,
+                WM_MBUTTONDOWN => MouseButton.Middle,
+                WM_XBUTTONDOWN => GetXButton(lParam),
                 _ => null
             };
 
-
             if (button is null)
-             return false;
+                return false;
 
             gesture = new HotkeyGesture(mods, HotkeyInput.FromMouse(button.Value));
             return true;
