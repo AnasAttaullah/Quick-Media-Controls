@@ -5,6 +5,7 @@ using Windows.System;
 
 namespace Quick_Media_Controls.Services
 {
+
     internal static class ModifierStateService
     {
         [DllImport("user32.dll")]

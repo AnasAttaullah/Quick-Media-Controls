@@ -65,15 +65,15 @@ namespace Quick_Media_Controls.Models
 
     public sealed class KeybindSettings
     {
-        public KeyboardShortcutSettings KeyboardShortcuts { get; set; } = KeyboardShortcutSettings.CreateDefault();
-        public MouseShortcutSettings MouseShortcuts { get; set; } = MouseShortcutSettings.CreateDefault();
+        public ShortcutSettings Shortcuts { get; set; } = ShortcutSettings.CreateDefault();
+        public IconShortcutSettings IconShortcuts { get; set; } = IconShortcutSettings.CreateDefault();
 
         public static KeybindSettings CreateDefault()
         {
             return new KeybindSettings
             {
-                KeyboardShortcuts = KeyboardShortcutSettings.CreateDefault(),
-                MouseShortcuts = MouseShortcutSettings.CreateDefault()
+                Shortcuts = ShortcutSettings.CreateDefault(),
+                IconShortcuts = IconShortcutSettings.CreateDefault()
             };
         }
 
@@ -81,22 +81,22 @@ namespace Quick_Media_Controls.Models
         {
             return new KeybindSettings
             {
-                KeyboardShortcuts = KeyboardShortcuts.Clone(),
-                MouseShortcuts = MouseShortcuts.Clone()
+                Shortcuts = Shortcuts.Clone(),
+                IconShortcuts = IconShortcuts.Clone()
             };
         }
     }
 
-    public sealed class KeyboardShortcutSettings
+    public sealed class ShortcutSettings
     {
         public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P));
         public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N));
         public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P));
         public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O));
 
-        public static KeyboardShortcutSettings CreateDefault()
+        public static ShortcutSettings CreateDefault()
         {
-            return new KeyboardShortcutSettings
+            return new ShortcutSettings
             {
                 PlayPause = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1)),
                 NextTrack = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N)),
@@ -105,9 +105,9 @@ namespace Quick_Media_Controls.Models
             };
         }
 
-        public KeyboardShortcutSettings Clone()
+        public ShortcutSettings Clone()
         {
-            return new KeyboardShortcutSettings
+            return new ShortcutSettings
             {
                 PlayPause = PlayPause.Clone(),
                 NextTrack = NextTrack.Clone(),
@@ -125,16 +125,16 @@ namespace Quick_Media_Controls.Models
         }
     }
 
-    public sealed class MouseShortcutSettings
+    public sealed class IconShortcutSettings
     {
         public ShortcutAction? LeftClick { get; set; } = ShortcutAction.PlayPause;
         public ShortcutAction? DoubleLeftClick { get; set; } = ShortcutAction.NextTrack;
         public ShortcutAction? RightClick { get; set; } = ShortcutAction.OpenFlyout;
         public ShortcutAction? MiddleClick { get; set; } = null;
 
-        public static MouseShortcutSettings CreateDefault()
+        public static IconShortcutSettings CreateDefault()
         {
-            return new MouseShortcutSettings
+            return new IconShortcutSettings
             {
                 LeftClick = ShortcutAction.PlayPause,
                 DoubleLeftClick = ShortcutAction.NextTrack,
@@ -143,9 +143,9 @@ namespace Quick_Media_Controls.Models
             };
         }
 
-        public MouseShortcutSettings Clone()
+        public IconShortcutSettings Clone()
         {
-            return new MouseShortcutSettings
+            return new IconShortcutSettings
             {
                 LeftClick = LeftClick,
                 DoubleLeftClick = DoubleLeftClick,

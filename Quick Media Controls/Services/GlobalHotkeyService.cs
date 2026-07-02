@@ -18,7 +18,7 @@ namespace Quick_Media_Controls.Services
         // Native Windows constants for the low-level mouse hook
         private const int WH_MOUSE_LL = 14;
         private const int WM_XBUTTONDOWN = 0x020B;
-        private const int WM_RBUTTONDOWN = 0x0204;
+        private const int WM_XBUTTONUP = 0x020C;
         private const int XBUTTON2 = 0x0002;
         private const int VK_CONTROL = 0x11;
 
@@ -31,6 +31,7 @@ namespace Quick_Media_Controls.Services
         private readonly IntPtr _windowHandle;
         private readonly HwndSource _hwndSource;
         private readonly Dictionary<int, ShortcutAction> _registeredHotkeyActions = new();
+        private readonly Dictionary<HotkeyGesture, ShortcutAction> _registeredMouseHotkeys = new();
         private bool _isDisposed;
 
         // Keeps a reference to the delegate so it doesn't get garbage collected
@@ -98,7 +99,7 @@ namespace Quick_Media_Controls.Services
         {
             UnregisterAll();
 
-            var keyboard = settings.KeyboardShortcuts ?? KeyboardShortcutSettings.CreateDefault();
+            ShortcutSettings keyboard = settings.Shortcuts ?? ShortcutSettings.CreateDefault();
             ValidateNoDuplicates(keyboard);
 
             try
@@ -120,21 +121,30 @@ namespace Quick_Media_Controls.Services
 
         private void Register(int id, HotkeyGesture gesture, ShortcutAction action)
         {
-            if (gesture.input.Type != Models.InputType.Keyboard) return;
-            if (gesture.input.Key == null) return;
-
-            var modifiers = ToNativeModifiers(gesture.modifiers) | MOD_NOREPEAT;
-
-            //
-            var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(gesture.input.Key.Value);
-
-            if (!RegisterHotKey(_windowHandle, id, modifiers, virtualKey))
+            //If input type is keyboard then input.key *shouddnt* be null 
+            if (gesture.input.Type == Models.InputType.Keyboard)
             {
-                var errorCode = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException($"Failed to register hotkey. Error code: {errorCode}");
-            }
+                if (gesture.input.Key == null) return;
 
-            _registeredHotkeyActions[id] = action;
+                var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(gesture.input.Key.Value);
+                var modifiers = ToNativeModifiers(gesture.modifiers) | MOD_NOREPEAT;
+
+                if (!RegisterHotKey(_windowHandle, id, modifiers, virtualKey))
+                {
+                    var errorCode = Marshal.GetLastWin32Error();
+                    throw new InvalidOperationException($"Failed to register hotkey. Error code: {errorCode}");
+                }
+
+                Debug.WriteLine("Added a keyboard gesture");
+                _registeredHotkeyActions[id] = action;
+            }
+            else
+            {
+                Debug.WriteLine("Added a mouse gesture");
+                _registeredMouseHotkeys[gesture] = action;
+
+                Debug.WriteLine(gesture.input.MouseButton);
+            }
         }
 
         public void UnregisterAll()
@@ -145,9 +155,10 @@ namespace Quick_Media_Controls.Services
             }
 
             _registeredHotkeyActions.Clear();
+            _registeredMouseHotkeys.Clear();
         }
 
-        private static void ValidateNoDuplicates(KeyboardShortcutSettings settings)
+        private static void ValidateNoDuplicates(ShortcutSettings settings)
         {
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -191,68 +202,76 @@ namespace Quick_Media_Controls.Services
 
             return IntPtr.Zero;
         }
-        
-       /* private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if (nCode >= 0)
-            {
-                var info = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
 
-                if ((info.flags & 0x01) != 0) // LLMHF_INJECTED
-                    return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
-
-                if (wParam == (IntPtr)WM_RBUTTONDOWN)
-                {
-                    return (IntPtr)1;
-                }
-                return (IntPtr)1;
-            }
-            return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
-        }*/
-       /* 
-        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if (nCode < 0)
-                return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
-
-            switch ((int)wParam)
-            {
-                case WM_RBUTTONDOWN:
-                    Debug.WriteLine("Blocked right click");
-                    return (IntPtr)1;
-
-                default:
-                    return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
-            }
-        }
-        */
         // Handles the global mouse event streaming interception
         private IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (wParam.ToInt32() != WM_XBUTTONDOWN)
-                return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
-
-            if (!_isDisposed && nCode >= 0 && (int)wParam == WM_XBUTTONDOWN)
+            if (nCode >= 0)
             {
-                var hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-                int mouseData = (short)((hookStruct.mouseData >> 16) & 0xffff);
 
-                uint xButton = (hookStruct.mouseData >> 16) & 0xFFFF;
-                bool isCtrlPressed = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
-                bool isTMB2Pressed = xButton == 2;
-                if (isCtrlPressed & isTMB2Pressed)
+
+
+                HotkeyGesture gesture = new(ModifierKeys.None, HotkeyInput.Empty());
+                var hook = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+
+                var mods = ModifierStateService.GetModifiers();
+                
+                int message = wParam.ToInt32();
+                if(message == WM_XBUTTONUP) return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
+
+                if (message == WM_XBUTTONDOWN || message == WM_XBUTTONUP)
                 {
-                    // Fire the play/pause action (or change this action to NextTrack, OpenFlyout, etc.)
-                    HotkeyPressed?.Invoke(this, ShortcutAction.PlayPause);
 
-                    // Return 1 to prevent Windows from passing this click to background apps
-                    return (IntPtr)1;
+                    uint xButton = (hook.mouseData >> 16) & 0xFFFF;
+                    if (xButton == 1)
+                    {
+                        gesture = new(mods, HotkeyInput.FromMouse(MouseButton.XButton1));
+                    }
+
+                    if (xButton == 2)
+                    {
+                        gesture = new(mods, HotkeyInput.FromMouse(MouseButton.XButton2));
+                    }
+
+
+                    if (_registeredMouseHotkeys.TryGetValue(gesture, out var action))
+                    {
+                        Debug.WriteLine("Hello");
+                        HotkeyPressed?.Invoke(this, action);
+                        return (IntPtr)1;
+                    }
                 }
+
+                /*
+                if (message == WM_XBUTTONDOWN || message == WM_XBUTTONUP)
+                {
+                    
+
+                    uint xButton = (hook.mouseData >> 16) & 0xFFFF; 
+                    bool isCtrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+                    bool isAltPressed = (GetKeyState(VK_Alt))
+
+                    if (isCtrlPressed && xButton == 2)
+                    {
+                        Debug.WriteLine("Swallowing XButton2");
+
+                        return (IntPtr)1;
+                    }
+
+                   
+                }
+                /*
+                if (_registeredHotkeyActions.TryGetValue(gesture, out var action))
+                {
+                    ShortcutPressed?.Invoke(this, action);
+
+                    return (IntPtr)1;
+                }*/
             }
 
             return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
         }
-        
+
         public void Dispose()
         {
             if (_isDisposed) return;

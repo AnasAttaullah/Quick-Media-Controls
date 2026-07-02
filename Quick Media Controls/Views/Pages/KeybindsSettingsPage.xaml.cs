@@ -40,8 +40,8 @@ namespace Quick_Media_Controls.Views.Pages
             if (_settingsWindow is null) return;
 
             _keybindsSettings = _settingsWindow.DraftSettings.Keybinds.Clone();
-            _keybindsSettings.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
-            _keybindsSettings.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
+            _keybindsSettings.Shortcuts ??= ShortcutSettings.CreateDefault();
+            _keybindsSettings.IconShortcuts ??= IconShortcutSettings.CreateDefault();
 
             BindKeyboardShortcutText();
             BindMouseShortcutSelections();
@@ -49,7 +49,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private void BindKeyboardShortcutText()
         {
-            var keyboard = _keybindsSettings.KeyboardShortcuts;
+            var keyboard = _keybindsSettings.Shortcuts;
 
             PlayPauseHotkeyTextBox.Text = keyboard.PlayPause.ToDisplayString();
             NextTrackHotkeyTextBox.Text = keyboard.NextTrack.ToDisplayString();
@@ -62,7 +62,7 @@ namespace Quick_Media_Controls.Views.Pages
             _isUpdatingMouseComboSelection = true;
             try
             {
-                var mouse = _keybindsSettings.MouseShortcuts;
+                var mouse = _keybindsSettings.IconShortcuts;
                 SetComboSelection(LeftClickActionComboBox, mouse.LeftClick);
                 SetComboSelection(DoubleLeftClickActionComboBox, mouse.DoubleLeftClick);
                 SetComboSelection(RightClickActionComboBox, mouse.RightClick);
@@ -92,7 +92,7 @@ namespace Quick_Media_Controls.Views.Pages
             HotkeyValidationTextBlock.Text = string.Empty;
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
-            var keyboard = _keybindsSettings.KeyboardShortcuts;
+            var keyboard = _keybindsSettings.Shortcuts;
 
             if (sender == PlayPauseHotkeyTextBox)
                 keyboard.PlayPause = gesture;
@@ -122,7 +122,7 @@ namespace Quick_Media_Controls.Views.Pages
             HotkeyValidationTextBlock.Text = "YeEESS";
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
-            var keyboard = _keybindsSettings.KeyboardShortcuts;
+            var keyboard = _keybindsSettings.Shortcuts;
 
             if (sender == PlayPauseHotkeyTextBox)
                 keyboard.PlayPause = gesture;
@@ -161,25 +161,25 @@ namespace Quick_Media_Controls.Views.Pages
 
         private void ResetPlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.KeyboardShortcuts.PlayPause = _defaultKeybinds.KeyboardShortcuts.PlayPause.Clone();
+            _keybindsSettings.Shortcuts.PlayPause = _defaultKeybinds.Shortcuts.PlayPause.Clone();
             ResetAndSync();
         }
 
         private void ResetNextTrackButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.KeyboardShortcuts.NextTrack = _defaultKeybinds.KeyboardShortcuts.NextTrack.Clone();
+            _keybindsSettings.Shortcuts.NextTrack = _defaultKeybinds.Shortcuts.NextTrack.Clone();
             ResetAndSync();
         }
 
         private void ResetPreviousTrackButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.KeyboardShortcuts.PreviousTrack = _defaultKeybinds.KeyboardShortcuts.PreviousTrack.Clone();
+            _keybindsSettings.Shortcuts.PreviousTrack = _defaultKeybinds.Shortcuts.PreviousTrack.Clone();
             ResetAndSync();
         }
 
         private void ResetOpenFlyoutButton_Click(object sender, RoutedEventArgs e)
         {
-            _keybindsSettings.KeyboardShortcuts.OpenFlyout = _defaultKeybinds.KeyboardShortcuts.OpenFlyout.Clone();
+            _keybindsSettings.Shortcuts.OpenFlyout = _defaultKeybinds.Shortcuts.OpenFlyout.Clone();
             ResetAndSync();
         }
 
@@ -188,9 +188,9 @@ namespace Quick_Media_Controls.Views.Pages
             _isUpdatingMouseComboSelection = true;
             try
             {
-                _keybindsSettings.MouseShortcuts = _defaultKeybinds.MouseShortcuts.Clone();
+                _keybindsSettings.IconShortcuts = _defaultKeybinds.IconShortcuts.Clone();
 
-                var defaultMouseShortcut = _keybindsSettings.MouseShortcuts;
+                var defaultMouseShortcut = _keybindsSettings.IconShortcuts;
                 SetComboSelection(LeftClickActionComboBox, defaultMouseShortcut.LeftClick);
                 SetComboSelection(DoubleLeftClickActionComboBox, defaultMouseShortcut.DoubleLeftClick);
                 SetComboSelection(RightClickActionComboBox, defaultMouseShortcut.RightClick);
@@ -240,7 +240,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private ShortcutAction? GetMappedAction(ComboBox comboBox)
         {
-            var mouse = _keybindsSettings.MouseShortcuts;
+            var mouse = _keybindsSettings.IconShortcuts;
 
             if (comboBox == LeftClickActionComboBox) return mouse.LeftClick;
             if (comboBox == DoubleLeftClickActionComboBox) return mouse.DoubleLeftClick;
@@ -250,7 +250,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private void SetMappedAction(ComboBox comboBox, ShortcutAction? action)
         {
-            var mouse = _keybindsSettings.MouseShortcuts;
+            var mouse = _keybindsSettings.IconShortcuts;
 
             if (comboBox == LeftClickActionComboBox) mouse.LeftClick = action;
             else if (comboBox == DoubleLeftClickActionComboBox) mouse.DoubleLeftClick = action;
@@ -264,7 +264,7 @@ namespace Quick_Media_Controls.Views.Pages
                 return false;
 
             var action = proposedAction.Value;
-            var mouse = _keybindsSettings.MouseShortcuts;
+            var mouse = _keybindsSettings.IconShortcuts;
 
             if (changedComboBox != LeftClickActionComboBox && mouse.LeftClick == action) return true;
             if (changedComboBox != DoubleLeftClickActionComboBox && mouse.DoubleLeftClick == action) return true;

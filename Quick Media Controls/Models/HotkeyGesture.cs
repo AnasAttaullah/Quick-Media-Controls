@@ -1,4 +1,5 @@
 ﻿using Quick_Media_Controls.Services;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -29,6 +30,9 @@ namespace Quick_Media_Controls.Models
         public static HotkeyInput FromMouse(MouseButton button)
             => new(InputType.Mouse, null, button);
 
+        public static HotkeyInput Empty()
+            => new(0, null, null);
+
         public string Value()
         {
             return Type switch
@@ -40,7 +44,7 @@ namespace Quick_Media_Controls.Models
         }
     }
 
-    public sealed class HotkeyGesture
+    public sealed class HotkeyGesture : IEquatable<HotkeyGesture>
     {
         public ModifierKeys modifiers { get; set; }
         public HotkeyInput input { get; set; }
@@ -110,6 +114,32 @@ namespace Quick_Media_Controls.Models
             System.Diagnostics.Debug.WriteLine("This is out gesture: " + gesture.modifiers.ToString() + " " + gesture.input.Value());
             return true;
         }
-        
+
+        public override string ToString()
+        {
+            return ToDisplayString();
+        }
+        public bool Equals(HotkeyGesture? other)
+        {
+            if (other is null) return false;
+
+            return modifiers == other.modifiers
+                && input.Type == other.input.Type
+                && input.Key == other.input.Key
+                && input.MouseButton == other.input.MouseButton;
+        }
+            
+        public override bool Equals(object? obj)
+            => obj is HotkeyGesture other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(
+                modifiers,
+                input.Type,
+                input.Key,
+                input.MouseButton
+            );
+        }
     }
 }
