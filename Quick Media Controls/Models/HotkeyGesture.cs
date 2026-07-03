@@ -1,6 +1,7 @@
 ﻿using Quick_Media_Controls.Services;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 namespace Quick_Media_Controls.Models
@@ -48,6 +49,7 @@ namespace Quick_Media_Controls.Models
     {
         public ModifierKeys Modifiers { get; set; }
         public HotkeyInput Input { get; set; }
+
 
         public HotkeyGesture()
         {
@@ -119,6 +121,7 @@ namespace Quick_Media_Controls.Models
             System.Diagnostics.Debug.WriteLine("This is out gesture: " + gesture.Modifiers.ToString() + " " + gesture.Input.Value());
             return true;
         }
+
 
         public bool Equals(HotkeyGesture? other)
         {

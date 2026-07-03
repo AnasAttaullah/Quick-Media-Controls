@@ -23,7 +23,6 @@ namespace Quick_Media_Controls.Services
         private const int WM_LBUTTONUP = 0x0202;
         private const int WM_RBUTTONUP = 0x0205;
         private const int WM_MBUTTONUP = 0x0207;
-
         private const int WM_XBUTTONDOWN = 0x020B;
         private const int WM_LBUTTONDOWN = 0x0201;
         private const int WM_RBUTTONDOWN = 0x0204;
@@ -93,7 +92,6 @@ namespace Quick_Media_Controls.Services
             {
                 _mouseHookHandle = SetWindowsHookEx(WH_MOUSE_LL, _mouseProc, GetModuleHandle(curModule.ModuleName), 0);
             }
-            Debug.WriteLine("Started!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
             _windowHandle = new WindowInteropHelper(messageWindow).Handle;
             _hwndSource = HwndSource.FromHwnd(_windowHandle);
@@ -142,15 +140,12 @@ namespace Quick_Media_Controls.Services
                     throw new InvalidOperationException($"Failed to register hotkey. Error code: {errorCode}");
                 }
 
-                Debug.WriteLine("Added a keyboard gesture");
                 _registeredHotkeyActions[id] = action;
             }
             else
             {
-                Debug.WriteLine("Added a mouse gesture");
+                //Adds a mouse type gesture
                 _registeredMouseHotkeys[gesture] = action;
-
-                Debug.WriteLine(gesture.Input.MouseButton);
             }
         }
 
@@ -270,6 +265,7 @@ namespace Quick_Media_Controls.Services
             return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
         }
 
+        //Return a gesture object for the modifier + mouse input
         private static bool TryGetMouseGesture(int message, IntPtr lParam, out HotkeyGesture gesture)
         {
             gesture = default;
