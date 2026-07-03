@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace Quick_Media_Controls.Models
@@ -68,6 +69,8 @@ namespace Quick_Media_Controls.Models
         public ShortcutSettings Shortcuts { get; set; } = ShortcutSettings.CreateDefault();
         public IconShortcutSettings IconShortcuts { get; set; } = IconShortcutSettings.CreateDefault();
 
+ 
+  
         public static KeybindSettings CreateDefault()
         {
             return new KeybindSettings
@@ -89,16 +92,17 @@ namespace Quick_Media_Controls.Models
 
     public sealed class ShortcutSettings
     {
-        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1));
+        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P));
         public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N));
         public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P));
         public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O));
 
         public static ShortcutSettings CreateDefault()
         {
+
             return new ShortcutSettings
-            {
-                PlayPause = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1)),
+            { 
+                PlayPause = new HotkeyGesture(ModifierKeys.Control, HotkeyInput.FromKey(Key.P)),
                 NextTrack = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N)),
                 PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P)),
                 OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O))

@@ -80,7 +80,6 @@ namespace Quick_Media_Controls.Views.Pages
         {
             e.Handled = true;
 
-            Debug.WriteLine("Nooooorr");
 
             if (!HotkeyGesture.TryFromKeyEvent(e, out var gesture) || gesture is null)
             {
@@ -103,14 +102,12 @@ namespace Quick_Media_Controls.Views.Pages
             else if (sender == OpenFlyoutHotkeyTextBox)
                 keyboard.OpenFlyout = gesture;
 
-            Debug.WriteLine("Hellloo");
             BindKeyboardShortcutText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
         }
 
         private void HotkeyTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("Yeeerrr");
 
             if(!HotkeyGesture.TryFromMouseEvent(e , out var gesture))
             {
@@ -119,7 +116,6 @@ namespace Quick_Media_Controls.Views.Pages
                 return;
             }
 
-            HotkeyValidationTextBlock.Text = "YeEESS";
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
             var keyboard = _keybindsSettings.Shortcuts;

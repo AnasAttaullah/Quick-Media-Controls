@@ -1,7 +1,9 @@
 ﻿using Quick_Media_Controls.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 
 namespace Quick_Media_Controls.Models
@@ -12,18 +14,21 @@ namespace Quick_Media_Controls.Models
         Mouse = 1
     }
 
-    public readonly struct HotkeyInput
+    public struct HotkeyInput
     {
-        public InputType Type { get; }
-        public Key? Key { get; }
-        public MouseButton? MouseButton { get; }
+        public InputType Type { get; set; }
+        public Key? Key { get; set; }
+        public MouseButton? MouseButton { get; set; }
 
-        private HotkeyInput(InputType type, Key? key, MouseButton? mouseButton)
+
+        [JsonConstructor]
+        public HotkeyInput(InputType Type, Key? Key, MouseButton? MouseButton)
         {
-            Type = type;
-            Key = key;
-            MouseButton = mouseButton;
+            this.Type = Type;
+            this.Key = Key;
+            this.MouseButton = MouseButton;
         }
+
 
         public static HotkeyInput FromKey(Key key)
             => new(InputType.Keyboard, key, null);
@@ -31,11 +36,11 @@ namespace Quick_Media_Controls.Models
         public static HotkeyInput FromMouse(MouseButton button)
             => new(InputType.Mouse, null, button);
 
-        public static HotkeyInput Empty()
-            => new(0, null, null);
+     
 
         public string Value()
         {
+
             return Type switch
             {
                 InputType.Keyboard => Key?.ToString() ?? "None",
@@ -51,17 +56,18 @@ namespace Quick_Media_Controls.Models
         public HotkeyInput Input { get; set; }
 
 
-        public HotkeyGesture()
+
+        public HotkeyGesture(ModifierKeys Modifiers, HotkeyInput Input)
         {
+            this.Modifiers = Modifiers;
+            this.Input = Input;
+
         }
 
-        public HotkeyGesture(ModifierKeys _modifiers, HotkeyInput _input)
+        public HotkeyGesture Clone()
         {
-            Modifiers = _modifiers;
-            Input = _input;
+            return new(Modifiers, Input);
         }
-
-        public HotkeyGesture Clone() => new(Modifiers, Input);
 
         public string ToDisplayString()
         {
@@ -95,7 +101,6 @@ namespace Quick_Media_Controls.Models
             {
                 return false;
             }
-
             gesture = new HotkeyGesture(modifiers, HotkeyInput.FromKey(key));
             return true;
         }
@@ -118,7 +123,6 @@ namespace Quick_Media_Controls.Models
 
             gesture = new HotkeyGesture(modifiers, HotkeyInput.FromMouse(button));
 
-            System.Diagnostics.Debug.WriteLine("This is out gesture: " + gesture.Modifiers.ToString() + " " + gesture.Input.Value());
             return true;
         }
 

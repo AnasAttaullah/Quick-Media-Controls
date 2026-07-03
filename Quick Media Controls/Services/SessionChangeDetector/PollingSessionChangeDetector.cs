@@ -40,6 +40,7 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
             catch (Exception ex)
             {
 
+                
                 Debug.WriteLine($"Error in polling session change: {ex.Message}");
             }
         }
