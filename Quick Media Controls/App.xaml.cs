@@ -1,10 +1,11 @@
-﻿using AutoUpdaterDotNET;
+using AutoUpdaterDotNET;
 using Microsoft.Win32;
 using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -24,6 +25,10 @@ namespace Quick_Media_Controls
         private NotifyIcon _trayIcon;
         private MediaFlyout? _mediaFlyout;
         private Window _hiddenWindow;
+
+
+        private static Mutex? mutex;
+        private static bool _isMutexOwned;
 
         private readonly DispatcherTimer _displayChangeReloadTimer = new()
         {
@@ -60,6 +65,19 @@ namespace Quick_Media_Controls
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            const string mutexName = @"Global/QuickMediaControls";
+
+            bool createdNew;
+            mutex = new Mutex(true, mutexName, out createdNew);
+            _isMutexOwned = createdNew;
+
+            if (!_isMutexOwned)
+            {
+                MessageBox.Show("This application is already running.", "Quick Media Controls", MessageBoxButton.OK, MessageBoxImage.Information);
+                Shutdown();
+                return;
+            }
 
             currentAppTheme = ApplicationThemeManager.GetAppTheme();
             _trayIcon = (NotifyIcon)FindResource("trayIcon");
@@ -109,7 +127,7 @@ namespace Quick_Media_Controls
             _hiddenWindow.Show();
 
             _appSettings = _appSettingsService.Load();
-            if (_appSettings.Keybinds.MouseShortcuts.LeftClick == ShortcutAction.OpenFlyout)
+            if (_appSettings.Keybinds.TrayIconShortcuts.LeftClick == ShortcutAction.OpenFlyout)
             {
                 _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
                 MainWindow = _mediaFlyout;
@@ -175,6 +193,19 @@ namespace Quick_Media_Controls
                 _mediaFlyout = null;
             }
 
+            if (_isMutexOwned && mutex != null)
+            {
+                try
+                {
+                    mutex.ReleaseMutex();
+                }
+                catch
+                {
+                    // Ignore if mutex is already released
+                }
+                mutex.Dispose();
+            }
+
             MainWindow?.Close();
             base.OnExit(e);
         }
@@ -182,8 +213,8 @@ namespace Quick_Media_Controls
         private void InitializeAppSettings()
         {
             _appSettings ??= _appSettingsService.Load();
-            _appSettings.Keybinds.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
-            _appSettings.Keybinds.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
+            _appSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
+            _appSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
 
             _globalHotkeyService = new GlobalHotkeyService(MainWindow);
             _globalHotkeyService.HotkeyPressed += GlobalHotkeyService_HotkeyPressed;
@@ -222,16 +253,16 @@ namespace Quick_Media_Controls
         {
             error = null;
 
-            updatedSettings.Keybinds.KeyboardShortcuts ??= KeyboardShortcutSettings.CreateDefault();
-            updatedSettings.Keybinds.MouseShortcuts ??= MouseShortcutSettings.CreateDefault();
+            updatedSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
+            updatedSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
 
-            if (!TryValidateMouseShortcutMappings(updatedSettings.Keybinds.MouseShortcuts, out error))
+            if (!TryValidateMouseShortcutMappings(updatedSettings.Keybinds.TrayIconShortcuts, out error))
             {
                 return false;
             }
 
-            var currentMouseShortcuts = _appSettings.Keybinds.MouseShortcuts ?? MouseShortcutSettings.CreateDefault();
-            var updatedMouseShortcuts = updatedSettings.Keybinds.MouseShortcuts;
+            var currentMouseShortcuts = _appSettings.Keybinds.TrayIconShortcuts ?? TrayIconShortcutSettings.CreateDefault();
+            var updatedMouseShortcuts = updatedSettings.Keybinds.TrayIconShortcuts;
             var shouldPromptRestart = HasOpenFlyoutMouseBindingChanged(currentMouseShortcuts, updatedMouseShortcuts);
 
             try
@@ -423,7 +454,7 @@ namespace Quick_Media_Controls
             }
         }
 
-        private static bool TryValidateMouseShortcutMappings(MouseShortcutSettings settings, out string? error)
+        private static bool TryValidateMouseShortcutMappings(TrayIconShortcutSettings settings, out string? error)
         {
             string? localError = null;
             var seen = new HashSet<ShortcutAction>();
@@ -453,7 +484,7 @@ namespace Quick_Media_Controls
             return ok;
         }
 
-        private static bool HasOpenFlyoutMouseBindingChanged(MouseShortcutSettings current, MouseShortcutSettings updated)
+        private static bool HasOpenFlyoutMouseBindingChanged(TrayIconShortcutSettings current, TrayIconShortcutSettings updated)
         {
             static bool ChangedToOrFromOpenFlyout(ShortcutAction? before, ShortcutAction? after) =>
                 before != after && (before == ShortcutAction.OpenFlyout || after == ShortcutAction.OpenFlyout);
@@ -513,22 +544,22 @@ namespace Quick_Media_Controls
 
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.LeftClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.LeftClick);
         }
 
         private async void TrayIcon_LeftDoubleClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.DoubleLeftClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.DoubleLeftClick);
         }
 
         private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.RightClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.RightClick);
         }
 
         private async void TrayIcon_MiddleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.MouseShortcuts.MiddleClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.MiddleClick);
         }
 
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 
 namespace Quick_Media_Controls.Models
@@ -65,15 +67,36 @@ namespace Quick_Media_Controls.Models
 
     public sealed class KeybindSettings
     {
-        public KeyboardShortcutSettings KeyboardShortcuts { get; set; } = KeyboardShortcutSettings.CreateDefault();
-        public MouseShortcutSettings MouseShortcuts { get; set; } = MouseShortcutSettings.CreateDefault();
+        public ShortcutSettings Shortcuts { get; set; } = ShortcutSettings.CreateDefault();
+        public TrayIconShortcutSettings TrayIconShortcuts { get; set; } = TrayIconShortcutSettings.CreateDefault();
+
+        [JsonPropertyName("KeyboardShortcuts")]
+        public ShortcutSettings? LegacyKeyboardShortcuts
+        {
+            get => null;
+            set { if (value != null) Shortcuts = value; }
+        }
+
+        [JsonPropertyName("MouseShortcuts")]
+        public TrayIconShortcutSettings? LegacyMouseShortcuts
+        {
+            get => null;
+            set { if (value != null) TrayIconShortcuts = value; }
+        }
+
+        [JsonPropertyName("IconShortcuts")]
+        public TrayIconShortcutSettings? LegacyIconShortcuts
+        {
+            get => null;
+            set { if (value != null) TrayIconShortcuts = value; }
+        }
 
         public static KeybindSettings CreateDefault()
         {
             return new KeybindSettings
             {
-                KeyboardShortcuts = KeyboardShortcutSettings.CreateDefault(),
-                MouseShortcuts = MouseShortcutSettings.CreateDefault()
+                Shortcuts = ShortcutSettings.CreateDefault(),
+                TrayIconShortcuts = TrayIconShortcutSettings.CreateDefault()
             };
         }
 
@@ -81,33 +104,34 @@ namespace Quick_Media_Controls.Models
         {
             return new KeybindSettings
             {
-                KeyboardShortcuts = KeyboardShortcuts.Clone(),
-                MouseShortcuts = MouseShortcuts.Clone()
+                Shortcuts = Shortcuts.Clone(),
+                TrayIconShortcuts = TrayIconShortcuts.Clone()
             };
         }
     }
 
-    public sealed class KeyboardShortcutSettings
+    public sealed class ShortcutSettings
     {
-        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, Key.P);
-        public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, Key.N);
-        public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, Key.P);
-        public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, Key.O);
+        public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N));
+        public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O));
 
-        public static KeyboardShortcutSettings CreateDefault()
+        public static ShortcutSettings CreateDefault()
         {
-            return new KeyboardShortcutSettings
-            {
-                PlayPause = new HotkeyGesture(ModifierKeys.Alt, Key.P),
-                NextTrack = new HotkeyGesture(ModifierKeys.Alt, Key.N),
-                PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, Key.P),
-                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, Key.O)
+
+            return new ShortcutSettings
+            { 
+                PlayPause = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P)),
+                NextTrack = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N)),
+                PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P)),
+                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O))
             };
         }
 
-        public KeyboardShortcutSettings Clone()
+        public ShortcutSettings Clone()
         {
-            return new KeyboardShortcutSettings
+            return new ShortcutSettings
             {
                 PlayPause = PlayPause.Clone(),
                 NextTrack = NextTrack.Clone(),
@@ -125,16 +149,16 @@ namespace Quick_Media_Controls.Models
         }
     }
 
-    public sealed class MouseShortcutSettings
+    public sealed class TrayIconShortcutSettings
     {
         public ShortcutAction? LeftClick { get; set; } = ShortcutAction.PlayPause;
         public ShortcutAction? DoubleLeftClick { get; set; } = ShortcutAction.NextTrack;
         public ShortcutAction? RightClick { get; set; } = ShortcutAction.OpenFlyout;
         public ShortcutAction? MiddleClick { get; set; } = null;
 
-        public static MouseShortcutSettings CreateDefault()
+        public static TrayIconShortcutSettings CreateDefault()
         {
-            return new MouseShortcutSettings
+            return new TrayIconShortcutSettings
             {
                 LeftClick = ShortcutAction.PlayPause,
                 DoubleLeftClick = ShortcutAction.NextTrack,
@@ -143,9 +167,9 @@ namespace Quick_Media_Controls.Models
             };
         }
 
-        public MouseShortcutSettings Clone()
+        public TrayIconShortcutSettings Clone()
         {
-            return new MouseShortcutSettings
+            return new TrayIconShortcutSettings
             {
                 LeftClick = LeftClick,
                 DoubleLeftClick = DoubleLeftClick,

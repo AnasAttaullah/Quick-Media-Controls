@@ -1,8 +1,10 @@
 ﻿using Quick_Media_Controls.Models;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Windows.Input;
 
 namespace Quick_Media_Controls.Services
 {
@@ -36,15 +38,17 @@ namespace Quick_Media_Controls.Services
                 }
 
                 var json = File.ReadAllText(_settingsFilePath);
-                var settings = JsonSerializer.Deserialize<AppSettings>(json, _jsonOptions);
+                var settings = JsonSerializer.Deserialize<AppSettings>(json, _jsonOptions)
+               ?? AppSettings.CreateDefault();
 
                 return settings ?? AppSettings.CreateDefault();
             }
-            catch
+            catch (Exception ex)
             {
                 return AppSettings.CreateDefault();
             }
         }
+
 
         public void Save(AppSettings settings)
         {
