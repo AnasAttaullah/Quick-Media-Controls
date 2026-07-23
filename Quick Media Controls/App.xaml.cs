@@ -1,4 +1,4 @@
-﻿using AutoUpdaterDotNET;
+using AutoUpdaterDotNET;
 using Microsoft.Win32;
 using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
@@ -28,6 +28,7 @@ namespace Quick_Media_Controls
 
 
         private static Mutex? mutex;
+        private static bool _isMutexOwned;
 
         private readonly DispatcherTimer _displayChangeReloadTimer = new()
         {
@@ -69,11 +70,12 @@ namespace Quick_Media_Controls
 
             bool createdNew;
             mutex = new Mutex(true, mutexName, out createdNew);
+            _isMutexOwned = createdNew;
 
-            if (!createdNew)
+            if (!_isMutexOwned)
             {
+                MessageBox.Show("This application is already running.", "Quick Media Controls", MessageBoxButton.OK, MessageBoxImage.Information);
                 Shutdown();
-                MessageBox.Show("This application is already running");
                 return;
             }
 
@@ -125,7 +127,7 @@ namespace Quick_Media_Controls
             _hiddenWindow.Show();
 
             _appSettings = _appSettingsService.Load();
-            if (_appSettings.Keybinds.IconShortcuts.LeftClick == ShortcutAction.OpenFlyout)
+            if (_appSettings.Keybinds.TrayIconShortcuts.LeftClick == ShortcutAction.OpenFlyout)
             {
                 _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
                 MainWindow = _mediaFlyout;
@@ -191,8 +193,18 @@ namespace Quick_Media_Controls
                 _mediaFlyout = null;
             }
 
-            mutex?.ReleaseMutex();
-            mutex?.Dispose();
+            if (_isMutexOwned && mutex != null)
+            {
+                try
+                {
+                    mutex.ReleaseMutex();
+                }
+                catch
+                {
+                    // Ignore if mutex is already released
+                }
+                mutex.Dispose();
+            }
 
             MainWindow?.Close();
             base.OnExit(e);
@@ -202,7 +214,7 @@ namespace Quick_Media_Controls
         {
             _appSettings ??= _appSettingsService.Load();
             _appSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
-            _appSettings.Keybinds.IconShortcuts ??= IconShortcutSettings.CreateDefault();
+            _appSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
 
             _globalHotkeyService = new GlobalHotkeyService(MainWindow);
             _globalHotkeyService.HotkeyPressed += GlobalHotkeyService_HotkeyPressed;
@@ -242,15 +254,15 @@ namespace Quick_Media_Controls
             error = null;
 
             updatedSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
-            updatedSettings.Keybinds.IconShortcuts ??= IconShortcutSettings.CreateDefault();
+            updatedSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
 
-            if (!TryValidateMouseShortcutMappings(updatedSettings.Keybinds.IconShortcuts, out error))
+            if (!TryValidateMouseShortcutMappings(updatedSettings.Keybinds.TrayIconShortcuts, out error))
             {
                 return false;
             }
 
-            var currentMouseShortcuts = _appSettings.Keybinds.IconShortcuts ?? IconShortcutSettings.CreateDefault();
-            var updatedMouseShortcuts = updatedSettings.Keybinds.IconShortcuts;
+            var currentMouseShortcuts = _appSettings.Keybinds.TrayIconShortcuts ?? TrayIconShortcutSettings.CreateDefault();
+            var updatedMouseShortcuts = updatedSettings.Keybinds.TrayIconShortcuts;
             var shouldPromptRestart = HasOpenFlyoutMouseBindingChanged(currentMouseShortcuts, updatedMouseShortcuts);
 
             try
@@ -442,7 +454,7 @@ namespace Quick_Media_Controls
             }
         }
 
-        private static bool TryValidateMouseShortcutMappings(IconShortcutSettings settings, out string? error)
+        private static bool TryValidateMouseShortcutMappings(TrayIconShortcutSettings settings, out string? error)
         {
             string? localError = null;
             var seen = new HashSet<ShortcutAction>();
@@ -472,7 +484,7 @@ namespace Quick_Media_Controls
             return ok;
         }
 
-        private static bool HasOpenFlyoutMouseBindingChanged(IconShortcutSettings current, IconShortcutSettings updated)
+        private static bool HasOpenFlyoutMouseBindingChanged(TrayIconShortcutSettings current, TrayIconShortcutSettings updated)
         {
             static bool ChangedToOrFromOpenFlyout(ShortcutAction? before, ShortcutAction? after) =>
                 before != after && (before == ShortcutAction.OpenFlyout || after == ShortcutAction.OpenFlyout);
@@ -532,22 +544,22 @@ namespace Quick_Media_Controls
 
         private async void TrayIcon_LeftClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.IconShortcuts.LeftClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.LeftClick);
         }
 
         private async void TrayIcon_LeftDoubleClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.IconShortcuts.DoubleLeftClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.DoubleLeftClick);
         }
 
         private async void TrayIcon_RightClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.IconShortcuts.RightClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.RightClick);
         }
 
         private async void TrayIcon_MiddleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
         {
-            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.IconShortcuts.MiddleClick);
+            await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.MiddleClick);
         }
 
         private void MediaService_MediaPropertiesChanged(object? sender, EventArgs e)

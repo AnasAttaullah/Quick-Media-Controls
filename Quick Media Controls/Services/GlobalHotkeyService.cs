@@ -1,4 +1,4 @@
-﻿using AutoUpdaterDotNET;
+using AutoUpdaterDotNET;
 using Microsoft.VisualBasic.Devices;
 using Quick_Media_Controls.Models;
 using System;
@@ -265,10 +265,9 @@ namespace Quick_Media_Controls.Services
             return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
         }
 
-        //Return a gesture object for the modifier + mouse input
-        private static bool TryGetMouseGesture(int message, IntPtr lParam, out HotkeyGesture gesture)
+        private static bool TryGetMouseGesture(int message, IntPtr lParam, out HotkeyGesture? gesture)
         {
-            gesture = default;
+            gesture = null;
 
             var mods = ModifierStateService.GetModifiers();
 
@@ -288,16 +287,25 @@ namespace Quick_Media_Controls.Services
             return true;
         }
 
-        private static MouseButton GetXButton(IntPtr lParam)
+        private static MouseButton? GetXButton(IntPtr lParam)
         {
-            var hook = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-            uint button = (hook.mouseData >> 16) & 0xFFFF;
-
-            return button switch
+            if (lParam == IntPtr.Zero) return null;
+            try
             {
-                1 => MouseButton.XButton1,
-                2 => MouseButton.XButton2
-            };
+                var hook = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+                uint button = (hook.mouseData >> 16) & 0xFFFF;
+
+                return button switch
+                {
+                    1 => MouseButton.XButton1,
+                    2 => MouseButton.XButton2,
+                    _ => null
+                };
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public void Dispose()

@@ -1,4 +1,4 @@
-﻿using Quick_Media_Controls.Services;
+using Quick_Media_Controls.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -55,13 +55,28 @@ namespace Quick_Media_Controls.Models
         public ModifierKeys Modifiers { get; set; }
         public HotkeyInput Input { get; set; }
 
+        public HotkeyGesture()
+        {
+        }
 
-
+        [JsonConstructor]
         public HotkeyGesture(ModifierKeys Modifiers, HotkeyInput Input)
         {
             this.Modifiers = Modifiers;
             this.Input = Input;
+        }
 
+        // Legacy property for backwards-compatibility deserialization of older settings.json format
+        public System.Windows.Input.Key? Key
+        {
+            get => Input.Key;
+            set
+            {
+                if (value.HasValue && Input.Key is null)
+                {
+                    Input = HotkeyInput.FromKey(value.Value);
+                }
+            }
         }
 
         public HotkeyGesture Clone()
@@ -87,17 +102,17 @@ namespace Quick_Media_Controls.Models
         {
             gesture = null;
 
-            var key = e.Key == Key.System ? e.SystemKey : e.Key;
+            var key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
             var modifiers = ModifierStateService.GetModifiers();
 
             if (modifiers == ModifierKeys.None)
                 return false;
 
-            if (key is Key.LeftAlt or Key.RightAlt
-                or Key.LeftCtrl or Key.RightCtrl
-                or Key.LeftShift or Key.RightShift
-                or Key.LWin or Key.RWin
-                or Key.None)
+            if (key is System.Windows.Input.Key.LeftAlt or System.Windows.Input.Key.RightAlt
+                or System.Windows.Input.Key.LeftCtrl or System.Windows.Input.Key.RightCtrl
+                or System.Windows.Input.Key.LeftShift or System.Windows.Input.Key.RightShift
+                or System.Windows.Input.Key.LWin or System.Windows.Input.Key.RWin
+                or System.Windows.Input.Key.None)
             {
                 return false;
             }

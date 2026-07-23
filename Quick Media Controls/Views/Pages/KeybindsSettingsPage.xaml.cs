@@ -1,4 +1,5 @@
-﻿using Quick_Media_Controls.Models;
+using Quick_Media_Controls.Models;
+using Quick_Media_Controls.Services;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +21,6 @@ namespace Quick_Media_Controls.Views.Pages
 
             Loaded += KeybindsSettingsPage_Loaded;
 
-            
             PlayPauseHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             NextTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
             PreviousTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
@@ -30,8 +30,6 @@ namespace Quick_Media_Controls.Views.Pages
             NextTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
             PreviousTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
             OpenFlyoutHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-            
-            
         }
 
         private void KeybindsSettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -41,7 +39,7 @@ namespace Quick_Media_Controls.Views.Pages
 
             _keybindsSettings = _settingsWindow.DraftSettings.Keybinds.Clone();
             _keybindsSettings.Shortcuts ??= ShortcutSettings.CreateDefault();
-            _keybindsSettings.IconShortcuts ??= IconShortcutSettings.CreateDefault();
+            _keybindsSettings.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
 
             BindKeyboardShortcutText();
             BindMouseShortcutSelections();
@@ -62,7 +60,7 @@ namespace Quick_Media_Controls.Views.Pages
             _isUpdatingMouseComboSelection = true;
             try
             {
-                var mouse = _keybindsSettings.IconShortcuts;
+                var mouse = _keybindsSettings.TrayIconShortcuts;
                 SetComboSelection(LeftClickActionComboBox, mouse.LeftClick);
                 SetComboSelection(DoubleLeftClickActionComboBox, mouse.DoubleLeftClick);
                 SetComboSelection(RightClickActionComboBox, mouse.RightClick);
@@ -79,7 +77,6 @@ namespace Quick_Media_Controls.Views.Pages
         private void HotkeyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
-
 
             if (!HotkeyGesture.TryFromKeyEvent(e, out var gesture) || gesture is null)
             {
@@ -108,14 +105,23 @@ namespace Quick_Media_Controls.Views.Pages
 
         private void HotkeyTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-
-            if(!HotkeyGesture.TryFromMouseEvent(e , out var gesture))
+            var modifiers = ModifierStateService.GetModifiers();
+            if (modifiers == ModifierKeys.None)
             {
-                HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key.";
+                // No modifier key held: allow normal mouse interaction without error
+                return;
+            }
+
+            e.Handled = true;
+
+            if (!HotkeyGesture.TryFromMouseEvent(e, out var gesture) || gesture is null)
+            {
+                HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key or mouse button.";
                 HotkeyValidationTextBlock.Visibility = Visibility.Visible;
                 return;
             }
 
+            HotkeyValidationTextBlock.Text = string.Empty;
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
             var keyboard = _keybindsSettings.Shortcuts;
@@ -184,9 +190,9 @@ namespace Quick_Media_Controls.Views.Pages
             _isUpdatingMouseComboSelection = true;
             try
             {
-                _keybindsSettings.IconShortcuts = _defaultKeybinds.IconShortcuts.Clone();
+                _keybindsSettings.TrayIconShortcuts = _defaultKeybinds.TrayIconShortcuts.Clone();
 
-                var defaultMouseShortcut = _keybindsSettings.IconShortcuts;
+                var defaultMouseShortcut = _keybindsSettings.TrayIconShortcuts;
                 SetComboSelection(LeftClickActionComboBox, defaultMouseShortcut.LeftClick);
                 SetComboSelection(DoubleLeftClickActionComboBox, defaultMouseShortcut.DoubleLeftClick);
                 SetComboSelection(RightClickActionComboBox, defaultMouseShortcut.RightClick);
@@ -236,7 +242,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private ShortcutAction? GetMappedAction(ComboBox comboBox)
         {
-            var mouse = _keybindsSettings.IconShortcuts;
+            var mouse = _keybindsSettings.TrayIconShortcuts;
 
             if (comboBox == LeftClickActionComboBox) return mouse.LeftClick;
             if (comboBox == DoubleLeftClickActionComboBox) return mouse.DoubleLeftClick;
@@ -246,7 +252,7 @@ namespace Quick_Media_Controls.Views.Pages
 
         private void SetMappedAction(ComboBox comboBox, ShortcutAction? action)
         {
-            var mouse = _keybindsSettings.IconShortcuts;
+            var mouse = _keybindsSettings.TrayIconShortcuts;
 
             if (comboBox == LeftClickActionComboBox) mouse.LeftClick = action;
             else if (comboBox == DoubleLeftClickActionComboBox) mouse.DoubleLeftClick = action;
@@ -260,7 +266,7 @@ namespace Quick_Media_Controls.Views.Pages
                 return false;
 
             var action = proposedAction.Value;
-            var mouse = _keybindsSettings.IconShortcuts;
+            var mouse = _keybindsSettings.TrayIconShortcuts;
 
             if (changedComboBox != LeftClickActionComboBox && mouse.LeftClick == action) return true;
             if (changedComboBox != DoubleLeftClickActionComboBox && mouse.DoubleLeftClick == action) return true;
