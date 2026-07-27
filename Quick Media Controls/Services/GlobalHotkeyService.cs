@@ -110,9 +110,16 @@ namespace Quick_Media_Controls.Services
             try
             {
                 Register(1001, keyboard.PlayPause, ShortcutAction.PlayPause);
-                Register(1002, keyboard.NextTrack, ShortcutAction.NextTrack);
-                Register(1003, keyboard.PreviousTrack, ShortcutAction.PreviousTrack);
-                Register(1004, keyboard.OpenFlyout, ShortcutAction.OpenFlyout);
+                Register(1002, keyboard.PlayPauseSecondary, ShortcutAction.PlayPause);
+
+                Register(1003, keyboard.NextTrack, ShortcutAction.NextTrack);
+                Register(1004, keyboard.NextTrackSecondary, ShortcutAction.NextTrack);
+
+                Register(1005, keyboard.PreviousTrack, ShortcutAction.PreviousTrack);
+                Register(1006, keyboard.PreviousTrackSecondary, ShortcutAction.PreviousTrack);
+
+                Register(1007, keyboard.OpenFlyout, ShortcutAction.OpenFlyout);
+                Register(1008, keyboard.OpenFlyoutSecondary, ShortcutAction.OpenFlyout);
             }
             catch
             {
@@ -124,9 +131,11 @@ namespace Quick_Media_Controls.Services
             }
         }
 
-        private void Register(int id, HotkeyGesture gesture, ShortcutAction action)
+        private void Register(int id, HotkeyGesture? gesture, ShortcutAction action)
         {
-            //If input type is keyboard then input.key *shouddnt* be null 
+            if (gesture == null) return;
+
+            // If input type is keyboard then input.key shouldn't be null 
             if (gesture.Input.Type == Models.InputType.Keyboard)
             {
                 if (gesture.Input.Key == null) return;
@@ -144,7 +153,7 @@ namespace Quick_Media_Controls.Services
             }
             else
             {
-                //Adds a mouse type gesture
+                // Adds a mouse type gesture
                 _registeredMouseHotkeys[gesture] = action;
             }
         }
@@ -166,9 +175,18 @@ namespace Quick_Media_Controls.Services
 
             foreach (var hotkey in settings.Enumerate())
             {
-                if (hotkey.Input.Key == null) continue;
-                var key = $"{(int)hotkey.Modifiers}:{(int)hotkey.Input.Key}";
-                if (!set.Add(key))
+                if (hotkey == null) continue;
+
+                string? keyIdentifier = hotkey.Input.Type switch
+                {
+                    Models.InputType.Keyboard => hotkey.Input.Key.HasValue ? $"K:{(int)hotkey.Modifiers}:{(int)hotkey.Input.Key.Value}" : null,
+                    Models.InputType.Mouse => hotkey.Input.MouseButton.HasValue ? $"M:{(int)hotkey.Modifiers}:{(int)hotkey.Input.MouseButton.Value}" : null,
+                    _ => null
+                };
+
+                if (keyIdentifier == null) continue;
+
+                if (!set.Add(keyIdentifier))
                 {
                     throw new InvalidOperationException($"Duplicate hotkey detected: {hotkey.ToDisplayString()}");
                 }

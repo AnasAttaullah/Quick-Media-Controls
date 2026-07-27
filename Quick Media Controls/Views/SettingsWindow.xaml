@@ -5,8 +5,8 @@
     xmlns:pages="clr-namespace:Quick_Media_Controls.Views.Pages"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Settings"
-    Width="700"
-    Height="450"
+    Width="850"
+    Height="500"
     Loaded="SettingsWindow_Loaded"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -73,8 +73,8 @@
                     Content="Cancel" />
                 <ui:Button
                     Appearance="Primary"
-                    Content="Save"
-                    Click="SaveButton_Click" />
+                    Click="SaveButton_Click"
+                    Content="Save" />
             </StackPanel>
         </Grid>
     </Grid>

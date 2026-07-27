@@ -11,7 +11,7 @@
 
     <StackPanel Margin="10">
         <ui:Image
-            Height="150"
+            Height="200"
             Margin="0,0,0,10"
             Source="/Assets/banner.jpg"
             CornerRadius="6" />

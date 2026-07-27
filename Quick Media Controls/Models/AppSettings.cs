@@ -113,19 +113,29 @@ namespace Quick_Media_Controls.Models
     public sealed class ShortcutSettings
     {
         public HotkeyGesture PlayPause { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture? PlayPauseSecondary { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.Right));
+
         public HotkeyGesture NextTrack { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N));
+        public HotkeyGesture? NextTrackSecondary { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton2));
+
         public HotkeyGesture PreviousTrack { get; set; } = new(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P));
+        public HotkeyGesture? PreviousTrackSecondary { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1));
+
         public HotkeyGesture OpenFlyout { get; set; } = new(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O));
+        public HotkeyGesture? OpenFlyoutSecondary { get; set; } = null;
 
         public static ShortcutSettings CreateDefault()
         {
-
             return new ShortcutSettings
             { 
                 PlayPause = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.P)),
+                PlayPauseSecondary = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.Right)),
                 NextTrack = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.N)),
+                NextTrackSecondary = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton2)),
                 PreviousTrack = new HotkeyGesture(ModifierKeys.Alt | ModifierKeys.Shift, HotkeyInput.FromKey(Key.P)),
-                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O))
+                PreviousTrackSecondary = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromMouse(MouseButton.XButton1)),
+                OpenFlyout = new HotkeyGesture(ModifierKeys.Alt, HotkeyInput.FromKey(Key.O)),
+                OpenFlyoutSecondary = null
             };
         }
 
@@ -134,18 +144,26 @@ namespace Quick_Media_Controls.Models
             return new ShortcutSettings
             {
                 PlayPause = PlayPause.Clone(),
+                PlayPauseSecondary = PlayPauseSecondary?.Clone(),
                 NextTrack = NextTrack.Clone(),
+                NextTrackSecondary = NextTrackSecondary?.Clone(),
                 PreviousTrack = PreviousTrack.Clone(),
-                OpenFlyout = OpenFlyout.Clone()
+                PreviousTrackSecondary = PreviousTrackSecondary?.Clone(),
+                OpenFlyout = OpenFlyout.Clone(),
+                OpenFlyoutSecondary = OpenFlyoutSecondary?.Clone()
             };
         }
 
         public IEnumerable<HotkeyGesture> Enumerate()
         {
-            yield return PlayPause;
-            yield return NextTrack;
-            yield return PreviousTrack;
-            yield return OpenFlyout;
+            if (PlayPause != null) yield return PlayPause;
+            if (PlayPauseSecondary != null) yield return PlayPauseSecondary;
+            if (NextTrack != null) yield return NextTrack;
+            if (NextTrackSecondary != null) yield return NextTrackSecondary;
+            if (PreviousTrack != null) yield return PreviousTrack;
+            if (PreviousTrackSecondary != null) yield return PreviousTrackSecondary;
+            if (OpenFlyout != null) yield return OpenFlyout;
+            if (OpenFlyoutSecondary != null) yield return OpenFlyoutSecondary;
         }
     }
 

@@ -22,14 +22,28 @@ namespace Quick_Media_Controls.Views.Pages
             Loaded += KeybindsSettingsPage_Loaded;
 
             PlayPauseHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+            PlayPauseSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+
             NextTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+            NextTrackSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+
             PreviousTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+            PreviousTrackSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+
             OpenFlyoutHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+            OpenFlyoutSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
 
             PlayPauseHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            PlayPauseSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+
             NextTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            NextTrackSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+
             PreviousTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            PreviousTrackSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+
             OpenFlyoutHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            OpenFlyoutSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
         }
 
         private void KeybindsSettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -49,10 +63,17 @@ namespace Quick_Media_Controls.Views.Pages
         {
             var keyboard = _keybindsSettings.Shortcuts;
 
-            PlayPauseHotkeyTextBox.Text = keyboard.PlayPause.ToDisplayString();
-            NextTrackHotkeyTextBox.Text = keyboard.NextTrack.ToDisplayString();
-            PreviousTrackHotkeyTextBox.Text = keyboard.PreviousTrack.ToDisplayString();
-            OpenFlyoutHotkeyTextBox.Text = keyboard.OpenFlyout.ToDisplayString();
+            PlayPauseHotkeyTextBox.Text = keyboard.PlayPause?.ToDisplayString() ?? string.Empty;
+            PlayPauseSecondaryHotkeyTextBox.Text = keyboard.PlayPauseSecondary?.ToDisplayString() ?? string.Empty;
+
+            NextTrackHotkeyTextBox.Text = keyboard.NextTrack?.ToDisplayString() ?? string.Empty;
+            NextTrackSecondaryHotkeyTextBox.Text = keyboard.NextTrackSecondary?.ToDisplayString() ?? string.Empty;
+
+            PreviousTrackHotkeyTextBox.Text = keyboard.PreviousTrack?.ToDisplayString() ?? string.Empty;
+            PreviousTrackSecondaryHotkeyTextBox.Text = keyboard.PreviousTrackSecondary?.ToDisplayString() ?? string.Empty;
+
+            OpenFlyoutHotkeyTextBox.Text = keyboard.OpenFlyout?.ToDisplayString() ?? string.Empty;
+            OpenFlyoutSecondaryHotkeyTextBox.Text = keyboard.OpenFlyoutSecondary?.ToDisplayString() ?? string.Empty;
         }
 
         private void BindMouseShortcutSelections()
@@ -78,6 +99,23 @@ namespace Quick_Media_Controls.Views.Pages
         {
             e.Handled = true;
 
+            var keyboard = _keybindsSettings.Shortcuts;
+
+            // Allow clearing optional secondary shortcuts with Backspace / Delete when no modifiers are held
+            if ((e.Key is Key.Back or Key.Delete) && Keyboard.Modifiers == ModifierKeys.None)
+            {
+                if (sender == PlayPauseSecondaryHotkeyTextBox) keyboard.PlayPauseSecondary = null;
+                else if (sender == NextTrackSecondaryHotkeyTextBox) keyboard.NextTrackSecondary = null;
+                else if (sender == PreviousTrackSecondaryHotkeyTextBox) keyboard.PreviousTrackSecondary = null;
+                else if (sender == OpenFlyoutSecondaryHotkeyTextBox) keyboard.OpenFlyoutSecondary = null;
+
+                HotkeyValidationTextBlock.Text = string.Empty;
+                HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
+                BindKeyboardShortcutText();
+                _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
+                return;
+            }
+
             if (!HotkeyGesture.TryFromKeyEvent(e, out var gesture) || gesture is null)
             {
                 HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key.";
@@ -88,16 +126,14 @@ namespace Quick_Media_Controls.Views.Pages
             HotkeyValidationTextBlock.Text = string.Empty;
             HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
 
-            var keyboard = _keybindsSettings.Shortcuts;
-
-            if (sender == PlayPauseHotkeyTextBox)
-                keyboard.PlayPause = gesture;
-            else if (sender == NextTrackHotkeyTextBox)
-                keyboard.NextTrack = gesture;
-            else if (sender == PreviousTrackHotkeyTextBox)
-                keyboard.PreviousTrack = gesture;
-            else if (sender == OpenFlyoutHotkeyTextBox)
-                keyboard.OpenFlyout = gesture;
+            if (sender == PlayPauseHotkeyTextBox) keyboard.PlayPause = gesture;
+            else if (sender == PlayPauseSecondaryHotkeyTextBox) keyboard.PlayPauseSecondary = gesture;
+            else if (sender == NextTrackHotkeyTextBox) keyboard.NextTrack = gesture;
+            else if (sender == NextTrackSecondaryHotkeyTextBox) keyboard.NextTrackSecondary = gesture;
+            else if (sender == PreviousTrackHotkeyTextBox) keyboard.PreviousTrack = gesture;
+            else if (sender == PreviousTrackSecondaryHotkeyTextBox) keyboard.PreviousTrackSecondary = gesture;
+            else if (sender == OpenFlyoutHotkeyTextBox) keyboard.OpenFlyout = gesture;
+            else if (sender == OpenFlyoutSecondaryHotkeyTextBox) keyboard.OpenFlyoutSecondary = gesture;
 
             BindKeyboardShortcutText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
@@ -126,14 +162,14 @@ namespace Quick_Media_Controls.Views.Pages
 
             var keyboard = _keybindsSettings.Shortcuts;
 
-            if (sender == PlayPauseHotkeyTextBox)
-                keyboard.PlayPause = gesture;
-            else if (sender == NextTrackHotkeyTextBox)
-                keyboard.NextTrack = gesture;
-            else if (sender == PreviousTrackHotkeyTextBox)
-                keyboard.PreviousTrack = gesture;
-            else if (sender == OpenFlyoutHotkeyTextBox)
-                keyboard.OpenFlyout = gesture;
+            if (sender == PlayPauseHotkeyTextBox) keyboard.PlayPause = gesture;
+            else if (sender == PlayPauseSecondaryHotkeyTextBox) keyboard.PlayPauseSecondary = gesture;
+            else if (sender == NextTrackHotkeyTextBox) keyboard.NextTrack = gesture;
+            else if (sender == NextTrackSecondaryHotkeyTextBox) keyboard.NextTrackSecondary = gesture;
+            else if (sender == PreviousTrackHotkeyTextBox) keyboard.PreviousTrack = gesture;
+            else if (sender == PreviousTrackSecondaryHotkeyTextBox) keyboard.PreviousTrackSecondary = gesture;
+            else if (sender == OpenFlyoutHotkeyTextBox) keyboard.OpenFlyout = gesture;
+            else if (sender == OpenFlyoutSecondaryHotkeyTextBox) keyboard.OpenFlyoutSecondary = gesture;
 
             BindKeyboardShortcutText();
             _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
@@ -164,24 +200,28 @@ namespace Quick_Media_Controls.Views.Pages
         private void ResetPlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             _keybindsSettings.Shortcuts.PlayPause = _defaultKeybinds.Shortcuts.PlayPause.Clone();
+            _keybindsSettings.Shortcuts.PlayPauseSecondary = _defaultKeybinds.Shortcuts.PlayPauseSecondary?.Clone();
             ResetAndSync();
         }
 
         private void ResetNextTrackButton_Click(object sender, RoutedEventArgs e)
         {
             _keybindsSettings.Shortcuts.NextTrack = _defaultKeybinds.Shortcuts.NextTrack.Clone();
+            _keybindsSettings.Shortcuts.NextTrackSecondary = _defaultKeybinds.Shortcuts.NextTrackSecondary?.Clone();
             ResetAndSync();
         }
 
         private void ResetPreviousTrackButton_Click(object sender, RoutedEventArgs e)
         {
             _keybindsSettings.Shortcuts.PreviousTrack = _defaultKeybinds.Shortcuts.PreviousTrack.Clone();
+            _keybindsSettings.Shortcuts.PreviousTrackSecondary = _defaultKeybinds.Shortcuts.PreviousTrackSecondary?.Clone();
             ResetAndSync();
         }
 
         private void ResetOpenFlyoutButton_Click(object sender, RoutedEventArgs e)
         {
             _keybindsSettings.Shortcuts.OpenFlyout = _defaultKeybinds.Shortcuts.OpenFlyout.Clone();
+            _keybindsSettings.Shortcuts.OpenFlyoutSecondary = _defaultKeybinds.Shortcuts.OpenFlyoutSecondary?.Clone();
             ResetAndSync();
         }
 

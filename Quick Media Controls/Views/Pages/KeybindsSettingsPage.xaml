@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Quick_Media_Controls.Views.Pages.KeybindsSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -22,7 +22,7 @@
         <ui:TextBlock
             Margin="0,10"
             Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-            Text="Keyboard Shortcuts" />
+            Text="Keyboard &amp; Mouse Shortcuts" />
 
         <ui:CardControl
             Margin="0,0,0,4"
@@ -39,21 +39,33 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <ui:TextBox
                     x:Name="PlayPauseHotkeyTextBox"
                     Grid.Column="0"
-                    Width="200"
+                    Width="160"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
-                <ui:Button
+                <ui:TextBox
+                    x:Name="PlayPauseSecondaryHotkeyTextBox"
                     Grid.Column="1"
+                    Width="160"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True"
+                    PlaceholderText="Optional" />
+
+                <ui:Button
+                    Grid.Column="2"
+                    Height="36"
                     Click="ResetPlayPauseButton_Click"
-                    Content="Reset" />
+                    FontSize="16"
+                    Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
+                    ToolTip="Reset to default" />
             </Grid>
         </ui:CardControl>
 
@@ -72,21 +84,33 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <ui:TextBox
                     x:Name="NextTrackHotkeyTextBox"
                     Grid.Column="0"
-                    Width="200"
+                    Width="160"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
-                <ui:Button
+                <ui:TextBox
+                    x:Name="NextTrackSecondaryHotkeyTextBox"
                     Grid.Column="1"
+                    Width="160"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True"
+                    PlaceholderText="Optional" />
+
+                <ui:Button
+                    Grid.Column="2"
+                    Height="36"
                     Click="ResetNextTrackButton_Click"
-                    Content="Reset" />
+                    FontSize="16"
+                    Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
+                    ToolTip="Reset to default" />
             </Grid>
         </ui:CardControl>
 
@@ -105,21 +129,33 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <ui:TextBox
                     x:Name="PreviousTrackHotkeyTextBox"
                     Grid.Column="0"
-                    Width="200"
+                    Width="160"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
-                <ui:Button
+                <ui:TextBox
+                    x:Name="PreviousTrackSecondaryHotkeyTextBox"
                     Grid.Column="1"
+                    Width="160"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True"
+                    PlaceholderText="Optional" />
+
+                <ui:Button
+                    Grid.Column="2"
+                    Height="36"
                     Click="ResetPreviousTrackButton_Click"
-                    Content="Reset" />
+                    FontSize="16"
+                    Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
+                    ToolTip="Reset to default" />
             </Grid>
         </ui:CardControl>
 
@@ -138,21 +174,33 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <ui:TextBox
                     x:Name="OpenFlyoutHotkeyTextBox"
                     Grid.Column="0"
-                    Width="200"
+                    Width="160"
                     Margin="0,0,8,0"
                     IsReadOnly="True" />
 
-                <ui:Button
+                <ui:TextBox
+                    x:Name="OpenFlyoutSecondaryHotkeyTextBox"
                     Grid.Column="1"
+                    Width="160"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True"
+                    PlaceholderText="Optional" />
+
+                <ui:Button
+                    Grid.Column="2"
+                    Height="36"
                     Click="ResetOpenFlyoutButton_Click"
-                    Content="Reset" />
+                    FontSize="16"
+                    Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
+                    ToolTip="Reset to default" />
             </Grid>
         </ui:CardControl>
 
@@ -164,7 +212,7 @@
             Visibility="Collapsed" />
 
         <!--  Mouse Keybinds Settings  -->
-        <Grid Margin="0">
+        <Grid Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -173,7 +221,7 @@
             <ui:TextBlock
                 Margin="0,10"
                 Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                Text="Mouse Shortcuts" />
+                Text="Tray Icon Shortcuts" />
 
             <ui:Button
                 Name="ResetMouseShortcutsButton"
@@ -186,12 +234,13 @@
                 Click="ResetMouseShortcutsButton_Click"
                 Content="Reset"
                 Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}" />
+                Icon="{ui:SymbolIcon Symbol=ArrowCounterclockwise16}"
+                ToolTip="Reset to default" />
         </Grid>
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="280" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -241,7 +290,7 @@
                     <ComboBox
                         x:Name="LeftClickActionComboBox"
                         Grid.Column="1"
-                        Width="140"
+                        Width="160"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
@@ -264,7 +313,7 @@
                     <ComboBox
                         x:Name="DoubleLeftClickActionComboBox"
                         Grid.Column="1"
-                        Width="140"
+                        Width="160"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
@@ -287,7 +336,7 @@
                     <ComboBox
                         x:Name="RightClickActionComboBox"
                         Grid.Column="1"
-                        Width="140"
+                        Width="160"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
@@ -310,7 +359,7 @@
                     <ComboBox
                         x:Name="MiddleClickActionComboBox"
                         Grid.Column="1"
-                        Width="140"
+                        Width="160"
                         SelectionChanged="MouseShortcutComboBox_SelectionChanged">
                         <ComboBoxItem Content="None" Tag="{x:Null}" />
                         <ComboBoxItem Content="Play/Pause" Tag="{x:Static models:ShortcutAction.PlayPause}" />
