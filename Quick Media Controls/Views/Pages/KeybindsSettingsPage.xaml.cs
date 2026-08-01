@@ -21,29 +21,21 @@ namespace Quick_Media_Controls.Views.Pages
 
             Loaded += KeybindsSettingsPage_Loaded;
 
-            PlayPauseHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-            PlayPauseSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+            var textBoxes = new[]
+            {
+                PlayPauseHotkeyTextBox, PlayPauseSecondaryHotkeyTextBox,
+                NextTrackHotkeyTextBox, NextTrackSecondaryHotkeyTextBox,
+                PreviousTrackHotkeyTextBox, PreviousTrackSecondaryHotkeyTextBox,
+                OpenFlyoutHotkeyTextBox, OpenFlyoutSecondaryHotkeyTextBox
+            };
 
-            NextTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-            NextTrackSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-
-            PreviousTrackHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-            PreviousTrackSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-
-            OpenFlyoutHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-            OpenFlyoutSecondaryHotkeyTextBox.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
-
-            PlayPauseHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-            PlayPauseSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-
-            NextTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-            NextTrackSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-
-            PreviousTrackHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-            PreviousTrackSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-
-            OpenFlyoutHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
-            OpenFlyoutSecondaryHotkeyTextBox.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+            foreach (var tb in textBoxes)
+            {
+                tb.PreviewKeyDown += HotkeyTextBox_PreviewKeyDown;
+                tb.PreviewMouseDown += HotkeyTextBox_PreviewMouseDown;
+                tb.GotFocus += HotkeyTextBox_GotFocus;
+                tb.LostFocus += HotkeyTextBox_LostFocus;
+            }
         }
 
         private void KeybindsSettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -57,6 +49,28 @@ namespace Quick_Media_Controls.Views.Pages
 
             BindKeyboardShortcutText();
             BindMouseShortcutSelections();
+        }
+
+        private void HotkeyTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearHotkeyValidationMessage();
+        }
+
+        private void HotkeyTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ClearHotkeyValidationMessage();
+        }
+
+        private void ClearHotkeyValidationMessage()
+        {
+            HotkeyValidationTextBlock.Text = string.Empty;
+            HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowHotkeyValidationMessage(string message)
+        {
+            HotkeyValidationTextBlock.Text = message;
+            HotkeyValidationTextBlock.Visibility = Visibility.Visible;
         }
 
         private void BindKeyboardShortcutText()
@@ -109,22 +123,27 @@ namespace Quick_Media_Controls.Views.Pages
                 else if (sender == PreviousTrackSecondaryHotkeyTextBox) keyboard.PreviousTrackSecondary = null;
                 else if (sender == OpenFlyoutSecondaryHotkeyTextBox) keyboard.OpenFlyoutSecondary = null;
 
-                HotkeyValidationTextBlock.Text = string.Empty;
-                HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
+                ClearHotkeyValidationMessage();
                 BindKeyboardShortcutText();
                 _settingsWindow?.SetDraftKeybinds(_keybindsSettings);
                 return;
             }
 
-            if (!HotkeyGesture.TryFromKeyEvent(e, out var gesture) || gesture is null)
+            var rawKey = e.Key == Key.System ? e.SystemKey : e.Key;
+
+            // Ignore standalone modifier key presses (Ctrl/Alt/Shift/Win) without throwing an error
+            if (rawKey is Key.LeftAlt or Key.RightAlt or Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift or Key.LWin or Key.RWin or Key.None)
             {
-                HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key.";
-                HotkeyValidationTextBlock.Visibility = Visibility.Visible;
                 return;
             }
 
-            HotkeyValidationTextBlock.Text = string.Empty;
-            HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
+            if (!HotkeyGesture.TryFromKeyEvent(e, out var gesture) || gesture is null)
+            {
+                ShowHotkeyValidationMessage("Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key.");
+                return;
+            }
+
+            ClearHotkeyValidationMessage();
 
             if (sender == PlayPauseHotkeyTextBox) keyboard.PlayPause = gesture;
             else if (sender == PlayPauseSecondaryHotkeyTextBox) keyboard.PlayPauseSecondary = gesture;
@@ -152,13 +171,11 @@ namespace Quick_Media_Controls.Views.Pages
 
             if (!HotkeyGesture.TryFromMouseEvent(e, out var gesture) || gesture is null)
             {
-                HotkeyValidationTextBlock.Text = "Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key or mouse button.";
-                HotkeyValidationTextBlock.Visibility = Visibility.Visible;
+                ShowHotkeyValidationMessage("Invalid hotkey. Use at least one modifier key (Ctrl/Alt/Shift/Win) + a non-modifier key or mouse button.");
                 return;
             }
 
-            HotkeyValidationTextBlock.Text = string.Empty;
-            HotkeyValidationTextBlock.Visibility = Visibility.Collapsed;
+            ClearHotkeyValidationMessage();
 
             var keyboard = _keybindsSettings.Shortcuts;
 

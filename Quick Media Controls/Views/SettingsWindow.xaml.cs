@@ -1,4 +1,4 @@
-﻿using Quick_Media_Controls.Models;
+using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Views.Pages;
 using System;
 using System.Windows;
@@ -62,7 +62,7 @@ namespace Quick_Media_Controls
                 SymbolRegular.DismissCircle20);
         }
 
-        private void ShowSnackbar(string title, string message, ControlAppearance appearance, SymbolRegular icon)
+        public void ShowSnackbar(string title, string message, ControlAppearance appearance, SymbolRegular icon)
         {
             _snackbar.Title = title;
             _snackbar.Content = message;

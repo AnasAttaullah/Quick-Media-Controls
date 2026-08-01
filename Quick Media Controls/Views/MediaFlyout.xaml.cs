@@ -1,4 +1,4 @@
-﻿using Quick_Media_Controls.Models;
+using Quick_Media_Controls.Models;
 using Quick_Media_Controls.Services;
 using System;
 using System.Diagnostics;
@@ -86,8 +86,37 @@ namespace Quick_Media_Controls
             Width = Math.Clamp(workWidthDip * 0.25, MinFlyoutWidth, MaxFlyoutWidth);
             Height = Math.Clamp(workHeightDip * 0.155, MinFlyoutHeight, MaxFlyoutHeight);
 
-            Left = workLeftDip + workWidthDip - Width - FlyoutScreenMargin;
-            _homeTop = Top = workTopDip + workHeightDip - Height - FlyoutScreenMargin;
+            double defaultLeft = workLeftDip + workWidthDip - Width - FlyoutScreenMargin;
+            double defaultTop = workTopDip + workHeightDip - Height - FlyoutScreenMargin;
+
+            if (_appSettings.General.FlyoutPositionX.HasValue && _appSettings.General.FlyoutPositionY.HasValue)
+            {
+                double savedLeft = _appSettings.General.FlyoutPositionX.Value;
+                double savedTop = _appSettings.General.FlyoutPositionY.Value;
+
+                if (IsPositionOnScreen(savedLeft, savedTop, Width, Height))
+                {
+                    Left = savedLeft;
+                    _homeTop = Top = savedTop;
+                    return;
+                }
+            }
+
+            Left = defaultLeft;
+            _homeTop = Top = defaultTop;
+        }
+
+        private static bool IsPositionOnScreen(double left, double top, double width, double height)
+        {
+            var virtualLeft = SystemParameters.VirtualScreenLeft;
+            var virtualTop = SystemParameters.VirtualScreenTop;
+            var virtualWidth = SystemParameters.VirtualScreenWidth;
+            var virtualHeight = SystemParameters.VirtualScreenHeight;
+
+            bool isWithinHorizontal = (left + width > virtualLeft + 20) && (left < virtualLeft + virtualWidth - 20);
+            bool isWithinVertical = (top + height > virtualTop + 20) && (top < virtualTop + virtualHeight - 20);
+
+            return isWithinHorizontal && isWithinVertical;
         }
 
         public void UpdateIcons()
@@ -285,6 +314,10 @@ namespace Quick_Media_Controls
             {
                 DragMove();
                 _homeTop = this.Top;
+
+                _appSettings.General.FlyoutPositionX = Left;
+                _appSettings.General.FlyoutPositionY = Top;
+                new AppSettingsService().Save(_appSettings);
             }
         }
 
@@ -295,6 +328,15 @@ namespace Quick_Media_Controls
 
             _IsDragEnabled = menuItem.IsChecked;
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
+        }
+
+        private void ResetPositionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            _appSettings.General.FlyoutPositionX = null;
+            _appSettings.General.FlyoutPositionY = null;
+            new AppSettingsService().Save(_appSettings);
+
+            PositionFlyoutOnPrimaryScreen();
         }
 
         private void GithubMenuItem_Click(object sender, RoutedEventArgs e)

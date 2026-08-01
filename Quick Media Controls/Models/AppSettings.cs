@@ -37,6 +37,8 @@ namespace Quick_Media_Controls.Models
         public bool AutoHideFlyout { get; set; } = true;
         public bool MoveFlyoutByDefault { get; set; } = false;
         public bool EnableFlyoutAnimations { get; set; } = true;
+        public double? FlyoutPositionX { get; set; } = null;
+        public double? FlyoutPositionY { get; set; } = null;
 
         public static GeneralSettings CreateDefault()
         {
@@ -47,7 +49,9 @@ namespace Quick_Media_Controls.Models
                 CheckForUpdatesOnStartup = true,
                 AutoHideFlyout = true,
                 MoveFlyoutByDefault = false,
-                EnableFlyoutAnimations = true
+                EnableFlyoutAnimations = true,
+                FlyoutPositionX = null,
+                FlyoutPositionY = null
             };
         }
 
@@ -60,7 +64,9 @@ namespace Quick_Media_Controls.Models
                 CheckForUpdatesOnStartup = CheckForUpdatesOnStartup,
                 AutoHideFlyout = AutoHideFlyout,
                 MoveFlyoutByDefault = MoveFlyoutByDefault,
-                EnableFlyoutAnimations = EnableFlyoutAnimations
+                EnableFlyoutAnimations = EnableFlyoutAnimations,
+                FlyoutPositionX = FlyoutPositionX,
+                FlyoutPositionY = FlyoutPositionY
             };
         }
     }
