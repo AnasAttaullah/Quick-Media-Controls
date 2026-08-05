@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Windows.Media.Control;
 
@@ -27,6 +27,7 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
                 throw new ObjectDisposedException(nameof(EventBasedSessionChangeDetector));
 
             _sessionManager.CurrentSessionChanged += OnCurrentSessionChanged;
+            _sessionManager.SessionsChanged += OnSessionsChanged;
         }
 
         private void OnCurrentSessionChanged(
@@ -44,12 +45,28 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
             }
         }
 
+        private void OnSessionsChanged(
+            GlobalSystemMediaTransportControlsSessionManager sender,
+            SessionsChangedEventArgs args)
+        {
+            try
+            {
+                var newSession = sender.GetCurrentSession();
+                _onSessionChanged.Invoke(newSession);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in event-based sessions list change: {ex.Message}");
+            }
+        }
+
         public void Dispose()
         {
             if (_isDisposed) return;
             _isDisposed = true;
 
             _sessionManager.CurrentSessionChanged -= OnCurrentSessionChanged;
+            _sessionManager.SessionsChanged -= OnSessionsChanged;
         }
     }
 }

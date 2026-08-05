@@ -93,34 +93,68 @@
                     Margin="0,0,0,10"
                     FontTypography="Body"
                     Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" />
-                <StackPanel
-                    Name="PlaybackButtonsGrid"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <ui:Button Name="PreviousTrackButton" Click="PreviousButton_ClickAsync">
-                        <ui:SymbolIcon
-                            Filled="False"
-                            FontSize="18"
-                            Symbol="Previous16" />
-                    </ui:Button>
-                    <ui:Button
-                        Margin="10,0"
-                        Appearance="Primary"
-                        Click="PlayPauseButton_ClickAsync">
-                        <ui:SymbolIcon
-                            Name="playPauseIcon"
-                            Filled="True"
-                            FontSize="18"
-                            Symbol="Play12" />
-                    </ui:Button>
-                    <ui:Button Name="NextTrackButton" Click="NextButton_ClickAsync">
-                        <ui:SymbolIcon
-                            Filled="False"
-                            FontSize="18"
-                            Symbol="Next16" />
-                    </ui:Button>
-                </StackPanel>
+                <Grid
+                    Margin="0,4,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center">
+                    <StackPanel
+                        Name="PlaybackButtonsGrid"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <ui:Button Name="PreviousTrackButton" Click="PreviousButton_ClickAsync">
+                            <ui:SymbolIcon
+                                Filled="False"
+                                FontSize="18"
+                                Symbol="Previous16" />
+                        </ui:Button>
+                        <ui:Button
+                            Margin="10,0"
+                            Appearance="Primary"
+                            Click="PlayPauseButton_ClickAsync">
+                            <ui:SymbolIcon
+                                Name="playPauseIcon"
+                                Filled="True"
+                                FontSize="18"
+                                Symbol="Play12" />
+                        </ui:Button>
+                        <ui:Button Name="NextTrackButton" Click="NextButton_ClickAsync">
+                            <ui:SymbolIcon
+                                Filled="False"
+                                FontSize="18"
+                                Symbol="Next16" />
+                        </ui:Button>
+                    </StackPanel>
+
+                    <StackPanel
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <ui:Button
+                            Name="LockButton"
+                            Padding="4,4"
+                            Appearance="Transparent"
+                            BorderBrush="Transparent"
+                            Click="LockButton_Click">
+                            <ui:SymbolIcon
+                                Name="LockIcon"
+                                FontSize="17"
+                                Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                                Symbol="LockOpen16" />
+                        </ui:Button>
+                        <ui:Button
+                            Name="CycleSessionButton"
+                            Padding="4,3.2"
+                            Appearance="Transparent"
+                            BorderBrush="Transparent"
+                            Click="CycleSessionButton_Click">
+                            <ui:SymbolIcon
+                                FontSize="18"
+                                Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                                Symbol="ArrowRight16" />
+                        </ui:Button>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </Grid>
 

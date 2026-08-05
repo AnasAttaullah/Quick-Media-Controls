@@ -128,6 +128,18 @@ namespace Quick_Media_Controls
             }
             if (_sessionManager.CurrentSession == null) return;
             playPauseIcon.Symbol = _sessionManager.IsPlaying() ? SymbolRegular.Pause12 : SymbolRegular.Play12;
+            LockIcon.Symbol = _sessionManager.IsLocked ? SymbolRegular.LockClosed16 : SymbolRegular.LockOpen16;
+            
+            if (_sessionManager.CanCycle)
+            {
+                CycleSessionButton.Opacity = 1.0;
+                CycleSessionButton.IsHitTestVisible = true;
+            }
+            else
+            {
+                CycleSessionButton.Opacity = 0.4;
+                CycleSessionButton.IsHitTestVisible = false;
+            }
         }
 
         public async Task UpdateMediaInfo()
@@ -305,6 +317,21 @@ namespace Quick_Media_Controls
         private async void PreviousButton_ClickAsync(object sender, RoutedEventArgs e)
         {
             await _sessionManager.SkipPreviousAsync();
+        }
+
+        private async void LockButton_Click(object sender, RoutedEventArgs e)
+        {
+            await _sessionManager.ToggleLockAsync();
+            await UpdateMediaInfo();
+            UpdateIcons();
+        }
+
+        private async void CycleSessionButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_sessionManager.CanCycle) return;
+            await _sessionManager.CycleSessionAsync();
+            await UpdateMediaInfo();
+            UpdateIcons();
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
