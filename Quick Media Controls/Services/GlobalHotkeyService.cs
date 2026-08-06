@@ -42,7 +42,7 @@ namespace Quick_Media_Controls.Services
 
         // Keeps a reference to the delegate so it doesn't get garbage collected
         private LowLevelMouseProc _mouseProc;
-        private static IntPtr _mouseHookHandle = IntPtr.Zero;
+        private IntPtr _mouseHookHandle = IntPtr.Zero;
         public event EventHandler<ShortcutAction>? HotkeyPressed;
 
         // --- Win32 Imports ---

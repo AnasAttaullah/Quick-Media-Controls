@@ -36,6 +36,26 @@ namespace Quick_Media_Controls
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
         private const int DWMWA_TRANSITIONS_FORCEDISABLED = 3;
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMinimumWorkingSetSize, IntPtr dwMaximumWorkingSetSize);
+
+        /// <summary>
+        /// Releases unused physical memory pages back to the OS.
+        /// </summary>
+        private static void TrimWorkingSet()
+        {
+            try
+            {
+                GC.Collect(2, GCCollectionMode.Optimized, false);
+                GC.WaitForPendingFinalizers();
+                SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, (IntPtr)(-1), (IntPtr)(-1));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to trim working set: {ex.Message}");
+            }
+        }
+
         public MediaFlyout(MediaSessionService sessionManager, AppSettings appSettings)
         {
             ApplicationThemeManager.ApplySystemTheme();
@@ -129,7 +149,7 @@ namespace Quick_Media_Controls
             if (_sessionManager.CurrentSession == null) return;
             playPauseIcon.Symbol = _sessionManager.IsPlaying() ? SymbolRegular.Pause12 : SymbolRegular.Play12;
             LockIcon.Symbol = _sessionManager.IsLocked ? SymbolRegular.LockClosed16 : SymbolRegular.LockOpen16;
-            
+
             if (_sessionManager.CanCycle)
             {
                 CycleSessionButton.Opacity = 1.0;
@@ -146,7 +166,7 @@ namespace Quick_Media_Controls
         {
             if (!Dispatcher.CheckAccess())
             {
-                await Dispatcher.InvokeAsync(UpdateMediaInfo);
+                await Dispatcher.InvokeAsync(async () => await UpdateMediaInfo()).Task.Unwrap();
                 return;
             }
 
@@ -171,6 +191,11 @@ namespace Quick_Media_Controls
                 mediaPlayingGrid.Visibility = Visibility.Collapsed;
                 noMediaPlayingGrid.Visibility = Visibility.Visible;
             }
+
+            if (!IsVisible)
+            {
+                TrimWorkingSet();
+            }
         }
 
         private async Task<BitmapImage?> LoadMediaThumbnailAsync(Windows.Storage.Streams.IRandomAccessStreamReference? thumbnailRef)
@@ -187,7 +212,8 @@ namespace Quick_Media_Controls
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.DecodePixelHeight = 160; // Decode at 160px 
+                bitmap.DecodePixelWidth = 160;  // Decode at 160px
+                bitmap.DecodePixelHeight = 160;
 
                 using var memStream = new MemoryStream();
                 await stream.AsStreamForRead().CopyToAsync(memStream);
@@ -261,6 +287,7 @@ namespace Quick_Media_Controls
                 Hide();
                 Root.Opacity = 1;
                 Top = _homeTop;
+                TrimWorkingSet();
                 return;
             }
 
@@ -288,6 +315,7 @@ namespace Quick_Media_Controls
                 Hide();
                 Root.Opacity = 1;
                 Top = _homeTop;
+                TrimWorkingSet();
             };
             Root.BeginAnimation(OpacityProperty, fadeOut);
         }
@@ -306,17 +334,38 @@ namespace Quick_Media_Controls
 
         private async void PlayPauseButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            await _sessionManager.TogglePlayPauseAsync();
+            try
+            {
+                await _sessionManager.TogglePlayPauseAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private async void NextButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            await _sessionManager.SkipNextAsync();
+            try
+            {
+                await _sessionManager.SkipNextAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private async void PreviousButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            await _sessionManager.SkipPreviousAsync();
+            try
+            {
+                await _sessionManager.SkipPreviousAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private async void LockButton_Click(object sender, RoutedEventArgs e)

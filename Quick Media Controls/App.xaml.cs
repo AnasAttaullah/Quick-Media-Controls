@@ -91,6 +91,7 @@ namespace Quick_Media_Controls
             {
                 MessageBox.Show(ex.ToString(), "Startup Error");
                 Shutdown();
+                return;
             }
 
             PreloadIconAssets();
@@ -127,21 +128,17 @@ namespace Quick_Media_Controls
             _hiddenWindow.Show();
 
             _appSettings = _appSettingsService.Load();
+            InitializeAppSettings();
+
             if (_appSettings.Keybinds.TrayIconShortcuts.LeftClick == ShortcutAction.OpenFlyout)
             {
                 _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
-                MainWindow = _mediaFlyout;
-                _hiddenWindow.Close();
             }
-            else
-            {
-                MainWindow = _hiddenWindow;
-            }
+
+            MainWindow = _hiddenWindow;
 
             MainWindow.Show();
             MainWindow.Hide();
-
-            InitializeAppSettings();
             RegisterTrayIcon();
             UpdateTrayIcon();
 
@@ -203,8 +200,8 @@ namespace Quick_Media_Controls
                 {
                     // Ignore if mutex is already released
                 }
-                mutex.Dispose();
             }
+            mutex?.Dispose();
 
             MainWindow?.Close();
             base.OnExit(e);
@@ -357,7 +354,7 @@ namespace Quick_Media_Controls
             var mediaArtist = _mediaService.CurrentMediaProperties?.Artist;
             mediaTitle = mediaTitle?.Length > 35 ? mediaTitle[..32] + "..." : mediaTitle;
 
-            _trayIcon.TooltipText = mediaTitle + $" | {mediaArtist}" ?? "Unknown";
+            _trayIcon.TooltipText = $"{mediaTitle ?? "Unknown"} | {mediaArtist ?? "Unknown"}";
 
             if (_mediaFlyout != null)
             {

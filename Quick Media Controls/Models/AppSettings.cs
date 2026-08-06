@@ -77,6 +77,7 @@ namespace Quick_Media_Controls.Models
         public TrayIconShortcutSettings TrayIconShortcuts { get; set; } = TrayIconShortcutSettings.CreateDefault();
 
         [JsonPropertyName("KeyboardShortcuts")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ShortcutSettings? LegacyKeyboardShortcuts
         {
             get => null;
@@ -84,6 +85,7 @@ namespace Quick_Media_Controls.Models
         }
 
         [JsonPropertyName("MouseShortcuts")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public TrayIconShortcutSettings? LegacyMouseShortcuts
         {
             get => null;
@@ -91,6 +93,7 @@ namespace Quick_Media_Controls.Models
         }
 
         [JsonPropertyName("IconShortcuts")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public TrayIconShortcutSettings? LegacyIconShortcuts
         {
             get => null;

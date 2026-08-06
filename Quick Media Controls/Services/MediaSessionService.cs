@@ -55,8 +55,6 @@ namespace Quick_Media_Controls.Services
                 {
                     Debug.WriteLine($"Locked session {_lastSessionId} returned. Canceling auto-unlock grace period.");
                     _unlockGracePeriodCts.Cancel();
-                    _unlockGracePeriodCts.Dispose();
-                    _unlockGracePeriodCts = null;
                 }
             }
         }
@@ -86,12 +84,6 @@ namespace Quick_Media_Controls.Services
                                 {
                                     Debug.WriteLine($"Grace period expired for locked session {_lastSessionId}. Auto-unlocking...");
                                     IsLocked = false;
-                                    
-                                    lock (_gracePeriodLock)
-                                    {
-                                        _unlockGracePeriodCts?.Dispose();
-                                        _unlockGracePeriodCts = null;
-                                    }
 
                                     var currentOSSession = SessionManager?.GetCurrentSession();
                                     _lastSessionId = currentOSSession?.SourceAppUserModelId;
@@ -106,6 +98,14 @@ namespace Quick_Media_Controls.Services
                     }
                     catch (TaskCanceledException) { }
                     catch (Exception ex) { Debug.WriteLine($"Error in grace period: {ex.Message}"); }
+                    finally
+                    {
+                        lock (_gracePeriodLock)
+                        {
+                            _unlockGracePeriodCts?.Dispose();
+                            _unlockGracePeriodCts = null;
+                        }
+                    }
                 });
             }
         }
@@ -173,9 +173,12 @@ namespace Quick_Media_Controls.Services
             if (session == null) return null;
             try
             {
+                using var cts = new CancellationTokenSource();
                 var task = Task.Run(async () => await session.TryGetMediaPropertiesAsync());
-                if (await Task.WhenAny(task, Task.Delay(timeoutMs)) == task)
+                var delayTask = Task.Delay(timeoutMs, cts.Token);
+                if (await Task.WhenAny(task, delayTask) == task)
                 {
+                    cts.Cancel();
                     return await task;
                 }
                 else
@@ -195,6 +198,9 @@ namespace Quick_Media_Controls.Services
         {
             if (_isDisposed) return;
 
+            bool shouldFireSessionChanged = false;
+            GlobalSystemMediaTransportControlsSessionManager? sessionManagerSnapshot = null;
+
             await _sessionChangeLock.WaitAsync();
             try
             {
@@ -204,7 +210,8 @@ namespace Quick_Media_Controls.Services
                 if (currentSessionCount != _lastSessionCount)
                 {
                     _lastSessionCount = currentSessionCount;
-                    SessionChanged?.Invoke(this, SessionManager);
+                    shouldFireSessionChanged = true;
+                    sessionManagerSnapshot = SessionManager;
                 }
 
                 if (IsLocked)
@@ -280,7 +287,7 @@ namespace Quick_Media_Controls.Services
                             sessionChanged = true;
                         }
                     }
-                    catch { }
+                    catch (Exception ex) { Debug.WriteLine($"Error comparing session properties: {ex.Message}"); }
                 }
 
                 if (sessionChanged)
@@ -297,6 +304,11 @@ namespace Quick_Media_Controls.Services
             finally
             {
                 _sessionChangeLock.Release();
+            }
+
+            if (shouldFireSessionChanged)
+            {
+                SessionChanged?.Invoke(this, sessionManagerSnapshot);
             }
         }
 
@@ -412,6 +424,7 @@ namespace Quick_Media_Controls.Services
         {
             if (SessionManager == null) return;
 
+            await _sessionChangeLock.WaitAsync();
             try
             {
                 var sessionsList = SessionManager.GetSessions();
@@ -424,7 +437,7 @@ namespace Quick_Media_Controls.Services
                 {
                     targetTitle = CurrentMediaProperties?.Title;
                 }
-                catch { }
+                catch (Exception ex) { Debug.WriteLine($"Error reading current title: {ex.Message}"); }
 
                 int currentIndex = -1;
                 for (int i = 0; i < sessionsList.Count; i++)
@@ -441,8 +454,9 @@ namespace Quick_Media_Controls.Services
                                 break;
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            Debug.WriteLine($"Error matching session during cycle: {ex.Message}");
                         }
 
                         if (currentIndex == -1)
@@ -464,6 +478,10 @@ namespace Quick_Media_Controls.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error cycling sessions: {ex.Message}");
+            }
+            finally
+            {
+                _sessionChangeLock.Release();
             }
         }
 

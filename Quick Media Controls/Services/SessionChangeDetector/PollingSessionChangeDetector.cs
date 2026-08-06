@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using Windows.Media.Control;
@@ -27,7 +27,7 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
             if (_isDisposed)
                 throw new ObjectDisposedException(nameof(PollingSessionChangeDetector));
 
-            _pollTimer ??= new Timer(CheckForSessionChange, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+            _pollTimer ??= new Timer(CheckForSessionChange, null, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
         }
 
         private void CheckForSessionChange(object? state)
@@ -42,6 +42,11 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
 
                 
                 Debug.WriteLine($"Error in polling session change: {ex.Message}");
+            }
+            finally
+            {
+                if (!_isDisposed)
+                    _pollTimer?.Change(TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
             }
         }
 
