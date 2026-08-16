@@ -36,6 +36,10 @@ namespace Quick_Media_Controls
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
         private const int DWMWA_TRANSITIONS_FORCEDISABLED = 3;
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr DefWindowProc(IntPtr hWnd, int uMsg, IntPtr wParam, IntPtr lParam);
+        private const int WM_NCACTIVATE = 0x0086;
+
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMinimumWorkingSetSize, IntPtr dwMaximumWorkingSetSize);
 
@@ -58,7 +62,14 @@ namespace Quick_Media_Controls
 
         public MediaFlyout(MediaSessionService sessionManager, AppSettings appSettings)
         {
-            ApplicationThemeManager.ApplySystemTheme();
+            if (Application.Current is App app)
+            {
+                app.ApplyApplicationTheme(appSettings.Theme.AppTheme);
+            }
+            else
+            {
+                ApplicationThemeManager.ApplySystemTheme();
+            }
             ApplicationAccentColorManager.ApplySystemAccent();
 
             _appSettings = appSettings;
@@ -82,8 +93,24 @@ namespace Quick_Media_Controls
             int disabled = 1;
             DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, ref disabled, sizeof(int));
 
+            var source = HwndSource.FromHwnd(hwnd);
+            source?.AddHook(WndProc);
+
             PositionFlyoutOnPrimaryScreen();
             await UpdateMediaInfo();
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_NCACTIVATE)
+            {
+                if (wParam == IntPtr.Zero)
+                {
+                    handled = true;
+                    return DefWindowProc(hwnd, WM_NCACTIVATE, new IntPtr(1), lParam);
+                }
+            }
+            return IntPtr.Zero;
         }
 
         private void PositionFlyoutOnPrimaryScreen()
@@ -232,6 +259,21 @@ namespace Quick_Media_Controls
             }
         }
 
+        private bool IsInUpperHalfOfScreen()
+        {
+            var handle = new WindowInteropHelper(this).Handle;
+            var screen = handle != IntPtr.Zero ? Screen.FromHandle(handle) : Screen.PrimaryScreen;
+            if (screen == null) return false;
+
+            var dpi = VisualTreeHelper.GetDpi(this);
+            double workTopDip = screen.WorkingArea.Top / dpi.DpiScaleY;
+            double workHeightDip = screen.WorkingArea.Height / dpi.DpiScaleY;
+            double screenCenterY = workTopDip + (workHeightDip / 2.0);
+
+            double flyoutCenterY = Top + (Height / 2.0);
+            return flyoutCenterY < screenCenterY;
+        }
+
         public async Task ShowFlyoutAsync()
         {
             Root.Opacity = 0;
@@ -257,17 +299,19 @@ namespace Quick_Media_Controls
                 return;
             }
 
-            // Fade-up: slide up 15px + fade in over 220ms with ease-out curve
+            bool upperHalf = IsInUpperHalfOfScreen();
+            double startTop = upperHalf ? _homeTop - 15 : _homeTop + 15;
+
             var duration = new Duration(TimeSpan.FromMilliseconds(220));
             var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
 
-            var slideUp = new DoubleAnimation(_homeTop + 15, _homeTop, duration)
+            var slide = new DoubleAnimation(startTop, _homeTop, duration)
             {
                 EasingFunction = ease,
                 FillBehavior = FillBehavior.Stop
             };
-            slideUp.Completed += (_, _) => Top = _homeTop;
-            BeginAnimation(Window.TopProperty, slideUp);
+            slide.Completed += (_, _) => Top = _homeTop;
+            BeginAnimation(Window.TopProperty, slide);
 
             var fadeIn = new DoubleAnimation(0, 1, duration)
             {
@@ -293,15 +337,18 @@ namespace Quick_Media_Controls
 
             _isAnimatingClose = true;
 
+            bool upperHalf = IsInUpperHalfOfScreen();
+            double endTop = upperHalf ? _homeTop - 15 : _homeTop + 15;
+
             var duration = new Duration(TimeSpan.FromMilliseconds(180));
             var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
 
-            var slideDown = new DoubleAnimation(_homeTop, _homeTop + 15, duration)
+            var slide = new DoubleAnimation(_homeTop, endTop, duration)
             {
                 EasingFunction = ease,
                 FillBehavior = FillBehavior.Stop
             };
-            BeginAnimation(Window.TopProperty, slideDown);
+            BeginAnimation(Window.TopProperty, slide);
 
             var fadeOut = new DoubleAnimation(1, 0, duration)
             {
@@ -329,6 +376,9 @@ namespace Quick_Media_Controls
         public void ApplySettings(AppSettings appSettings)
         {
             _appSettings = appSettings;
+            _IsDragEnabled = appSettings.General.MoveFlyoutByDefault;
+            Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
+            MoveFlyoutToggle.IsChecked = _IsDragEnabled;
         }
 
 

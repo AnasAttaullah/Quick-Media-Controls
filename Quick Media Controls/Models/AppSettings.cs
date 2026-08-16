@@ -5,9 +5,24 @@ using System.Windows.Input;
 
 namespace Quick_Media_Controls.Models
 {
+    public enum ApplicationThemeSetting
+    {
+        System,
+        Light,
+        Dark
+    }
+
+    public enum TrayIconThemeSetting
+    {
+        System,
+        Light,
+        Dark
+    }
+
     public sealed class AppSettings
     {
         public GeneralSettings General { get; set; } = GeneralSettings.CreateDefault();
+        public ThemeSettings Theme { get; set; } = ThemeSettings.CreateDefault();
         public KeybindSettings Keybinds { get; set; } = KeybindSettings.CreateDefault();
 
         public static AppSettings CreateDefault()
@@ -15,6 +30,7 @@ namespace Quick_Media_Controls.Models
             return new AppSettings
             {
                 General = GeneralSettings.CreateDefault(),
+                Theme = ThemeSettings.CreateDefault(),
                 Keybinds = KeybindSettings.CreateDefault()
             };
         }
@@ -24,7 +40,32 @@ namespace Quick_Media_Controls.Models
             return new AppSettings
             {
                 General = General.Clone(),
+                Theme = Theme.Clone(),
                 Keybinds = Keybinds.Clone()
+            };
+        }
+    }
+
+    public sealed class ThemeSettings
+    {
+        public ApplicationThemeSetting AppTheme { get; set; } = ApplicationThemeSetting.System;
+        public TrayIconThemeSetting TrayIconTheme { get; set; } = TrayIconThemeSetting.System;
+
+        public static ThemeSettings CreateDefault()
+        {
+            return new ThemeSettings
+            {
+                AppTheme = ApplicationThemeSetting.System,
+                TrayIconTheme = TrayIconThemeSetting.System
+            };
+        }
+
+        public ThemeSettings Clone()
+        {
+            return new ThemeSettings
+            {
+                AppTheme = AppTheme,
+                TrayIconTheme = TrayIconTheme
             };
         }
     }

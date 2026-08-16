@@ -5,9 +5,11 @@ using Quick_Media_Controls.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -25,6 +27,17 @@ namespace Quick_Media_Controls
         private NotifyIcon _trayIcon;
         private MediaFlyout? _mediaFlyout;
         private Window _hiddenWindow;
+        private HwndSource? _hiddenWindowHwndSource;
+
+        private const uint MSGFLT_ALLOW = 1;
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern uint RegisterWindowMessage(string lpString);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool ChangeWindowMessageFilterEx(IntPtr hWnd, uint msg, uint action, IntPtr pChangeFilterStruct);
+
+        private static readonly uint WmTaskbarCreated = RegisterWindowMessage("TaskbarCreated");
 
 
         private static Mutex? mutex;
@@ -127,6 +140,15 @@ namespace Quick_Media_Controls
 
             _hiddenWindow.Show();
 
+            var windowHandle = new WindowInteropHelper(_hiddenWindow).EnsureHandle();
+            if (WmTaskbarCreated != 0)
+            {
+                ChangeWindowMessageFilterEx(windowHandle, WmTaskbarCreated, MSGFLT_ALLOW, IntPtr.Zero);
+            }
+
+            _hiddenWindowHwndSource = HwndSource.FromHwnd(windowHandle);
+            _hiddenWindowHwndSource?.AddHook(HwndMessageHook);
+
             _appSettings = _appSettingsService.Load();
             InitializeAppSettings();
 
@@ -150,6 +172,12 @@ namespace Quick_Media_Controls
 
         protected override void OnExit(ExitEventArgs e)
         {
+            if (_hiddenWindowHwndSource != null)
+            {
+                _hiddenWindowHwndSource.RemoveHook(HwndMessageHook);
+                _hiddenWindowHwndSource = null;
+            }
+
             ApplicationThemeManager.Changed -= ApplicationThemeManager_Changed;
             SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
             SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
@@ -207,11 +235,35 @@ namespace Quick_Media_Controls
             base.OnExit(e);
         }
 
+        public void ApplyApplicationTheme(ApplicationThemeSetting themeSetting)
+        {
+            switch (themeSetting)
+            {
+                case ApplicationThemeSetting.Light:
+                    ApplicationThemeManager.Apply(ApplicationTheme.Light);
+                    break;
+                case ApplicationThemeSetting.Dark:
+                    ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+                    break;
+                case ApplicationThemeSetting.System:
+                default:
+                    ApplicationThemeManager.ApplySystemTheme();
+                    break;
+            }
+
+            currentAppTheme = ApplicationThemeManager.GetAppTheme();
+            ApplicationAccentColorManager.ApplySystemAccent();
+            UpdateTrayIcon();
+        }
+
         private void InitializeAppSettings()
         {
             _appSettings ??= _appSettingsService.Load();
+            _appSettings.Theme ??= ThemeSettings.CreateDefault();
             _appSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
             _appSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
+
+            ApplyApplicationTheme(_appSettings.Theme.AppTheme);
 
             _globalHotkeyService = new GlobalHotkeyService(MainWindow);
             _globalHotkeyService.HotkeyPressed += GlobalHotkeyService_HotkeyPressed;
@@ -250,6 +302,7 @@ namespace Quick_Media_Controls
         {
             error = null;
 
+            updatedSettings.Theme ??= ThemeSettings.CreateDefault();
             updatedSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
             updatedSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
 
@@ -262,6 +315,9 @@ namespace Quick_Media_Controls
             var updatedMouseShortcuts = updatedSettings.Keybinds.TrayIconShortcuts;
             var shouldPromptRestart = HasOpenFlyoutMouseBindingChanged(currentMouseShortcuts, updatedMouseShortcuts);
 
+            bool themeChanged = _appSettings.Theme.AppTheme != updatedSettings.Theme.AppTheme ||
+                                _appSettings.Theme.TrayIconTheme != updatedSettings.Theme.TrayIconTheme;
+
             try
             {
                 _globalHotkeyService.Apply(updatedSettings.Keybinds);
@@ -269,7 +325,17 @@ namespace Quick_Media_Controls
 
                 _appSettings = updatedSettings.Clone();
                 _appSettingsService.Save(_appSettings);
-                _mediaFlyout?.ApplySettings(_appSettings);
+
+                ApplyApplicationTheme(_appSettings.Theme.AppTheme);
+
+                if (themeChanged)
+                {
+                    _ = ReloadFlyoutAsync();
+                }
+                else
+                {
+                    _mediaFlyout?.ApplySettings(_appSettings);
+                }
 
                 if (shouldPromptRestart)
                 {
@@ -312,6 +378,53 @@ namespace Quick_Media_Controls
             }
         }
 
+        private IntPtr HwndMessageHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (WmTaskbarCreated != 0 && (uint)msg == WmTaskbarCreated)
+            {
+                OnTaskbarCreated();
+                handled = true;
+            }
+
+            return IntPtr.Zero;
+        }
+
+        private async void OnTaskbarCreated()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                _ = Dispatcher.InvokeAsync(OnTaskbarCreated);
+                return;
+            }
+
+            RecreateTrayIcon();
+
+            // In some edge cases, Windows Explorer might take a short moment to finish initializing
+            // its notification area after broadcasting TaskbarCreated. Schedule a delayed refresh.
+            await Task.Delay(500);
+            UpdateTrayIcon();
+        }
+
+        private void RecreateTrayIcon()
+        {
+            if (_trayIcon == null) return;
+
+            try
+            {
+                if (_trayIcon.IsRegistered)
+                {
+                    _trayIcon.Unregister();
+                }
+
+                _trayIcon.Register();
+                UpdateTrayIcon();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to recreate tray icon on TaskbarCreated: {ex.Message}");
+            }
+        }
+
         private static ImageSource LoadTrayIcon(string relativePath)
         {
             var uri = new Uri($"pack://application:,,,/{relativePath}", UriKind.Absolute);
@@ -337,7 +450,12 @@ namespace Quick_Media_Controls
             }
 
             bool isPlaying = _mediaService.IsPlaying();
-            bool isDarkMode = currentAppTheme == ApplicationTheme.Dark;
+            bool isDarkMode = _appSettings.Theme.TrayIconTheme switch
+            {
+                TrayIconThemeSetting.Light => false,
+                TrayIconThemeSetting.Dark => true,
+                _ => currentAppTheme == ApplicationTheme.Dark
+            };
 
             if (_mediaService.CurrentSession is null)
             {
@@ -606,6 +724,7 @@ namespace Quick_Media_Controls
         private void ApplicationThemeManager_Changed(ApplicationTheme currentApplicationTheme, System.Windows.Media.Color systemAccent)
         {
             currentAppTheme = currentApplicationTheme;
+            ApplicationAccentColorManager.ApplySystemAccent();
             UpdateTrayIcon();
         }
     }

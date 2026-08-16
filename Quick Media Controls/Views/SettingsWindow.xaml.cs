@@ -32,6 +32,11 @@ namespace Quick_Media_Controls
             DraftSettings.General = generalSettings.Clone();
         }
 
+        public void SetDraftThemeSettings(ThemeSettings themeSettings)
+        {
+            DraftSettings.Theme = themeSettings.Clone();
+        }
+
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             SettingsNavigation.Navigate(typeof(Home));

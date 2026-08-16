@@ -1,0 +1,68 @@
+<Page
+    x:Class="Quick_Media_Controls.Views.Pages.ThemeSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="ThemeSettingsPage"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="14">
+
+        <Grid Margin="0,0,0,14">
+            <ui:TextBlock
+                FontSize="22"
+                FontTypography="Subtitle"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                Text="Appearance Settings" />
+        </Grid>
+
+        <ui:CardControl
+            Margin="0,0,0,4"
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=DarkTheme24}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                        Text="Application Theme"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ComboBox
+                x:Name="AppThemeComboBox"
+                MinWidth="200"
+                SelectionChanged="AppThemeComboBox_SelectionChanged">
+                <ComboBoxItem Content="System" Tag="System" />
+                <ComboBoxItem Content="Light" Tag="Light" />
+                <ComboBoxItem Content="Dark" Tag="Dark" />
+            </ComboBox>
+        </ui:CardControl>
+
+        <ui:CardControl
+            Margin="0,0,0,4"
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=Pause24}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                        Text="Tray Icon Theme"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ComboBox
+                x:Name="TrayIconThemeComboBox"
+                MinWidth="200"
+                SelectionChanged="TrayIconThemeComboBox_SelectionChanged">
+                <ComboBoxItem Content="System" Tag="System" />
+                <ComboBoxItem Content="Light" Tag="Light" />
+                <ComboBoxItem Content="Dark" Tag="Dark" />
+            </ComboBox>
+        </ui:CardControl>
+
+    </StackPanel>
+</Page>
