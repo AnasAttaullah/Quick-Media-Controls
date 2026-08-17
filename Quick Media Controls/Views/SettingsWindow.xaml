@@ -6,7 +6,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Settings"
     Width="850"
-    Height="500"
+    Height="530"
     Loaded="SettingsWindow_Loaded"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"

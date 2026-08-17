@@ -1,10 +1,7 @@
-using AutoUpdaterDotNET;
-using Microsoft.VisualBasic.Devices;
 using Quick_Media_Controls.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -17,7 +14,6 @@ namespace Quick_Media_Controls.Services
     {
         private const int WM_HOTKEY = 0x0312;
 
-        // Native Windows constants for the low-level mouse hook
         private const int WH_MOUSE_LL = 14;
         private const int WM_XBUTTONUP = 0x020C;
         private const int WM_LBUTTONUP = 0x0202;
@@ -40,12 +36,10 @@ namespace Quick_Media_Controls.Services
         private readonly Dictionary<HotkeyGesture, ShortcutAction> _registeredMouseHotkeys = new();
         private bool _isDisposed;
 
-        // Keeps a reference to the delegate so it doesn't get garbage collected
         private LowLevelMouseProc _mouseProc;
         private IntPtr _mouseHookHandle = IntPtr.Zero;
         public event EventHandler<ShortcutAction>? HotkeyPressed;
 
-        // --- Win32 Imports ---
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
 
@@ -86,7 +80,6 @@ namespace Quick_Media_Controls.Services
 
         public GlobalHotkeyService(Window messageWindow)
         {
-            // Initialize and register the low-level mouse hook
             _mouseProc = MouseHookCallback;
             using (ProcessModule curModule = Process.GetCurrentProcess().MainModule!)
             {
@@ -96,8 +89,6 @@ namespace Quick_Media_Controls.Services
             _windowHandle = new WindowInteropHelper(messageWindow).Handle;
             _hwndSource = HwndSource.FromHwnd(_windowHandle);
             _hwndSource.AddHook(WndProc);
-
-            
         }
 
         public void Apply(KeybindSettings settings)
@@ -135,7 +126,6 @@ namespace Quick_Media_Controls.Services
         {
             if (gesture == null) return;
 
-            // If input type is keyboard then input.key shouldn't be null 
             if (gesture.Input.Type == Models.InputType.Keyboard)
             {
                 if (gesture.Input.Key == null) return;
@@ -153,7 +143,6 @@ namespace Quick_Media_Controls.Services
             }
             else
             {
-                // Adds a mouse type gesture
                 _registeredMouseHotkeys[gesture] = action;
             }
         }
@@ -223,7 +212,6 @@ namespace Quick_Media_Controls.Services
             return IntPtr.Zero;
         }
 
-        // Handles the global mouse event streaming interception
         private MouseButton? _suppressUpFor = null;
         private IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
@@ -244,7 +232,6 @@ namespace Quick_Media_Controls.Services
                 message == WM_MBUTTONUP ||
                 message == WM_XBUTTONUP;
 
-            // 1. If this is a suppressed UP → swallow it
             if (isUp && _suppressUpFor != null)
             {
                 MouseButton? upButton = message switch
@@ -263,20 +250,16 @@ namespace Quick_Media_Controls.Services
                 }
             }
 
-            // 2. Only process DOWN for hotkeys
             if (!isDown)
                 return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
 
-            if (!TryGetMouseGesture(message, lParam, out var gesture))
+            if (!TryGetMouseGesture(message, lParam, out var gesture) || gesture is null)
                 return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
 
             if (_registeredMouseHotkeys.TryGetValue(gesture, out var action))
             {
                 HotkeyPressed?.Invoke(this, action);
-
-                // remember to also block the matching UP
                 _suppressUpFor = gesture.Input.MouseButton;
-
                 return (IntPtr)1;
             }
 
@@ -333,7 +316,6 @@ namespace Quick_Media_Controls.Services
 
             UnregisterAll();
 
-            // Safely tear down the global mouse hook
             if (_mouseHookHandle != IntPtr.Zero)
             {
                 UnhookWindowsHookEx(_mouseHookHandle);

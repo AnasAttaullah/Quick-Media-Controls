@@ -9,84 +9,230 @@
     Title="About Settings Page"
     mc:Ignorable="d">
 
-    <StackPanel Margin="20,15,20,0" VerticalAlignment="Center">
-
-        <StackPanel
-            Margin="4,0,4,10"
-            HorizontalAlignment="Center"
-            Orientation="Vertical">
-            <ui:Image
-                Width="120"
-                Height="120"
-                Margin="0,0,0,10"
-                Source="/Assets/logo.png" />
+    <StackPanel Margin="14">
+        <Grid Margin="0,0,0,14">
             <ui:TextBlock
-                FontSize="24"
+                FontSize="22"
                 FontTypography="Subtitle"
                 Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                Text="Quick Media Controls" />
-        </StackPanel>
-        <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
-            <ui:TextBlock
-                Margin="4,0,4,14"
-                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                Opacity="0.85"
-                Text="A Windows tray app that lets you control media playback quickly"
-                TextAlignment="Center"
-                TextWrapping="Wrap" />
+                Text="Application Details" />
+        </Grid>
 
-            <Grid Width="220" Margin="0,10,0,10">
+        <Border
+            Margin="0,0,0,12"
+            Padding="20,18"
+            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
+
+                <Image
+                    Grid.Column="0"
+                    Width="74"
+                    Height="74"
+                    Margin="0,0,18,0"
+                    VerticalAlignment="Center"
+                    Source="/Assets/logo.png" />
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontSize="20"
+                            FontTypography="Subtitle"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="Quick Media Controls" />
+                        <Border
+                            Margin="10,0,0,0"
+                            Padding="6,2"
+                            VerticalAlignment="Center"
+                            Background="{ui:ThemeResource SubtleFillColorSecondaryBrush}"
+                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <ui:TextBlock
+                                FontTypography="Caption"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{Binding AppVersionDisplay}" />
+                        </Border>
+
+                    </StackPanel>
+
                     <ui:TextBlock
-                        FontTypography="BodyStrong"
-                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Author:" />
-                    <ui:TextBlock
-                        FontTypography="BodyStrong"
-                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="License:" />
-                    <ui:TextBlock
-                        FontTypography="BodyStrong"
-                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Framework:" />
-                    <ui:TextBlock
-                        FontTypography="BodyStrong"
-                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Platform:" />
-                    <ui:TextBlock
-                        FontTypography="BodyStrong"
-                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
-                        Text="Version:" />
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <ui:TextBlock
+                        Margin="0,4,0,0"
                         FontTypography="Body"
-                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                        Text="Anas Attaullah" />
+                        Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                        Text="A Windows tray app that lets you control media playback quickly" />
+
                     <ui:TextBlock
-                        FontTypography="Body"
-                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                        Text="GNU GPL v3.0" />
-                    <ui:TextBlock
-                        FontTypography="Body"
-                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                        Text=".NET 8" />
-                    <ui:TextBlock
-                        FontTypography="Body"
-                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                        Text="Windows 10 / 11" />
-                    <ui:TextBlock
-                        FontTypography="Body"
-                        Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
-                        Text="{Binding AppVersion}" />
+                        Width="150"
+                        Margin="0,3,0,0"
+                        HorizontalAlignment="Left"
+                        Cursor="Hand"
+                        FontTypography="Caption"
+                        Foreground="{ui:ThemeResource AccentTextFillColorPrimaryBrush}"
+                        MouseLeftButtonUp="AuthorTextBlock_MouseLeftButtonUp"
+                        Text="Created by Anas Attaullah" />
                 </StackPanel>
             </Grid>
+        </Border>
 
-        </StackPanel>
+        <Border
+            Padding="20,18"
+            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <StackPanel>
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <ui:SymbolIcon
+                                Margin="0,0,12,0"
+                                FontSize="32"
+                                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                                Symbol="DesktopPulse24" />
+                            <StackPanel>
+                                <ui:TextBlock
+                                    FontTypography="BodyStrong"
+                                    Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                                    Text="System &amp; Diagnostics" />
+                                <ui:TextBlock
+                                    Margin="0,2,0,0"
+                                    FontTypography="Caption"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="Environment details for troubleshooting and GitHub issue reporting" />
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <ui:Button
+                        x:Name="CopyDiagnosticsButton"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Appearance="Secondary"
+                        Click="CopyDiagnosticsButton_Click"
+                        Content="Copy Info"
+                        Icon="{ui:SymbolIcon Symbol=Copy20}" />
+                </Grid>
+
+                <Rectangle
+                    Height="1"
+                    Margin="0,0,0,16"
+                    Fill="{ui:ThemeResource CardStrokeColorDefaultBrush}" />
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="0,0,12,12"
+                        Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Operating System: " />
+                        <ui:TextBlock
+                            FontTypography="Body"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="{Binding OsVersion}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="12,0,0,12"
+                        Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Target Runtime: " />
+                        <ui:TextBlock
+                            FontTypography="Body"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="{Binding RuntimeVersion}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,0,12,12"
+                        Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Architecture: " />
+                        <ui:TextBlock
+                            FontTypography="Body"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="{Binding Architecture}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="12,0,0,12"
+                        Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Distribution: " />
+                        <ui:TextBlock
+                            FontTypography="Body"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="{Binding DistributionChannel}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Margin="0,0,12,0"
+                        Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="License: " />
+                        <ui:TextBlock
+                            FontTypography="Body"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="{Binding LicenseName}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="12,0,0,0"
+                        Orientation="Horizontal">
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Author: " />
+                        <ui:TextBlock
+                            FontTypography="Body"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                            Text="{Binding AuthorName}" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
     </StackPanel>
 </Page>

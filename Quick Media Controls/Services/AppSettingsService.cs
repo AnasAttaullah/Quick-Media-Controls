@@ -1,4 +1,4 @@
-﻿using Quick_Media_Controls.Models;
+using Quick_Media_Controls.Models;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -43,7 +43,7 @@ namespace Quick_Media_Controls.Services
 
                 return settings ?? AppSettings.CreateDefault();
             }
-            catch (Exception ex)
+            catch
             {
                 return AppSettings.CreateDefault();
             }

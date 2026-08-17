@@ -50,16 +50,16 @@ namespace Quick_Media_Controls
 
         private const string UpdateManifestUrl = "https://raw.githubusercontent.com/AnasAttaullah/Quick-Media-Controls/main/update.xml";
 
-        private ImageSource noMediaLightIcon;
-        private ImageSource noMediaDarkIcon;
-        private ImageSource playLightIcon;
-        private ImageSource playDarkIcon;
-        private ImageSource pauseLightIcon;
-        private ImageSource pauseDarkIcon;
+        private ImageSource noMediaLightIcon = default!;
+        private ImageSource noMediaDarkIcon = default!;
+        private ImageSource playLightIcon = default!;
+        private ImageSource playDarkIcon = default!;
+        private ImageSource pauseLightIcon = default!;
+        private ImageSource pauseDarkIcon = default!;
 
-        private AppSettings _appSettings = null;
-        private MediaSessionService _mediaService;
-        private GlobalHotkeyService _globalHotkeyService;
+        private AppSettings _appSettings = default!;
+        private MediaSessionService _mediaService = default!;
+        private GlobalHotkeyService _globalHotkeyService = default!;
         private StartupRegistrationService _startupRegistrationService;
         private AppSettingsService _appSettingsService = new();
         private AppDistributionService _appDistributionService = new();
@@ -92,7 +92,14 @@ namespace Quick_Media_Controls
                 return;
             }
 
-            currentAppTheme = ApplicationThemeManager.GetAppTheme();
+            _appSettings = _appSettingsService.Load();
+            _appSettings.Theme ??= ThemeSettings.CreateDefault();
+            _appSettings.Keybinds.Shortcuts ??= ShortcutSettings.CreateDefault();
+            _appSettings.Keybinds.TrayIconShortcuts ??= TrayIconShortcutSettings.CreateDefault();
+
+            ApplyApplicationTheme(_appSettings.Theme.AppTheme);
+
+            PreloadIconAssets();
             _trayIcon = (NotifyIcon)FindResource("trayIcon");
 
             try
@@ -106,8 +113,6 @@ namespace Quick_Media_Controls
                 Shutdown();
                 return;
             }
-
-            PreloadIconAssets();
 
             _trayIcon.LeftClick += TrayIcon_LeftClickAsync;
             _trayIcon.LeftDoubleClick += TrayIcon_LeftDoubleClickAsync;
@@ -124,7 +129,6 @@ namespace Quick_Media_Controls
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
 
-            // Hidden window to provide message pump for tray icon
             _hiddenWindow = new Window
             {
                 Width = 0,
@@ -149,13 +153,11 @@ namespace Quick_Media_Controls
             _hiddenWindowHwndSource = HwndSource.FromHwnd(windowHandle);
             _hiddenWindowHwndSource?.AddHook(HwndMessageHook);
 
-            _appSettings = _appSettingsService.Load();
             InitializeAppSettings();
 
-            if (_appSettings.Keybinds.TrayIconShortcuts.LeftClick == ShortcutAction.OpenFlyout)
-            {
-                _mediaFlyout ??= new MediaFlyout(_mediaService, _appSettings);
-            }
+            _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
+            _mediaFlyout.Owner = _hiddenWindow;
+            _ = _mediaFlyout.UpdateMediaInfo();
 
             MainWindow = _hiddenWindow;
 
@@ -226,7 +228,6 @@ namespace Quick_Media_Controls
                 }
                 catch
                 {
-                    // Ignore if mutex is already released
                 }
             }
             mutex?.Dispose();
@@ -240,14 +241,14 @@ namespace Quick_Media_Controls
             switch (themeSetting)
             {
                 case ApplicationThemeSetting.Light:
-                    ApplicationThemeManager.Apply(ApplicationTheme.Light);
+                    ApplicationThemeManager.Apply(ApplicationTheme.Light, updateAccent: false);
                     break;
                 case ApplicationThemeSetting.Dark:
-                    ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+                    ApplicationThemeManager.Apply(ApplicationTheme.Dark, updateAccent: false);
                     break;
                 case ApplicationThemeSetting.System:
                 default:
-                    ApplicationThemeManager.ApplySystemTheme();
+                    ApplicationThemeManager.ApplySystemTheme(updateAccent: false);
                     break;
             }
 
@@ -287,8 +288,9 @@ namespace Quick_Media_Controls
                 {
                     _startupRegistrationService.Apply(_appSettings.General.RunAtStartup);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Debug.WriteLine($"Failed to initialize startup registration: {ex.Message}");
                 }
 
                 _appSettings.General.StartupRegistrationInitialized = true;
@@ -316,7 +318,8 @@ namespace Quick_Media_Controls
             var shouldPromptRestart = HasOpenFlyoutMouseBindingChanged(currentMouseShortcuts, updatedMouseShortcuts);
 
             bool themeChanged = _appSettings.Theme.AppTheme != updatedSettings.Theme.AppTheme ||
-                                _appSettings.Theme.TrayIconTheme != updatedSettings.Theme.TrayIconTheme;
+                                _appSettings.Theme.TrayIconTheme != updatedSettings.Theme.TrayIconTheme ||
+                                _appSettings.Theme.FlyoutTheme != updatedSettings.Theme.FlyoutTheme;
 
             try
             {
@@ -326,10 +329,9 @@ namespace Quick_Media_Controls
                 _appSettings = updatedSettings.Clone();
                 _appSettingsService.Save(_appSettings);
 
-                ApplyApplicationTheme(_appSettings.Theme.AppTheme);
-
                 if (themeChanged)
                 {
+                    ApplyApplicationTheme(_appSettings.Theme.AppTheme);
                     _ = ReloadFlyoutAsync();
                 }
                 else
@@ -398,9 +400,6 @@ namespace Quick_Media_Controls
             }
 
             RecreateTrayIcon();
-
-            // In some edge cases, Windows Explorer might take a short moment to finish initializing
-            // its notification area after broadcasting TaskbarCreated. Schedule a delayed refresh.
             await Task.Delay(500);
             UpdateTrayIcon();
         }
@@ -487,10 +486,9 @@ namespace Quick_Media_Controls
                 Dispatcher.InvokeAsync(UpdatePlaybackButtonsStatus);
                 return;
             }
-            if (_mediaFlyout != null && _mediaService.CurrentPlaybackInfo != null)
+            if (_mediaFlyout != null)
             {
-                _mediaFlyout.NextTrackButton.IsEnabled = _mediaService.IsNextEnabled();
-                _mediaFlyout.PreviousTrackButton.IsEnabled = _mediaService.IsPreviousEnabled();
+                _mediaFlyout.UpdateIcons();
             }
         }
 
@@ -499,8 +497,8 @@ namespace Quick_Media_Controls
             if (_mediaFlyout == null)
             {
                 _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
-                _mediaFlyout.UpdateIcons();
                 _mediaFlyout.Owner = MainWindow;
+                await _mediaFlyout.UpdateMediaInfo();
             }
             if (_mediaFlyout.IsVisible)
             {
@@ -508,6 +506,7 @@ namespace Quick_Media_Controls
                 return;
             }
 
+            _mediaFlyout.UpdateIcons();
             await _mediaFlyout.ShowFlyoutAsync();
         }
 
@@ -543,6 +542,8 @@ namespace Quick_Media_Controls
             _mediaFlyout.Close();
             _mediaFlyout = new MediaFlyout(_mediaService, _appSettings);
             _mediaFlyout.Owner = MainWindow;
+            await _mediaFlyout.UpdateMediaInfo();
+            _mediaFlyout.UpdateIcons();
 
             if (wasVisible)
             {
@@ -672,7 +673,7 @@ namespace Quick_Media_Controls
             await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.RightClick);
         }
 
-        private async void TrayIcon_MiddleClickAsync([System.Diagnostics.CodeAnalysis.NotNull] NotifyIcon sender, RoutedEventArgs e)
+        private async void TrayIcon_MiddleClickAsync(NotifyIcon sender, RoutedEventArgs e)
         {
             await ExecuteMouseShortcutAsync(_appSettings.Keybinds.TrayIconShortcuts.MiddleClick);
         }
@@ -682,9 +683,10 @@ namespace Quick_Media_Controls
             _ = _mediaFlyout?.UpdateMediaInfo();
         }
 
-        private void MediaService_SessionChanged(object? sender, GlobalSystemMediaTransportControlsSessionManager e)
+        private void MediaService_SessionChanged(object? sender, GlobalSystemMediaTransportControlsSessionManager? e)
         {
             UpdateTrayIcon();
+            _ = _mediaFlyout?.UpdateMediaInfo();
         }
 
         private void MediaService_PlaybackInfoChanged(object? sender, GlobalSystemMediaTransportControlsSessionPlaybackInfo e)
@@ -726,6 +728,7 @@ namespace Quick_Media_Controls
             currentAppTheme = currentApplicationTheme;
             ApplicationAccentColorManager.ApplySystemAccent();
             UpdateTrayIcon();
+            _ = _mediaFlyout?.ApplyFlyoutThemeAsync(_mediaFlyout.CurrentThumbnail);
         }
     }
 }

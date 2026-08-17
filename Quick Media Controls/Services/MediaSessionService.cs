@@ -33,17 +33,14 @@ namespace Quick_Media_Controls.Services
 
         private bool IsSessionAlive(GlobalSystemMediaTransportControlsSessionPlaybackInfo? info, string? title)
         {
-            // 1. If it has a title, it's definitively alive.
             if (!string.IsNullOrWhiteSpace(title)) return true;
 
-            // 2. If it has no title, but controls are enabled, it's just buffering/transitioning.
             if (info?.Controls != null && 
                (info.Controls.IsPlayEnabled || info.Controls.IsPauseEnabled || info.Controls.IsNextEnabled || info.Controls.IsPreviousEnabled))
             {
                 return true; 
             }
 
-            // 3. Otherwise, it's a dead/ghost session.
             return false;
         }
 
@@ -469,7 +466,7 @@ namespace Quick_Media_Controls.Services
                 int nextIndex = currentIndex == -1 ? 0 : (currentIndex + 1) % sessionsList.Count;
                 var nextSession = sessionsList[nextIndex];
 
-                IsLocked = true; // Lock onto the manually selected session
+                IsLocked = true;
                 CancelUnlockGracePeriod();
 
                 await UpdateCurrentSessionAsync(nextSession);

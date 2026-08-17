@@ -60,6 +60,23 @@ namespace Quick_Media_Controls.Views.Pages
                     break;
             }
 
+            switch (_themeSettings.FlyoutTheme)
+            {
+                case FlyoutThemeSetting.AmbientDynamic:
+                    FlyoutThemeComboBox.SelectedIndex = 1;
+                    break;
+                case FlyoutThemeSetting.BlurredArtwork:
+                    FlyoutThemeComboBox.SelectedIndex = 2;
+                    break;
+                case FlyoutThemeSetting.MinimalistGlass:
+                    FlyoutThemeComboBox.SelectedIndex = 3;
+                    break;
+                case FlyoutThemeSetting.Default:
+                default:
+                    FlyoutThemeComboBox.SelectedIndex = 0;
+                    break;
+            }
+
             _isBinding = false;
         }
 
@@ -86,6 +103,21 @@ namespace Quick_Media_Controls.Views.Pages
                 1 => TrayIconThemeSetting.Light,
                 2 => TrayIconThemeSetting.Dark,
                 _ => TrayIconThemeSetting.System
+            };
+
+            _settingWindows.SetDraftThemeSettings(_themeSettings);
+        }
+
+        private void FlyoutThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_settingWindows is null || _isBinding) return;
+
+            _themeSettings.FlyoutTheme = FlyoutThemeComboBox.SelectedIndex switch
+            {
+                1 => FlyoutThemeSetting.AmbientDynamic,
+                2 => FlyoutThemeSetting.BlurredArtwork,
+                3 => FlyoutThemeSetting.MinimalistGlass,
+                _ => FlyoutThemeSetting.Default
             };
 
             _settingWindows.SetDraftThemeSettings(_themeSettings);

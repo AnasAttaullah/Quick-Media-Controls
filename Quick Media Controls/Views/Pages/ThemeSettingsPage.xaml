@@ -64,5 +64,29 @@
             </ComboBox>
         </ui:CardControl>
 
+        <ui:CardControl
+            Margin="0,0,0,4"
+            Padding="20,15,20,15"
+            Icon="{ui:SymbolIcon Symbol=Color24}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        Margin="0"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
+                        Text="Media Flyout Theme"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ComboBox
+                x:Name="FlyoutThemeComboBox"
+                MinWidth="200"
+                SelectionChanged="FlyoutThemeComboBox_SelectionChanged">
+                <ComboBoxItem Content="Default" Tag="Default" />
+                <ComboBoxItem Content="Ambient Dynamic" Tag="AmbientDynamic" />
+                <ComboBoxItem Content="Blurred Artwork" Tag="BlurredArtwork" />
+                <ComboBoxItem Content="Minimalist Glass" Tag="MinimalistGlass" />
+            </ComboBox>
+        </ui:CardControl>
+
     </StackPanel>
 </Page>

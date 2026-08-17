@@ -115,7 +115,6 @@ namespace Quick_Media_Controls.Views.Pages
 
             var keyboard = _keybindsSettings.Shortcuts;
 
-            // Allow clearing optional secondary shortcuts with Backspace / Delete when no modifiers are held
             if ((e.Key is Key.Back or Key.Delete) && Keyboard.Modifiers == ModifierKeys.None)
             {
                 if (sender == PlayPauseSecondaryHotkeyTextBox) keyboard.PlayPauseSecondary = null;
@@ -131,7 +130,6 @@ namespace Quick_Media_Controls.Views.Pages
 
             var rawKey = e.Key == Key.System ? e.SystemKey : e.Key;
 
-            // Ignore standalone modifier key presses (Ctrl/Alt/Shift/Win) without throwing an error
             if (rawKey is Key.LeftAlt or Key.RightAlt or Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift or Key.LWin or Key.RWin or Key.None)
             {
                 return;
@@ -163,7 +161,6 @@ namespace Quick_Media_Controls.Views.Pages
             var modifiers = ModifierStateService.GetModifiers();
             if (modifiers == ModifierKeys.None)
             {
-                // No modifier key held: allow normal mouse interaction without error
                 return;
             }
 

@@ -19,6 +19,14 @@ namespace Quick_Media_Controls.Models
         Dark
     }
 
+    public enum FlyoutThemeSetting
+    {
+        Default,
+        AmbientDynamic,
+        BlurredArtwork,
+        MinimalistGlass
+    }
+
     public sealed class AppSettings
     {
         public GeneralSettings General { get; set; } = GeneralSettings.CreateDefault();
@@ -50,13 +58,15 @@ namespace Quick_Media_Controls.Models
     {
         public ApplicationThemeSetting AppTheme { get; set; } = ApplicationThemeSetting.System;
         public TrayIconThemeSetting TrayIconTheme { get; set; } = TrayIconThemeSetting.System;
+        public FlyoutThemeSetting FlyoutTheme { get; set; } = FlyoutThemeSetting.BlurredArtwork;
 
         public static ThemeSettings CreateDefault()
         {
             return new ThemeSettings
             {
                 AppTheme = ApplicationThemeSetting.System,
-                TrayIconTheme = TrayIconThemeSetting.System
+                TrayIconTheme = TrayIconThemeSetting.System,
+                FlyoutTheme = FlyoutThemeSetting.BlurredArtwork
             };
         }
 
@@ -65,7 +75,8 @@ namespace Quick_Media_Controls.Models
             return new ThemeSettings
             {
                 AppTheme = AppTheme,
-                TrayIconTheme = TrayIconTheme
+                TrayIconTheme = TrayIconTheme,
+                FlyoutTheme = FlyoutTheme
             };
         }
     }

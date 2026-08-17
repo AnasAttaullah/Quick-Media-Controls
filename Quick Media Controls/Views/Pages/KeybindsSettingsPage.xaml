@@ -18,7 +18,6 @@
             Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
             Text="Keybinds Settings" />
 
-        <!--  Keyboard Keybinds Settings  -->
         <ui:TextBlock
             Margin="0,10"
             Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
@@ -211,7 +210,6 @@
             Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
             Visibility="Collapsed" />
 
-        <!--  Mouse Keybinds Settings  -->
         <Grid Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -260,7 +258,7 @@
                             Margin="0,10,0,0"
                             FontSize="18"
                             FontTypography="Subtitle"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                             Text="Mouse Click Actions"
                             TextAlignment="Center"
                             TextWrapping="WrapWithOverflow" />
@@ -283,7 +281,7 @@
                             Grid.Column="0"
                             Margin="0,0,12,0"
                             VerticalAlignment="Center"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                             Text="Single Left Click" />
 
                     </ui:CardControl.Header>
@@ -306,7 +304,7 @@
                             Grid.Column="0"
                             Margin="0,0,12,0"
                             VerticalAlignment="Center"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                             Text="Double Left Click" />
 
                     </ui:CardControl.Header>
@@ -329,7 +327,7 @@
                             Grid.Column="0"
                             Margin="0,0,12,0"
                             VerticalAlignment="Center"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                             Text="Right Click" />
 
                     </ui:CardControl.Header>
@@ -352,7 +350,7 @@
                             Grid.Column="0"
                             Margin="0,0,12,0"
                             VerticalAlignment="Center"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                             Text="Middle Click" />
 
                     </ui:CardControl.Header>

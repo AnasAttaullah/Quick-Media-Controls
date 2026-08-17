@@ -8,7 +8,6 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
     /// <summary>
     /// Windows 10 session change detector using polling strategy
     /// </summary>
-
     internal class PollingSessionChangeDetector : ISessionChangeDetector
     {
         private readonly GlobalSystemMediaTransportControlsSessionManager _sessionManager;
@@ -39,8 +38,6 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
             }
             catch (Exception ex)
             {
-
-                
                 Debug.WriteLine($"Error in polling session change: {ex.Message}");
             }
             finally
@@ -58,6 +55,5 @@ namespace Quick_Media_Controls.Services.SessionChangeDetector
             _pollTimer?.Dispose();
             _pollTimer = null;
         }
-
     }
 }

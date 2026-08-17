@@ -27,10 +27,15 @@ namespace Quick_Media_Controls
         private bool _isAnimatingClose;
         private double _homeTop;
         private const double FlyoutScreenMargin = 11;
-        private const double MinFlyoutWidth = 300;
+        private const double MinFlyoutWidth = 350;
         private const double MaxFlyoutWidth = 360;
         private const double MinFlyoutHeight = 96;
         private const double MaxFlyoutHeight = 112;
+
+        private FlyoutPalette? _currentPalette;
+        private BitmapImage? _currentThumbnail;
+
+        public BitmapImage? CurrentThumbnail => _currentThumbnail;
 
         [DllImport("dwmapi.dll")]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
@@ -43,9 +48,6 @@ namespace Quick_Media_Controls
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMinimumWorkingSetSize, IntPtr dwMaximumWorkingSetSize);
 
-        /// <summary>
-        /// Releases unused physical memory pages back to the OS.
-        /// </summary>
         private static void TrimWorkingSet()
         {
             try
@@ -68,7 +70,7 @@ namespace Quick_Media_Controls
             }
             else
             {
-                ApplicationThemeManager.ApplySystemTheme();
+                ApplicationThemeManager.ApplySystemTheme(updateAccent: false);
             }
             ApplicationAccentColorManager.ApplySystemAccent();
 
@@ -82,13 +84,17 @@ namespace Quick_Media_Controls
             InitializeComponent();
             PositionFlyoutOnPrimaryScreen();
 
+            PlayPauseButton.MouseEnter += PlayPauseButton_MouseEnter;
+            PlayPauseButton.MouseLeave += PlayPauseButton_MouseLeave;
+            PlayPauseButton.PreviewMouseDown += PlayPauseButton_PreviewMouseDown;
+            PlayPauseButton.PreviewMouseUp += PlayPauseButton_PreviewMouseUp;
+
             MoveFlyoutToggle.IsChecked = _IsDragEnabled;
             SourceInitialized += OnSourceInitialized;
         }
 
         private async void OnSourceInitialized(object? sender, EventArgs e)
         {
-            // Disables Default WPF Window Animations
             var hwnd = new WindowInteropHelper(this).Handle;
             int disabled = 1;
             DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, ref disabled, sizeof(int));
@@ -98,6 +104,7 @@ namespace Quick_Media_Controls
 
             PositionFlyoutOnPrimaryScreen();
             await UpdateMediaInfo();
+            UpdateIcons();
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -129,7 +136,6 @@ namespace Quick_Media_Controls
             var workWidthDip = workAreaPx.Width / dpi.DpiScaleX;
             var workHeightDip = workAreaPx.Height / dpi.DpiScaleY;
 
-            // Responsive sizing: ~25% width and ~15.5% height of work area, clamped
             Width = Math.Clamp(workWidthDip * 0.25, MinFlyoutWidth, MaxFlyoutWidth);
             Height = Math.Clamp(workHeightDip * 0.155, MinFlyoutHeight, MaxFlyoutHeight);
 
@@ -173,7 +179,15 @@ namespace Quick_Media_Controls
                 Dispatcher.InvokeAsync(UpdateIcons);
                 return;
             }
-            if (_sessionManager.CurrentSession == null) return;
+            if (_sessionManager.CurrentSession == null)
+            {
+                CycleSessionButton.Opacity = 0.4;
+                CycleSessionButton.IsHitTestVisible = false;
+                NextTrackButton.IsEnabled = false;
+                PreviousTrackButton.IsEnabled = false;
+                return;
+            }
+
             playPauseIcon.Symbol = _sessionManager.IsPlaying() ? SymbolRegular.Pause12 : SymbolRegular.Play12;
             LockIcon.Symbol = _sessionManager.IsLocked ? SymbolRegular.LockClosed16 : SymbolRegular.LockOpen16;
 
@@ -187,6 +201,9 @@ namespace Quick_Media_Controls
                 CycleSessionButton.Opacity = 0.4;
                 CycleSessionButton.IsHitTestVisible = false;
             }
+
+            NextTrackButton.IsEnabled = _sessionManager.IsNextEnabled();
+            PreviousTrackButton.IsEnabled = _sessionManager.IsPreviousEnabled();
         }
 
         public async Task UpdateMediaInfo()
@@ -212,12 +229,17 @@ namespace Quick_Media_Controls
                 playingMediaTitle.Text = mediaTitle.Length > 28 ? mediaTitle[..28] + "..." : mediaTitle;
                 playingMediaTitle.ToolTip = (mediaTitle.Length > 28) ? mediaTitle : null;
                 playingMediaArtist.Text = _sessionManager.CurrentMediaProperties.Artist;
+
+                await ApplyFlyoutThemeAsync(thumbnail);
             }
             else
             {
                 mediaPlayingGrid.Visibility = Visibility.Collapsed;
                 noMediaPlayingGrid.Visibility = Visibility.Visible;
+                await ApplyFlyoutThemeAsync(null);
             }
+
+            UpdateIcons();
 
             if (!IsVisible)
             {
@@ -239,7 +261,7 @@ namespace Quick_Media_Controls
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.DecodePixelWidth = 160;  // Decode at 160px
+                bitmap.DecodePixelWidth = 160;
                 bitmap.DecodePixelHeight = 160;
 
                 using var memStream = new MemoryStream();
@@ -276,22 +298,29 @@ namespace Quick_Media_Controls
 
         public async Task ShowFlyoutAsync()
         {
+            UpdateIcons();
             Root.Opacity = 0;
             _isAnimatingClose = false;
             BeginAnimation(Window.TopProperty, null);
             Root.BeginAnimation(OpacityProperty, null);
 
             Top = _homeTop;
-            Visibility = Visibility.Visible;
+            Show();
 
-            // Force topmost activation workaround for WPF
             Topmost = true;
             Topmost = false;
             Topmost = true;
 
-            Activate();
-            Focus();
-            Keyboard.Focus(this);
+            try
+            {
+                Activate();
+                Focus();
+                Keyboard.Focus(this);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Activate failed: {ex.Message}");
+            }
 
             if (!_appSettings.General.EnableFlyoutAnimations)
             {
@@ -379,6 +408,237 @@ namespace Quick_Media_Controls
             _IsDragEnabled = appSettings.General.MoveFlyoutByDefault;
             Cursor = _IsDragEnabled ? Cursors.SizeAll : Cursors.Arrow;
             MoveFlyoutToggle.IsChecked = _IsDragEnabled;
+            _ = ApplyFlyoutThemeAsync(_currentThumbnail);
+        }
+
+        private bool IsCurrentFlyoutDarkMode()
+        {
+            return _appSettings.Theme.AppTheme switch
+            {
+                ApplicationThemeSetting.Light => false,
+                ApplicationThemeSetting.Dark => true,
+                _ => (Application.Current as App)?.currentAppTheme == ApplicationTheme.Dark
+            };
+        }
+
+        public async Task ApplyFlyoutThemeAsync(BitmapImage? thumbnail)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                await Dispatcher.InvokeAsync(async () => await ApplyFlyoutThemeAsync(thumbnail)).Task.Unwrap();
+                return;
+            }
+
+            _currentThumbnail = thumbnail;
+            bool isDarkMode = IsCurrentFlyoutDarkMode();
+            var flyoutTheme = _appSettings.Theme.FlyoutTheme;
+
+            switch (flyoutTheme)
+            {
+                case FlyoutThemeSetting.AmbientDynamic:
+                    DynamicAmbientLayer.Visibility = Visibility.Visible;
+                    BlurredArtworkLayer.Visibility = Visibility.Collapsed;
+                    MinimalistGlassLayer.Visibility = Visibility.Collapsed;
+                    WindowBackdropType = WindowBackdropType.Acrylic;
+                    Root.Background = Brushes.Transparent;
+
+                    ThumbnailDropShadow.Opacity = isDarkMode ? 0.32 : 0.18;
+                    ThumbnailDropShadow.BlurRadius = 12;
+                    ThumbnailContainer.BorderThickness = new Thickness(0);
+                    ThumbnailContainer.BorderBrush = null;
+
+                    _currentPalette = await ColorExtractorService.ExtractPaletteAsync(thumbnail, isDarkMode);
+
+                    DynamicAmbientBackground.Background = _currentPalette.AmbientBrush;
+                    DynamicAmbientOverlay.Background = new SolidColorBrush(isDarkMode
+                        ? Color.FromArgb(75, 18, 18, 24)
+                        : Color.FromArgb(30, 255, 255, 255));
+
+                    PlayPauseButton.Style = (Style)FindResource("PlayPauseFlyoutButtonStyle");
+                    PlayPauseButton.Background = _currentPalette.PlayButtonBrush;
+                    PlayPauseButton.BorderBrush = _currentPalette.PlayButtonBorderBrush;
+                    playPauseIcon.Foreground = _currentPalette.PlayButtonForegroundBrush;
+
+                    var frostedButtonBg = new SolidColorBrush(isDarkMode ? Color.FromArgb(30, 255, 255, 255) : Color.FromArgb(18, 0, 0, 0));
+                    var frostedButtonBorder = new SolidColorBrush(isDarkMode ? Color.FromArgb(40, 255, 255, 255) : Color.FromArgb(25, 0, 0, 0));
+                    PreviousTrackButton.Appearance = ControlAppearance.Secondary;
+                    PreviousTrackButton.Background = frostedButtonBg;
+                    PreviousTrackButton.BorderBrush = frostedButtonBorder;
+                    NextTrackButton.Appearance = ControlAppearance.Secondary;
+                    NextTrackButton.Background = frostedButtonBg;
+                    NextTrackButton.BorderBrush = frostedButtonBorder;
+                    break;
+
+                case FlyoutThemeSetting.BlurredArtwork:
+                    DynamicAmbientLayer.Visibility = Visibility.Collapsed;
+                    BlurredArtworkLayer.Visibility = Visibility.Visible;
+                    MinimalistGlassLayer.Visibility = Visibility.Collapsed;
+                    WindowBackdropType = WindowBackdropType.Acrylic;
+                    Root.Background = Brushes.Transparent;
+
+                    BlurredArtworkImage.Source = thumbnail;
+                    BlurredArtworkImage.Opacity = isDarkMode ? 0.45 : 0.60;
+                    if (thumbnail != null)
+                    {
+                        BlurredArtworkTintBorder.Background = new SolidColorBrush(isDarkMode
+                            ? Color.FromArgb(120, 16, 16, 22)
+                            : Color.FromArgb(50, 255, 255, 255));
+                    }
+                    else
+                    {
+                        BlurredArtworkTintBorder.Background = new SolidColorBrush(isDarkMode
+                            ? Color.FromArgb(120, 20, 20, 25)
+                            : Color.FromArgb(50, 245, 245, 250));
+                    }
+
+                    ThumbnailDropShadow.Opacity = isDarkMode ? 0.35 : 0.20;
+                    ThumbnailDropShadow.BlurRadius = 14;
+                    ThumbnailContainer.BorderThickness = new Thickness(0);
+                    ThumbnailContainer.BorderBrush = null;
+
+                    _currentPalette = await ColorExtractorService.ExtractPaletteAsync(thumbnail, isDarkMode);
+
+                    PlayPauseButton.Style = (Style)FindResource("PlayPauseFlyoutButtonStyle");
+                    PlayPauseButton.Background = _currentPalette.PlayButtonBrush;
+                    PlayPauseButton.BorderBrush = _currentPalette.PlayButtonBorderBrush;
+                    playPauseIcon.Foreground = _currentPalette.PlayButtonForegroundBrush;
+
+                    var blurPillBg = new SolidColorBrush(isDarkMode ? Color.FromArgb(32, 255, 255, 255) : Color.FromArgb(20, 0, 0, 0));
+                    var blurPillBorder = new SolidColorBrush(isDarkMode ? Color.FromArgb(42, 255, 255, 255) : Color.FromArgb(25, 0, 0, 0));
+                    PreviousTrackButton.Appearance = ControlAppearance.Secondary;
+                    PreviousTrackButton.Background = blurPillBg;
+                    PreviousTrackButton.BorderBrush = blurPillBorder;
+                    NextTrackButton.Appearance = ControlAppearance.Secondary;
+                    NextTrackButton.Background = blurPillBg;
+                    NextTrackButton.BorderBrush = blurPillBorder;
+                    break;
+
+                case FlyoutThemeSetting.MinimalistGlass:
+                    DynamicAmbientLayer.Visibility = Visibility.Collapsed;
+                    BlurredArtworkLayer.Visibility = Visibility.Collapsed;
+                    MinimalistGlassLayer.Visibility = Visibility.Visible;
+                    WindowBackdropType = WindowBackdropType.Acrylic;
+                    Root.Background = Brushes.Transparent;
+
+                    MinimalistGlassLayer.Background = new SolidColorBrush(isDarkMode
+                        ? Color.FromArgb(125, 22, 22, 28)
+                        : Color.FromArgb(50, 255, 255, 255));
+                    MinimalistGlassLayer.BorderBrush = isDarkMode
+                        ? new SolidColorBrush(Color.FromArgb(40, 255, 255, 255))
+                        : new SolidColorBrush(Color.FromArgb(30, 0, 0, 0));
+                    MinimalistGlassLayer.BorderThickness = new Thickness(1);
+
+                    ThumbnailDropShadow.Opacity = isDarkMode ? 0.25 : 0.12;
+                    ThumbnailDropShadow.BlurRadius = 10;
+                    ThumbnailContainer.BorderThickness = new Thickness(0);
+                    ThumbnailContainer.BorderBrush = null;
+
+                    PlayPauseButton.Style = (Style)FindResource("PlayPauseFlyoutButtonStyle");
+                    PlayPauseButton.Background = new SolidColorBrush(isDarkMode ? Color.FromArgb(45, 255, 255, 255) : Color.FromArgb(25, 0, 0, 0));
+                    PlayPauseButton.BorderBrush = new SolidColorBrush(isDarkMode ? Color.FromArgb(60, 255, 255, 255) : Color.FromArgb(35, 0, 0, 0));
+                    playPauseIcon.Foreground = isDarkMode ? Brushes.White : new SolidColorBrush(Color.FromRgb(28, 28, 30));
+
+                    var glassPillBg = new SolidColorBrush(isDarkMode ? Color.FromArgb(25, 255, 255, 255) : Color.FromArgb(15, 0, 0, 0));
+                    var glassPillBorder = new SolidColorBrush(isDarkMode ? Color.FromArgb(35, 255, 255, 255) : Color.FromArgb(20, 0, 0, 0));
+                    PreviousTrackButton.Appearance = ControlAppearance.Secondary;
+                    PreviousTrackButton.Background = glassPillBg;
+                    PreviousTrackButton.BorderBrush = glassPillBorder;
+                    NextTrackButton.Appearance = ControlAppearance.Secondary;
+                    NextTrackButton.Background = glassPillBg;
+                    NextTrackButton.BorderBrush = glassPillBorder;
+                    break;
+
+                case FlyoutThemeSetting.Default:
+                default:
+                    DynamicAmbientLayer.Visibility = Visibility.Collapsed;
+                    BlurredArtworkLayer.Visibility = Visibility.Collapsed;
+                    MinimalistGlassLayer.Visibility = Visibility.Collapsed;
+                    WindowBackdropType = WindowBackdropType.Mica;
+                    Root.ClearValue(System.Windows.Controls.Panel.BackgroundProperty);
+
+                    ThumbnailDropShadow.Opacity = 0;
+                    ThumbnailContainer.BorderThickness = new Thickness(0);
+                    ThumbnailContainer.BorderBrush = null;
+
+                    PlayPauseButton.ClearValue(StyleProperty);
+                    PlayPauseButton.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+                    PlayPauseButton.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+                    PlayPauseButton.Appearance = ControlAppearance.Primary;
+                    playPauseIcon.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
+
+                    PreviousTrackButton.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+                    PreviousTrackButton.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+                    PreviousTrackButton.Appearance = ControlAppearance.Secondary;
+
+                    NextTrackButton.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+                    NextTrackButton.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+                    NextTrackButton.Appearance = ControlAppearance.Secondary;
+                    break;
+            }
+        }
+
+        private void PlayPauseButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if ((_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.AmbientDynamic || _appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.BlurredArtwork) && _currentPalette != null)
+            {
+                PlayPauseButton.Background = _currentPalette.PlayButtonHoverBrush;
+                PlayPauseButton.BorderBrush = _currentPalette.PlayButtonHoverBorderBrush;
+            }
+            else if (_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.MinimalistGlass)
+            {
+                bool isDark = IsCurrentFlyoutDarkMode();
+                PlayPauseButton.Background = isDark ? new SolidColorBrush(Color.FromArgb(65, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(40, 0, 0, 0));
+                PlayPauseButton.BorderBrush = isDark ? new SolidColorBrush(Color.FromArgb(80, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(50, 0, 0, 0));
+            }
+        }
+
+        private void PlayPauseButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if ((_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.AmbientDynamic || _appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.BlurredArtwork) && _currentPalette != null)
+            {
+                PlayPauseButton.Background = _currentPalette.PlayButtonBrush;
+                PlayPauseButton.BorderBrush = _currentPalette.PlayButtonBorderBrush;
+            }
+            else if (_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.MinimalistGlass)
+            {
+                bool isDark = IsCurrentFlyoutDarkMode();
+                PlayPauseButton.Background = isDark ? new SolidColorBrush(Color.FromArgb(45, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(25, 0, 0, 0));
+                PlayPauseButton.BorderBrush = isDark ? new SolidColorBrush(Color.FromArgb(60, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(35, 0, 0, 0));
+            }
+        }
+
+        private void PlayPauseButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if ((_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.AmbientDynamic || _appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.BlurredArtwork) && _currentPalette != null)
+            {
+                PlayPauseButton.Background = _currentPalette.PlayButtonPressedBrush;
+                PlayPauseButton.BorderBrush = _currentPalette.PlayButtonPressedBorderBrush;
+            }
+            else if (_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.MinimalistGlass)
+            {
+                bool isDark = IsCurrentFlyoutDarkMode();
+                PlayPauseButton.Background = isDark ? new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
+                PlayPauseButton.BorderBrush = isDark ? new SolidColorBrush(Color.FromArgb(45, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(25, 0, 0, 0));
+            }
+        }
+
+        private void PlayPauseButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if ((_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.AmbientDynamic || _appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.BlurredArtwork) && _currentPalette != null)
+            {
+                PlayPauseButton.Background = PlayPauseButton.IsMouseOver ? _currentPalette.PlayButtonHoverBrush : _currentPalette.PlayButtonBrush;
+                PlayPauseButton.BorderBrush = PlayPauseButton.IsMouseOver ? _currentPalette.PlayButtonHoverBorderBrush : _currentPalette.PlayButtonBorderBrush;
+            }
+            else if (_appSettings.Theme.FlyoutTheme == FlyoutThemeSetting.MinimalistGlass)
+            {
+                bool isDark = IsCurrentFlyoutDarkMode();
+                PlayPauseButton.Background = PlayPauseButton.IsMouseOver
+                    ? (isDark ? new SolidColorBrush(Color.FromArgb(65, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(40, 0, 0, 0)))
+                    : (isDark ? new SolidColorBrush(Color.FromArgb(45, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(25, 0, 0, 0)));
+                PlayPauseButton.BorderBrush = PlayPauseButton.IsMouseOver
+                    ? (isDark ? new SolidColorBrush(Color.FromArgb(80, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(50, 0, 0, 0)))
+                    : (isDark ? new SolidColorBrush(Color.FromArgb(60, 255, 255, 255)) : new SolidColorBrush(Color.FromArgb(35, 0, 0, 0)));
+            }
         }
 
 

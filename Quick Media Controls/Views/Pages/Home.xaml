@@ -11,10 +11,9 @@
 
     <StackPanel Margin="10">
         <ui:Image
-            Height="200"
             Margin="0,0,0,10"
-            Source="/Assets/banner.jpg"
-            CornerRadius="6" />
+            CornerRadius="10"
+            Source="/Assets/banner.jpg" />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -23,39 +22,39 @@
             <StackPanel Grid.Column="0" Margin="0,0,2,0">
                 <ui:CardAction
                     Margin="0,0,0,4"
-                    Icon="{ui:SymbolIcon Symbol=AppsAddIn16}"
+                    Click="CardAction_Click1"
                     Content="Request a Feature"
                     FontSize="18"
-                    Click="CardAction_Click1" />
+                    Icon="{ui:SymbolIcon Symbol=AppsAddIn16}" />
                 <ui:CardAction
                     Margin="0,0,0,0"
-                    Icon="{ui:SymbolIcon Symbol=Archive16}"
+                    Click="CardAction_Click_3"
                     Content="Visit Repository"
                     FontSize="18"
-                    Click="CardAction_Click_3" />
+                    Icon="{ui:SymbolIcon Symbol=Archive16}" />
 
             </StackPanel>
 
             <StackPanel Grid.Column="1" Margin="2,0,0,0">
                 <ui:CardAction
                     Margin="0,0,0,4"
-                    Icon="{ui:SymbolIcon Symbol=Bug16}"
+                    Click="CardAction_Click_2"
                     Content="Report a Bug"
                     FontSize="18"
-                    Click="CardAction_Click_2" />
+                    Icon="{ui:SymbolIcon Symbol=Bug16}" />
                 <ui:CardAction
                     Margin="0,0,0,0"
-                    Icon="{ui:SymbolIcon Symbol=Heart16}"
+                    Click="CardAction_Click_4"
                     Content="Sponsor the Project"
                     FontSize="18"
-                    Click="CardAction_Click_4" />
+                    Icon="{ui:SymbolIcon Symbol=Heart16}" />
             </StackPanel>
         </Grid>
         <ui:InfoBar
             Title="Open Source"
             Margin="0,10,0,0"
             IsClosable="False"
-            Visibility="Visible"
-            Message="Your support keeps this project alive and growing" />
+            Message="Your support keeps this project alive and growing"
+            Visibility="Visible" />
     </StackPanel>
 </Page>

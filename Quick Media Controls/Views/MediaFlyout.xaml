@@ -8,7 +8,7 @@
     Title="MediaFlyout"
     Width="360"
     Height="112"
-    MinWidth="300"
+    MinWidth="350"
     MinHeight="96"
     MaxWidth="360"
     MaxHeight="112"
@@ -19,10 +19,38 @@
     ShowActivated="True"
     ShowInTaskbar="False"
     Topmost="False"
+    Background="Transparent"
     WindowBackdropType="Mica"
     WindowStartupLocation="Manual"
-    WindowStyle="None"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style x:Key="PlayPauseFlyoutButtonStyle" TargetType="{x:Type ui:Button}">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="11,5,11,6" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ui:Button}">
+                        <Border
+                            x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
     <Window.ContextMenu>
         <ContextMenu>
@@ -60,7 +88,22 @@
         </ContextMenu>
     </Window.ContextMenu>
     <Grid x:Name="Root" Opacity="1">
-        <!--  Media Playing Grid  -->
+        <Grid x:Name="DynamicAmbientLayer" Visibility="Collapsed" IsHitTestVisible="False">
+            <Border x:Name="DynamicAmbientBackground" />
+            <Border x:Name="DynamicAmbientOverlay" />
+        </Grid>
+
+        <Grid x:Name="BlurredArtworkLayer" Visibility="Collapsed" IsHitTestVisible="False" ClipToBounds="True">
+            <Image x:Name="BlurredArtworkImage" Stretch="UniformToFill" Margin="-30" Opacity="0.45">
+                <Image.Effect>
+                    <BlurEffect Radius="36" KernelType="Gaussian" />
+                </Image.Effect>
+            </Image>
+            <Border x:Name="BlurredArtworkTintBorder" />
+        </Grid>
+
+        <Border x:Name="MinimalistGlassLayer" Visibility="Collapsed" IsHitTestVisible="False" />
+
         <Grid
             Name="mediaPlayingGrid"
             Margin="12,0"
@@ -70,13 +113,29 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ui:Image
-                Name="playingMediaThumbnail"
+            <Border
+                x:Name="ThumbnailContainer"
                 Grid.Column="0"
                 Width="86"
                 Height="86"
                 CornerRadius="8"
-                Visibility="Visible" />
+                BorderThickness="0">
+                <Border.Effect>
+                    <DropShadowEffect
+                        x:Name="ThumbnailDropShadow"
+                        BlurRadius="14"
+                        Direction="270"
+                        Opacity="0"
+                        ShadowDepth="2"
+                        Color="Black" />
+                </Border.Effect>
+                <ui:Image
+                    Name="playingMediaThumbnail"
+                    Width="86"
+                    Height="86"
+                    CornerRadius="8"
+                    Visibility="Visible" />
+            </Border>
 
             <StackPanel
                 Grid.Column="1"
@@ -109,6 +168,7 @@
                                 Symbol="Previous16" />
                         </ui:Button>
                         <ui:Button
+                            x:Name="PlayPauseButton"
                             Margin="10,0"
                             Appearance="Primary"
                             Click="PlayPauseButton_ClickAsync">
@@ -147,6 +207,8 @@
                             Padding="4,3.2"
                             Appearance="Transparent"
                             BorderBrush="Transparent"
+                            Opacity="0.4"
+                            IsHitTestVisible="False"
                             Click="CycleSessionButton_Click">
                             <ui:SymbolIcon
                                 FontSize="18"
@@ -158,7 +220,6 @@
             </StackPanel>
         </Grid>
 
-        <!--  No Media Playing Grid  -->
         <Grid
             Name="noMediaPlayingGrid"
             Margin="12,0"
