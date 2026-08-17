@@ -12,7 +12,7 @@
 	<Identity
 	  Name="AnasAttaullah.QuickMediaControls"
 	  Publisher="CN=217DA2E1-12A6-4BCD-AF87-F844F8CF28C7"
-	  Version="2.0.0.0" />
+	  Version="3.0.0.0" />
 
 	<Properties>
 		<DisplayName>Quick Media Controls</DisplayName>

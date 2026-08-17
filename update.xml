@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>2.0.0</version>
-  <url>https://github.com/AnasAttaullah/Quick-Media-Controls/releases/download/v2.0.0/QuickMediaControls-Setup-v2.0.0.exe</url>
-  <changelog>https://github.com/AnasAttaullah/Quick-Media-Controls/releases/tag/v2.0.0</changelog>
-  <mandatory>false</mandatory>
+  <version>3.0.0</version>
+  <url>https://github.com/AnasAttaullah/Quick-Media-Controls/releases/download/v3.0.0/QuickMediaControls-Setup-v3.0.0.exe</url>
+  <changelog>https://github.com/AnasAttaullah/Quick-Media-Controls/releases/tag/v3.0.0</changelog>
+  <mandatory mode="1">true</mandatory>
 </item>

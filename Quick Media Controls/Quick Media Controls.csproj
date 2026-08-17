@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -13,8 +13,8 @@
 		<Title>Quick Media Controls</Title>
 		<Description>A quick media controls flyout for Windows</Description>
 		<Company>Anas Attaullah</Company>
-		<Copyright>Copyright © 2026 Anas Attaullah</Copyright>
-		<Version>2.0.0</Version>
+		<Copyright>Copyright � 2026 Anas Attaullah</Copyright>
+		<Version>3.0.0</Version>
 		<ApplicationIcon>Assets\Icons\applicationIcon.ico</ApplicationIcon>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Platforms>AnyCPU;x64;ARM64;x86</Platforms>
