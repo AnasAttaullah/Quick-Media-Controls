@@ -9,6 +9,8 @@
 # Build outputs
 **/bin/
 **/obj/
+**/BundleArtifacts/
+*.assets.cache
 
 # Installer/deployment artifacts
 Packaging Output/

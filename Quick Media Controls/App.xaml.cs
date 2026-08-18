@@ -615,9 +615,9 @@ namespace Quick_Media_Controls
         private static void ConfigureAutoUpdaterOptions()
         {
             AutoUpdater.ShowSkipButton = false;
-            AutoUpdater.ShowRemindLaterButton = true;
-            AutoUpdater.Mandatory = false;
-            AutoUpdater.UpdateMode = Mode.Normal;
+            AutoUpdater.ShowRemindLaterButton = false;
+            AutoUpdater.Mandatory = true;
+            AutoUpdater.UpdateMode = Mode.Forced;
         }
 
         private void ConfigureAutoUpdater()

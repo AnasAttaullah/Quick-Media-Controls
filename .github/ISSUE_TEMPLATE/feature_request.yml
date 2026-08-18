@@ -1,0 +1,43 @@
+name: Feature Request
+description: Suggest a new feature, setting, or enhancement for Quick Media Controls
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement for Quick Media Controls!
+
+  - type: textarea
+    id: problem_or_goal
+    attributes:
+      label: Problem or Motivation
+      description: Is your feature request related to a problem or a missing capability?
+      placeholder: A concise explanation of the problem or what you are trying to achieve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: Describe how you envision this feature working in the app (e.g., new shortcut, UI option, tray behavior).
+      placeholder: Describe the desired behavior or appearance.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions, workarounds, or other tools you have considered.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Add mockups, screenshots, reference designs, or any other helpful context.
+    validations:
+      required: false

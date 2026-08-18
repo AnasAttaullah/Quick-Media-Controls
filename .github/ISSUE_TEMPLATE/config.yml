@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions & Discussions
+    url: https://github.com/AnasAttaullah/Quick-Media-Controls/discussions
+    about: Ask questions, get help, or share feedback with the community.
+  - name: Microsoft Store Listing
+    url: https://apps.microsoft.com/detail/9msq5ct443tv
+    about: Rate or review Quick Media Controls on the Microsoft Store.

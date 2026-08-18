@@ -1,0 +1,80 @@
+name: Bug Report
+description: Report a bug, crash, or unexpected behavior in Quick Media Controls
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report an issue! Please provide as much detail as possible to help reproduce and fix the problem.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what went wrong.
+      placeholder: Describe what happened and what you expected to happen instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Environment & Diagnostics
+      description: |
+        Please paste the diagnostic details from the app:
+        1. Open **Settings** (Right-click tray icon or flyout -> **Settings**)
+        2. Navigate to the **About** tab
+        3. Click **"Copy Info"** under *System & Diagnostics*
+        4. Paste the clipboard content below.
+
+        *(If the app fails to start, please specify your Windows version, architecture, and whether you installed via GitHub or Microsoft Store).*
+      placeholder: |
+        ### Environment & Diagnostics
+        - **App Version**: 
+        - **Operating System**: 
+        - **Architecture**: 
+        - **Runtime**: 
+        - **Distribution Channel**: 
+      render: markdown
+    validations:
+      required: true
+
+  - type: input
+    id: media_player
+    attributes:
+      label: Media Player / Source
+      description: Which app or browser was playing media when the issue occurred?
+      placeholder: "e.g., Spotify (Desktop), Google Chrome (YouTube), Apple Music, VLC, Tidal"
+    validations:
+      required: false
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue.
+      placeholder: |
+        1. Start media playback in [App Name]
+        2. Click the Quick Media Controls tray icon
+        3. Observe [unexpected behavior]
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots_logs
+    attributes:
+      label: Screenshots or Error Messages
+      description: Drag and drop screenshots or paste any crash error messages if available.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have verified that I am running the latest version of Quick Media Controls.
+          required: false
+        - label: I have searched existing issues to make sure this is not a duplicate.
+          required: false
