@@ -8,6 +8,7 @@
   <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/blob/main/LICENSE.txt">
     <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-orange?logo=gnu" />
   </a>
+  <img alt="RAM: ~10 MB" src="https://img.shields.io/badge/RAM-~10%20MB%20(Idle)-2ea44f?logo=speedtest&logoColor=white" />
   <img alt="Windows 10/11" src="https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4" />
   <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8-512BD4" />
   <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/issues">
@@ -26,23 +27,23 @@ It's super quick ⚡:
 <table>
   <tr>
     <th>Action</th>
-    <th>Mouse Input</th>
-    <th>Keyboard Shortcut</th>
+    <th>Tray Icon</th>
+    <th>Keyboard + Mouse Shortcut</th>
   </tr>
   <tr>
     <td>Play or Pause</td>
     <td>Left Click</td>
-    <td><code>Alt + P</code></td>
+    <td><code>Alt + P</code> &nbsp;/&nbsp; <code>Alt + Right Click</code></td>
   </tr>
   <tr>
     <td>Next Track</td>
     <td>Double Click</td>
-    <td><code>Alt + N</code></td>
+    <td><code>Alt + N</code> &nbsp;/&nbsp; <code>Alt + Mouse 5</code></td>
   </tr>
   <tr>
     <td>Previous Track</td>
     <td>—</td>
-    <td><code>Alt + Shift + P</code></td>
+    <td><code>Alt + Shift + P</code> &nbsp;/&nbsp; <code>Alt + Mouse 4</code></td>
   </tr>
   <tr>
     <td>Open Flyout</td>
@@ -56,43 +57,86 @@ It's super quick ⚡:
 
 ## Download ⬇️
 
-<a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
-  <img src="docs/images/download_installerx64.png" alt="Download Now" width="260" style="display:block; margin-left:0;" />
-</a>
-<a href="https://apps.microsoft.com/detail/9msq5ct443tv">
-   <img width="273" height="83" alt="download_store" src="docs/images/download_store.png" />
-</a>
+<p align="left">
+  <a href="https://get.microsoft.com/installer/download/9msq5ct443tv?referrer=appbadge">
+    <img src="https://get.microsoft.com/images/en-us%20light.svg" alt="Download from Microsoft Store" width="200" />
+  </a>
+  <a href="https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest">
+    <img src="docs/images/download_installerx64.png" alt="Download Installer" width="170" />
+  </a>
+</p>
+
+<details>
+  <summary><strong>Compare: Microsoft Store vs GitHub Release</strong></summary>
+  <br/>
+  <table>
+    <tr>
+      <th>Feature</th>
+      <th>Microsoft Store ⭐️ (Recommended)</th>
+      <th>GitHub Release</th>
+    </tr>
+    <tr>
+      <td><b>Price</b></td>
+      <td>Free for now</td>
+      <td>Free forever</td>
+    </tr>
+    <tr>
+      <td><b>Support the Project</b></td>
+      <td>❤️ Supports ongoing development</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><b>Device Support</b></td>
+      <td>x86 (32-bit), x64, ARM64</td>
+      <td>x64 only</td>
+    </tr>
+    <tr>
+      <td><b>Updates & Install</b></td>
+      <td>One-click install & automatic updates</td>
+      <td>Manual setup installer</td>
+    </tr>
+    <tr>
+      <td><b>Security</b></td>
+      <td>Microsoft verified & signed</td>
+      <td>Open source releases</td>
+    </tr>
+  </table>
+</details>
+
 <p></p>
 
-> The installer bundles .NET 8, which increases the download size from **~14 MB** to **~65 MB**.
-
-Prefer building it yourself? Jump to **[Build from source](#Requirements)**.
+> Prefer building from source? See the **Build from source** section below.
 
 ---
 
 ## Installation 🖥️
 
-1. Download the setup file from Releases (example: `QuickMediaControls-Setup-...exe`)
-2. Run the installer
-3. Launch **Quick Media Controls**
-4. Find it in the **system tray** (near the clock)  
-   - If you don’t see it, click the **^** arrow to show hidden tray icons
+#### Microsoft Store (Recommended)
+1. Install directly from the [Microsoft Store](https://apps.microsoft.com/detail/9msq5ct443tv).
+2. Launch the app. It will appear directly in your system tray.
 
-**Tip:** On first use, **pin the tray icon** so it’s always visible.
+#### GitHub Installer (.exe)
+1. Download `QuickMediaControls-Setup-...exe` from [Releases](https://github.com/AnasAttaullah/Quick-Media-Controls/releases/latest).
+2. Run the installer and launch **Quick Media Controls**.
+3. Locate the icon in your **system tray** (near the clock). If hidden, click the **^** arrow.
+
+> **Tip:** Pin the tray icon so your media controls are always one click away.
 
 ---
 
 ## Features ✨
 
-- **Native experience** on Windows 10 & 11  
-- **Light & Dark mode** with Windows accent color  
-- **Universal media support** – works with apps, browsers, and players  
-- **Flyout panel**: shows title, artist, album art, and playback controls  
-- **Smart tray icon**: displays play/pause state or “No Media Playing”  
-- **Keyboard & mouse shortcuts** with custom keybinds  
-- **Multi-display & DPI aware**  
-- **Customizable settings window**  
-- **Automatic updates** to keep you up to date
+- **Native Windows UI**: Designed for Windows 10 & 11 with dark mode, light mode, and accent colors.
+- **Dynamic Themes**: Ambient album art colors, Blurred Artwork, and Minimalist Glass.
+- **Multi-Source Support**: Cycle between active media sessions or lock to a specific player.
+- **Dual Shortcuts**: Primary and secondary keybind slots with full keyboard and mouse support.
+- **Mouse Hotkeys**: Bind media actions to mouse buttons (Middle click, Mouse 4, Mouse 5).
+- **Custom Tray Clicks**: Assign single, double, right, and middle clicks on the tray icon.
+- **Smooth Animations**: Directional slide animation adapts to your taskbar position.
+- **Position Memory**: Remembers custom flyout placement across restarts.
+- **Ultra-Lightweight**: Uses only ~10–12 MB memory on idle.
+- **Universal Support**: Works with Spotify, Apple Music, YouTube, web browsers, and local players.
+- **Multi-Display & DPI Aware**: Crisp scaling on high-DPI and multi-monitor setups.
 
 ---
 
@@ -124,12 +168,22 @@ https://github.com/user-attachments/assets/61f0dea8-6c25-40d1-8a48-cc870b52eefd
 </table>
 </p>
 
+#### Dynamic Flyout Themes
+<p align="center">
+  <img src="docs/images/themes.jpg" width="100%"/>
+</p>
+
+#### Multi-Source Media Switching
+<p align="center">
+  <img src="docs/images/cycle_media_session.gif" width="100%"/>
+</p>
+
 #### Mouse Click Actions
 <p align="center">
   <img src="docs/images/mouse_clicks_showcase.gif" width="100%"/>
 </p>
 
-#### Settings Windows
+#### Settings Window
 
 <p align="center">
   <img src="docs/images/settings_window_showcase.gif" width="100%"/>
@@ -140,53 +194,99 @@ https://github.com/user-attachments/assets/61f0dea8-6c25-40d1-8a48-cc870b52eefd
 ## Build from source 🛠️
 
 ### Requirements
-- Windows 10/11
-- Visual Studio 2022+
+- Windows 10 / 11
 - .NET 8 SDK
+- Visual Studio 2022+ (with .NET desktop development workload)
 
 ### Steps
-1. Clone the repository:
-   `git clone https://github.com/AnasAttaullah/Quick-Media-Controls.git`
-2. Open `Quick-Media-Controls.sln` in Visual Studio
-3. Restore NuGet packages (if prompted)
-4. Build and run (`F5`)
-5. The app will appear in the **system tray** (near the clock)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/AnasAttaullah/Quick-Media-Controls.git
+
+# 2. Navigate to the project directory
+cd Quick-Media-Controls
+
+# 3. Build the project
+dotnet build "Quick Media Controls/Quick Media Controls.csproj" -c Release
+
+# 4. Run the app
+dotnet run --project "Quick Media Controls/Quick Media Controls.csproj"
+```
+
+*Alternatively, open `Quick-Media-Controls.sln` in Visual Studio and press `F5`.*
 
 ---
 
 ## Help / FAQ ❓
 
 <details>
-  <summary><strong>Where is the app tray?</strong></summary>
+  <summary><strong>Where is the app running?</strong></summary>
   <br/>
   The app runs in the <strong>system tray</strong> (near the clock).  
-  If you don’t see it, click the <strong>^</strong> arrow to show hidden tray icons.
+  If you don’t see it, click the <strong>^</strong> arrow in your taskbar to reveal hidden tray icons.
 </details>
 
 <details>
-  <summary><strong>How do I open the settings window?</strong></summary>
+  <summary><strong>How do I open Settings?</strong></summary>
   <br/>
-  Right-click the media flyout, then select <strong>Settings</strong>.
+  Right-click the media flyout and select <strong>Settings</strong>, or configure a shortcut / tray click action to open it.
+</details>
+
+<details>
+  <summary><strong>How do I switch between multiple playing apps?</strong></summary>
+  <br/>
+  Use the source cycle buttons on the flyout to navigate between active media sessions, or click the lock icon to lock controls to your preferred player.
 </details>
 
 <details>
   <summary><strong>GitHub vs Microsoft Store version?</strong></summary>
   <br/>
-  <strong>GitHub version</strong>: completely free forever, supports <strong>x64</strong> only.<br/>
-  <strong>Microsoft Store version</strong>: also free, Microsoft-scanned/signed, supports <strong>x86 (32-bit), x64, and ARM64</strong>.
+  <table>
+    <tr>
+      <th>Feature</th>
+      <th>Microsoft Store ⭐️ (Recommended)</th>
+      <th>GitHub Release</th>
+    </tr>
+    <tr>
+      <td><b>Price</b></td>
+      <td>Free for now</td>
+      <td>Free forever</td>
+    </tr>
+    <tr>
+      <td><b>Support the Project</b></td>
+      <td>❤️ Supports ongoing development</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><b>Device Support</b></td>
+      <td>x86 (32-bit), x64, ARM64</td>
+      <td>x64 only</td>
+    </tr>
+    <tr>
+      <td><b>Updates & Install</b></td>
+      <td>One-click install & automatic updates</td>
+      <td>Manual setup installer</td>
+    </tr>
+    <tr>
+      <td><b>Security</b></td>
+      <td>Microsoft verified & signed</td>
+      <td>Open source releases</td>
+    </tr>
+  </table>
 </details>
 
 ---
 
-
 ## Contributing 🤝
 
-Ideas, suggestions, and contributions are always welcome.
+Contributions, issues, and feature requests are welcome:
 
-- Report bugs or request features: [GitHub Issues](https://github.com/AnasAttaullah/Quick-Media-Controls/issues)
-- Submit improvements via pull requests
+- **Report a bug or request a feature**: Open an [issue](https://github.com/AnasAttaullah/Quick-Media-Controls/issues).
+- **Submit code**: Please open an [issue](https://github.com/AnasAttaullah/Quick-Media-Controls/issues) first to discuss proposed changes before submitting a pull request.
 
----
+> ⭐️ **Enjoying Quick Media Controls?** If you find this project helpful, please consider giving it a star on GitHub!
 
 ## License 📜
 Licensed under the **GNU GPL v3.0**. See `LICENSE.txt` for details.
+
