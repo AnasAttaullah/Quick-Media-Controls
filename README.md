@@ -230,13 +230,13 @@ dotnet run --project "Quick Media Controls/Quick Media Controls.csproj"
 <details>
   <summary><strong>How do I open Settings?</strong></summary>
   <br/>
-  Right-click the media flyout and select <strong>Settings</strong>, or configure a shortcut / tray click action to open it.
+  Right-click the media flyout and select <strong>Settings</strong>.
 </details>
 
 <details>
   <summary><strong>How do I switch between multiple playing apps?</strong></summary>
   <br/>
-  Use the source cycle buttons on the flyout to navigate between active media sessions, or click the lock icon to lock controls to your preferred player.
+  Use the source cycle button (right arrow) on the flyout to navigate between active media sessions, or click the lock icon to lock controls to your preferred player.
 </details>
 
 <details>
@@ -282,8 +282,9 @@ dotnet run --project "Quick Media Controls/Quick Media Controls.csproj"
 
 Contributions, issues, and feature requests are welcome:
 
+- **Guidelines**: Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
 - **Report a bug or request a feature**: Open an [issue](https://github.com/AnasAttaullah/Quick-Media-Controls/issues).
-- **Submit code**: Please open an [issue](https://github.com/AnasAttaullah/Quick-Media-Controls/issues) first to discuss proposed changes before submitting a pull request.
+- **Discussions & Feedback**: Join the conversation in [GitHub Discussions](https://github.com/AnasAttaullah/Quick-Media-Controls/discussions).
 
 > ⭐️ **Enjoying Quick Media Controls?** If you find this project helpful, please consider giving it a star on GitHub!
 
